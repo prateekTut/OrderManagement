@@ -1,0 +1,117 @@
+.main_content_iner {
+    margin-top: 10px;
+    width: 100%;
+    justify-content: center;
+}
+
+#icon {
+    height: 20px;
+    width: 20px;
+    color: #fff;
+}
+
+#home {
+    margin-top: 10%;
+}
+
+#displaynone {
+    display: none;
+}
+
+.datatable {
+    border: 2px solid black;
+}
+
+#flexRadioDefault2 {
+    margin: 3px 0px 0px 8px;
+}
+
+#Client_status {
+    margin-right: 40px;
+}
+
+.Allbutton {
+    margin-left: 370px;
+}
+
+table {
+    font-size: 20px;
+}
+
+table td {
+    padding-left: 20px;
+    padding-top: 20px;
+}
+
+table th {
+    padding-top: 20px;
+}
+
+img,
+svg {
+    height: 23px;
+    /* margin-left: 290px;
+    margin-top: -50px; */
+}
+
+
+/* =========== datatable header style ============== */
+
+[data-column-id="name"].rdt_TableCol {
+    background-color: rgb(80, 78, 75);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    width: 100%;
+    width: "fit-content";
+}
+
+[data-column-id="Email"].rdt_TableCol {
+    background-color: rgb(80, 78, 75);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    width: 200px;
+}
+
+
+/* ================================================== */
+
+
+/* ================  file = Viewbudget.js Budget data style ================== */
+
+#budgetdata {
+    display: inline-block;
+    border: 4px solid black;
+    border-radius: 5px;
+    padding: 20px;
+    margin-left: 280px;
+}
+
+#Editbudgetbutton {
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+#invoicebutton {
+    margin-left: 200px;
+}
+
+
+/* ============================================= */
+
+#invailidemail {
+    color: red;
+}
+
+
+/* ======================================modal style*/
+
+.modaltitle {
+    color: #fff;
+}
+
+.modaldata {
+    font-size: 20px;
+    margin-left: 10px;
+}

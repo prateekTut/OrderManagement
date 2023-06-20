@@ -1,0 +1,90 @@
+.mb_30 {
+    margin-bottom: 30px;
+}
+
+.mb_30 {
+    margin-bottom: 30px!important;
+    max-width: 991px
+}
+
+.white_box {
+    padding: 30px;
+    padding: 30px;
+    padding-top: 30px;
+    padding-right: 30px;
+    padding-bottom: 30px;
+    padding-left: 30px;
+    background-color: #fff;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    border-radius: 20px;
+}
+
+.cs_check_box {
+    display: flex;
+    margin-top: 20px;
+}
+
+.cs_modal .modal-body {
+    padding: 35px 30px;
+}
+
+.cs_modal .modal-body {
+    padding: 35px 30px!important;
+    background: #fff;
+    border-radius: 5px;
+}
+
+.modal-body {
+    position: relative;
+    flex: 1 1 auto;
+    padding: 1rem;
+}
+
+form {
+    display: block;
+    margin-top: 0em;
+}
+
+.text-center {
+    text-align: center!important;
+}
+
+.cs_check_box .common_checkbox+label {
+    display: block;
+    cursor: pointer;
+    color: #fff;
+}
+
+.cs_check_box label {
+    position: relative;
+    padding-left: 34px;
+    margin-bottom: 0;
+}
+
+#link {
+    color: rgb(32, 51, 58);
+}
+
+.cs_check_box input,
+.cs_check_box label {
+    line-height: 20px!important;
+    height: auto!important;
+    width: auto!important;
+    max-width: auto;
+}
+
+*,
+ ::after,
+ ::before {
+    box-sizing: border-box;
+}
+
+.row>* {
+    flex-shrink: 0;
+    width: 100%;
+    max-width: 100%;
+    padding-right: calc(var(--bs-gutter-x) * .5);
+    padding-left: calc(var(--bs-gutter-x) * .5);
+    margin-top: var(--bs-gutter-y);
+}
