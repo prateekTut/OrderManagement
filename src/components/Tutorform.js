@@ -40,7 +40,7 @@ function Tutorform() {
         body: formdata,
       };
 
-      fetch("http://127.0.0.1:5000/updatetutor/".concat(userToEdit[0]), requestOptions)
+      fetch("http://order-env.ap-south-1.elasticbeanstalk.com/updatetutor/".concat(userToEdit[0]), requestOptions)
         .then((response) => response.json())
         .then((result) => {
           //   alert("Data Updated");
@@ -65,7 +65,7 @@ function Tutorform() {
 
   const fetchDataforupdate = (userId) => {
     console.log("Tutor ID", userId);
-    fetch("http://127.0.0.1:5000/gettutoruser/".concat(userId))
+    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/gettutoruser/".concat(userId))
       .then((res) => res.json())
       .then((data) => {
         // do something with data

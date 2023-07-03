@@ -77,7 +77,7 @@ function Dashbord() {
   // ===================================================
 
   const fetchstudentData = () => {
-    fetch("http://127.0.0.1:5000/getstudentclientdata", {
+    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getstudentclientdata", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -94,7 +94,7 @@ function Dashbord() {
   };
 
   const fetchvendorData = () => {
-    fetch("http://127.0.0.1:5000/getvendoreclientdata", {
+    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getvendoreclientdata", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -110,7 +110,7 @@ function Dashbord() {
       });
   };
   const fetchtutorData = () => {
-    fetch("http://127.0.0.1:5000/getexpert", {
+    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getexpert", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -126,7 +126,7 @@ function Dashbord() {
       });
   };
   const fetchotmData = () => {
-    fetch("http://127.0.0.1:5000/getotm1", {
+    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getotm1", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -142,7 +142,7 @@ function Dashbord() {
       });
   };
   const fetchstudentbudgetData = () => {
-    fetch("http://127.0.0.1:5000/getbudgetdata", {
+    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getbudgetdata", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -158,7 +158,7 @@ function Dashbord() {
       });
   };
   const getorderfordashbord = () => {
-    fetch("http://127.0.0.1:5000/getorderfordashbord", {
+    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getorderfordashbord", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }

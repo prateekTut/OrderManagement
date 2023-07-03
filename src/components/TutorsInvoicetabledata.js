@@ -24,7 +24,7 @@ function TutorsInvoicetabledata() {
   const token = sessionStorage.getItem("token")
   const fetchDataformodal = (userId) => {
     console.log("Tutor ID", userId);
-    fetch("http://127.0.0.1:5000/gettutorinvoicedataid/".concat(userId), {
+    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/gettutorinvoicedataid/".concat(userId), {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -82,7 +82,7 @@ function TutorsInvoicetabledata() {
     },
   ];
   const fetchData = () => {
-    fetch("http://127.0.0.1:5000/gettutorinvoicedata", {
+    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/gettutorinvoicedata", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -128,7 +128,7 @@ function TutorsInvoicetabledata() {
   };
   const deleteUser = (userId) => {
     console.log("Del", userId);
-    fetch("http://127.0.0.1:5000/deletetutorinvoice/".concat(userId), {
+    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/deletetutorinvoice/".concat(userId), {
       method: "delete",
       headers: {
         'Authorization' : 'Bearer ' + token
@@ -183,7 +183,7 @@ function TutorsInvoicetabledata() {
         onClick={(event) => {
           event.preventDefault();
 
-          fetch("http://127.0.0.1:5000/invoicetutor", {
+          fetch("http://order-env.ap-south-1.elasticbeanstalk.com/invoicetutor", {
             headers: {
               'Authorization' : 'Bearer ' + token
             }

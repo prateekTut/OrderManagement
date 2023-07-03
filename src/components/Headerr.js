@@ -17,7 +17,7 @@ function Headerr() {
     // if used in more components, this should be in context
     // axios to /logout endpoint
     sessionStorage.removeItem("token")
-    fetch('http://127.0.0.1:5000/logout')
+    fetch('http://order-env.ap-south-1.elasticbeanstalk.com/logout')
     .then(() => {
       window.location.href = '/home'; // Redirect to home page after logout
     })

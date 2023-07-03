@@ -20,7 +20,7 @@ function AddBudget() {
 
   const fetchData = () => {
                               
-    fetch("http://127.0.0.1:5000/getclientnamedata", {
+    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getclientnamedata", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -86,7 +86,7 @@ function AddBudget() {
                               
                             };
 
-                            fetch("http://127.0.0.1:5000/Budget", requestOptions)
+                            fetch("http://order-env.ap-south-1.elasticbeanstalk.com/Budget", requestOptions)
                               .then((response) => response.text())
                               .then((result) => {
                                 alert("Data inserted");

@@ -28,7 +28,7 @@ function Invoicedata() {
   const token = sessionStorage.getItem("token")
   const fetchDataformodal = (userId) => {
     console.log("Tutor ID", userId);
-    fetch("http://127.0.0.1:5000/getinvoicedataid/".concat(userId), {
+    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getinvoicedataid/".concat(userId), {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -91,7 +91,7 @@ function Invoicedata() {
     },
   ];
   const fetchData = () => {
-    fetch("http://127.0.0.1:5000/getinvoicedata", {
+    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getinvoicedata", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -138,7 +138,7 @@ function Invoicedata() {
   };
   const deleteUser = (userId) => {
     console.log("Del", userId);
-    fetch("http://127.0.0.1:5000/deleteinvoice/".concat(userId), {
+    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/deleteinvoice/".concat(userId), {
       method: "delete",
       headers: {
         'Authorization' : 'Bearer ' + token
@@ -192,7 +192,7 @@ function Invoicedata() {
         onClick={(event) => {
           event.preventDefault();
 
-          fetch("http://127.0.0.1:5000/invoiceclientid", {
+          fetch("http://order-env.ap-south-1.elasticbeanstalk.com/invoiceclientid", {
             headers: {
               'Authorization' : 'Bearer ' + token
             }

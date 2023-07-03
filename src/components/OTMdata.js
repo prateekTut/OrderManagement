@@ -8,7 +8,7 @@ function OTMdata() {
   const [show, setShow] = useState();
   const [Student, setStudent] = useState();
   const fetchData = () => {
-    fetch("http://127.0.0.1:5000/getordersdata")
+    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getordersdata")
       .then((res) => res.json())
       .then((data) => {
         // do something with data
@@ -21,7 +21,7 @@ function OTMdata() {
   };
   const deleteUser = (userId) => {
     console.log("Del", userId);
-    fetch("http://127.0.0.1:5000/deleteotm/".concat(userId), {
+    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/deleteotm/".concat(userId), {
       method: "delete",
     })
       .then((res) => res.text())
@@ -37,7 +37,7 @@ function OTMdata() {
   };
   const UpadeteUser = (userId) => {
     console.log("Del", userId);
-    fetch("http://127.0.0.1:5000/getordersdata/".concat(userId), {
+    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getordersdata/".concat(userId), {
       method: "UPDATE",
     })
       .then((res) => res.text())

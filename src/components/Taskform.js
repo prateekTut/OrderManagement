@@ -25,7 +25,7 @@ function Taskform() {
 
   const fetchDataforupdate = (userId) => {
     console.log("OTM ID", userId);
-    fetch("http://127.0.0.1:5000/gettaskid/".concat(userId), {
+    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/gettaskid/".concat(userId), {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -42,7 +42,7 @@ function Taskform() {
       });
   };
   const fetchtutorsData = () => {
-    fetch("http://127.0.0.1:5000/getexpert", {
+    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getexpert", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -58,7 +58,7 @@ function Taskform() {
       });
   };
   const fetchclientData = () => {
-    fetch("http://127.0.0.1:5000/getclientdata", {
+    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getclientdata", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -75,7 +75,7 @@ function Taskform() {
       });
   };
   const fetchOTMData = () => {
-    fetch("http://127.0.0.1:5000/getotm1", {
+    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getotm1", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -147,7 +147,7 @@ function Taskform() {
                               body: formdata,
                             };
 
-                            fetch("http://127.0.0.1:5000/updatetask/".concat(userToEdit[0]), requestOptions)
+                            fetch("http://order-env.ap-south-1.elasticbeanstalk.com/updatetask/".concat(userToEdit[0]), requestOptions)
                               .then((response) => response.json())
                               .then((result) => {
                                 alert("Data Updated");

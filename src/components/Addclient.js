@@ -51,7 +51,7 @@ function Addclient() {
       
       };
 
-      fetch("http://127.0.0.1:5000/addclient", requestOptions)
+      fetch("http://order-env.ap-south-1.elasticbeanstalk.com/addclient", requestOptions)
         .then((response) => response.text())
         .then((result) => {
           alert("Data inserted");

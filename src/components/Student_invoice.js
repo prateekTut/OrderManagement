@@ -45,7 +45,7 @@ function Student_invoice() {
   // =================== student data api ========================
   const fetchDataforinvoice = (userId) => {
     console.log("Tutor ID", userId);
-    fetch("http://127.0.0.1:5000/getclient/".concat(userId), {
+    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getclient/".concat(userId), {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -67,7 +67,7 @@ function Student_invoice() {
 
   const fetchDataforupdateinvoice = (userId) => {
     console.log("Tutor ID", userId);
-    fetch("http://127.0.0.1:5000/getbudgetdataforview/".concat(userId), {
+    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getbudgetdataforview/".concat(userId), {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
