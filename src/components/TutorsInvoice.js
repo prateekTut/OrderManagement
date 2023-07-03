@@ -38,13 +38,17 @@ function TutorsInvoice() {
   var GSTtaxformula = subtotalePrice * (1 + 0.18);
   var GSTtax = GSTtaxformula - subtotalePrice;
   var totalprice = subtotalePrice - discount + GSTtax;
-
+  const token = sessionStorage.getItem("token")
   // ===========================end=========================================
 
   // =================== tutors data api ========================
   const fetchDataforinvoice = (userId) => {
     console.log("Tutor ID", userId);
-    fetch("http://127.0.0.1:5000/gettutoruser/".concat(userId))
+    fetch("http://127.0.0.1:5000/gettutoruser/".concat(userId), {
+      headers: {
+        'Authorization' : 'Bearer ' + token
+      } 
+    })
       .then((res) => res.json())
       .then((data) => {
         // do something with data

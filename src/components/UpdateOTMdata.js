@@ -37,7 +37,7 @@ function UpdateOTMdata() {
         // do something with data
         handleShow();
         console.log("Tutors data", data);
-        setUserToEdit(JSON.parse(data)[0]);
+        setUserToEdit(data[0]);
         // navigate("/OTMform");
       })
       .catch((rejected) => {
@@ -117,30 +117,31 @@ function UpdateOTMdata() {
       .then((res) => res.json())
       .then((rawData) => {
         // do something with data
+        console.log("raw " , rawData)
         const parsedUsers = [...users];
-        const data = JSON.parse(rawData);
+        const data = rawData;
         data.forEach((user) => {
           parsedUsers.push({
             Tutor_ID: user[0],
-            Full_name: user[9],
-            password: user[3],
-            Email: user[4],
-            Contact_No: user[5],
-            joiningDate: user[6],
-            Level: user[7],
-            type: user[8],
+            Full_name: user.firstname +" "+ user.lastname,
+            password: user.password,
+            Email: user.email,
+            Contact_No: user.contact,
+            joiningDate: user.joiningDate,
+            Level: user.Level,
+            type: user.type,
             View: (
-              <Button variant='btn btn-success btn-sm' onClick={() => fetchDataformodal(user[0])}>
+              <Button variant='btn btn-success btn-sm' onClick={() => fetchDataformodal(user.id)}>
                 View
               </Button>
             ),
             EditUser: (
-              <button type='button' class='btn btn-success btn-sm' onClick={() => editUser(user[0])}>
+              <button type='button' class='btn btn-success btn-sm' onClick={() => editUser(user.id)}>
                 Edit
               </button>
             ),
             DeleteUser: (
-              <button type='button' class='btn btn-danger  btn-sm' onClick={() => deleteUser(user[0])}>
+              <button type='button' class='btn btn-danger  btn-sm' onClick={() => deleteUser(user.id)}>
                 Delete
               </button>
             ),
@@ -234,15 +235,11 @@ function UpdateOTMdata() {
             <Modal.Title className='modaltitle'>OTM's INFORMATION</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <p className='modaldata'>Name : {userToEdit[1]}</p>
-
-            <p className='modaldata'>Password : {userToEdit[3]}</p>
-
-            <p className='modaldata'>Email : {userToEdit[4]}</p>
-            <p className='modaldata'>Contact No. : {userToEdit[5]}</p>
-            <p className='modaldata'>Joining Date: {userToEdit[6]}</p>
-            <p className='modaldata'>Level : {userToEdit[7]}</p>
-            <p className='modaldata'>type : {userToEdit[8]}</p>
+            <p className='modaldata'>Name : {userToEdit.firstname + " " + userToEdit.lastname}</p>
+            <p className='modaldata'>Email : {userToEdit.email}</p>
+            <p className='modaldata'>Contact No. : {userToEdit.contact}</p>
+            <p className='modaldata'>Joining Date: {userToEdit.joiningDate}</p>
+            <p className='modaldata'>Level : {userToEdit.Level}</p>
           </Modal.Body>
           <Modal.Footer>
             <Button variant='secondary' onClick={handleClose}>

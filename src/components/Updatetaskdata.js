@@ -17,7 +17,7 @@ function Updatetaskdata() {
   const [statususer, setstatususer] = useState([]);
   const [forstatususers, setforstatususers] = useState([]);
   const [userToEdit, setUserToEdit] = useState([]);
-  const [statusToEdit, setstatusToEdit] = useState([]);
+  const [statusToUpdate, setstatusToUpdate] = useState([]);
   const usersData = useRef([]);
 
   const [inputdata, setinputdata] = useState("");
@@ -45,7 +45,7 @@ function Updatetaskdata() {
         handleShow();
 
         console.log("Tutors data", data);
-        setUserToEdit(JSON.parse(data)[0]);
+        setUserToEdit(data[0]);
         // navigate("/OTMform");
       })
       .catch((rejected) => {
@@ -57,13 +57,18 @@ function Updatetaskdata() {
   // ==================== for update task status start============
   const fetchDataforupdatestatus = (userId) => {
     console.log("OTM ID", userId);
-    fetch("http://127.0.0.1:5000/gettaskid/".concat(userId))
+    fetch("http://127.0.0.1:5000/gettaskid/".concat(userId), {
+      headers: {
+        'Authorization' : 'Bearer ' + token
+      }
+    })
       .then((res) => res.json())
       .then((data) => {
         // do something with data
         handlestatusShow();
         console.log("budget DATA", data);
-        setforstatususers(JSON.parse(data)[0]);
+        setforstatususers(data);
+
         // navigate("/Budgetform");
       })
       .catch((rejected) => {
@@ -183,41 +188,41 @@ function Updatetaskdata() {
       .then((rawData) => {
         // do something with data
         const parsedUsers = [...users];
-        const data = JSON.parse(rawData);
+        const data = rawData;
         data.forEach((user) => {
           parsedUsers.push({
-            Order_ID: user[0],
-            Task_Subject: user[1],
-            Vendor_budget: user[2],
-            Expert_ID: user[3],
-            Client_id: user[4],
-            Status: user[5],
-            Start_date: user[6],
-            End_date: user[7],
-            Expert_startDate: user[8],
-            Expert_endDate: user[9],
-            Qc_Expert_id: user[10],
-            Otm_id: user[11],
-            Description: user[12],
-            Word_count: user[13],
-            Expert_price: user[14],
+            Order_ID: user.id,
+            Task_Subject: user.subject,
+            Vendor_budget: user.budget,
+            Expert_ID: user.expert_id,
+            Client_id: user.client_id,
+            Status: user.order_status,
+            Start_date: user.order_start_date,
+            End_date: user.order_end_date,
+            Expert_startDate: user.expert_start_date,
+            Expert_endDate: user.expert_end_date,
+            Qc_Expert_id: user.qc_expert_id,
+            Otm_id: user.otm_id,
+            Description: user.description,
+            Word_count: user.word_count,
+            Expert_price: user.expert_price,
             View: (
-              <Button variant='btn btn-success btn-sm' onClick={() => fetchDataformodal(user[0])}>
+              <Button variant='btn btn-success btn-sm' onClick={() => fetchDataformodal(user.id)}>
                 View
               </Button>
             ),
             Change_Status: (
-              <Button variant='btn btn-success btn-sm' onClick={() => fetchDataforupdatestatus(user[0])}>
+              <Button variant='btn btn-success btn-sm' onClick={() => fetchDataforupdatestatus(user.id)}>
                 status
               </Button>
             ),
             EditUser: (
-              <button type='button' class='btn btn-success btn-sm' onClick={() => editUser(user[0])}>
+              <button type='button' class='btn btn-success btn-sm' onClick={() => editUser(user.id)}>
                 Edit
               </button>
             ),
             DeleteUser: (
-              <button type='button' class='btn btn-danger  btn-sm' onClick={() => deleteUser(user[0])}>
+              <button type='button' class='btn btn-danger  btn-sm' onClick={() => deleteUser(user.id)}>
                 Delete
               </button>
             ),
@@ -303,20 +308,20 @@ function Updatetaskdata() {
             <Modal.Title className='modaltitle'>TASK INFORMATION</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <p className='modaldata'>Subject : {userToEdit[1]}</p>
-            <p className='modaldata'>Budget : {userToEdit[2]}</p>
-            <p className='modaldata'>Expert ID : {userToEdit[3]}</p>
-            <p className='modaldata'>Client ID : {userToEdit[4]}</p>
-            <p className='modaldata'>Status : {userToEdit[5]}</p>
-            <p className='modaldata'>Start Date : {userToEdit[6]}</p>
-            <p className='modaldata'>End Date: {userToEdit[7]}</p>
-            <p className='modaldata'>Expert Start Date : {userToEdit[8]}</p>
-            <p className='modaldata'>Expert End Date : {userToEdit[9]}</p>
-            <p className='modaldata'>Qc Expert Id : {userToEdit[10]}</p>
-            <p className='modaldata'>Otm Id : {userToEdit[11]}</p>
-            <p className='modaldata'>Description : {userToEdit[12]}</p>
-            <p className='modaldata'>Word Count : {userToEdit[13]}</p>
-            <p className='modaldata'>Expert Price : {userToEdit[14]}</p>
+            <p className='modaldata'>Subject : {userToEdit.subject}</p>
+            <p className='modaldata'>Budget : {userToEdit.budget}</p>
+            <p className='modaldata'>Expert ID : {userToEdit.expert_id}</p>
+            <p className='modaldata'>Client ID : {userToEdit.client_id}</p>
+            <p className='modaldata'>Status : {userToEdit.status}</p>
+            <p className='modaldata'>Start Date : {userToEdit.order_start_date}</p>
+            <p className='modaldata'>End Date: {userToEdit.order_end_date}</p>
+            <p className='modaldata'>Expert Start Date : {userToEdit.expert_start_date}</p>
+            <p className='modaldata'>Expert End Date : {userToEdit.expert_end_date}</p>
+            <p className='modaldata'>Qc Expert Id : {userToEdit.qc_expert_id}</p>
+            <p className='modaldata'>Otm Id : {userToEdit.otm_id}</p>
+            <p className='modaldata'>Description : {userToEdit.description}</p>
+            <p className='modaldata'>Word Count : {userToEdit.word_count}</p>
+            <p className='modaldata'>Expert Price : {userToEdit.expert_price}</p>
           </Modal.Body>
           <Modal.Footer>
             <Button variant='secondary' onClick={handleClose}>
@@ -339,8 +344,8 @@ function Updatetaskdata() {
                     onSubmit={(e) => {
                       e.preventDefault();
                       var formdata = new FormData();
-                      formdata.append("Status", forstatususers[5]);
-
+                      formdata.append("Status", statusToUpdate);
+                      console.log(statusToUpdate)
                       var requestOptions = {
                         method: "POST",
                         body: formdata,
@@ -349,8 +354,8 @@ function Updatetaskdata() {
                         }
                       };
 
-                      fetch("http://127.0.0.1:5000/updatestatustask/".concat(forstatususers[0]), requestOptions)
-                        .then((response) => response.json())
+                      fetch("http://127.0.0.1:5000/updatestatustask/".concat(forstatususers[0].id), requestOptions)
+                        .then((response) => response.status == 200)
                         .then((result) => {
                           statushandleClose();
 
@@ -373,14 +378,15 @@ function Updatetaskdata() {
                       {/* <label htmlFor=''>select client status </label> */}
                       <select
                         class='form-select form-select-m'
-                        value={forstatususers[5]}
+                        value={statusToUpdate}
                         onInput={(e) => {
-                          let updatedData = cloneDeep(forstatususers);
-                          updatedData[5] = e.target.value;
-                          setforstatususers(updatedData);
+                          //let updatedData = cloneDeep(forstatususers);
+                          //updatedData[5] = e.target.value;
+                          //setforstatususers(updatedData);
+                          setstatusToUpdate(e.target.value)
                         }}
                         required>
-                        <option value=''>Select User Type </option>
+                        <option value=''>Select Order Status </option>
                         <option value='New Order'>New Order</option>
                         <option value='Assigned'>Assigned</option>
                         <option value='QC'>QC</option>

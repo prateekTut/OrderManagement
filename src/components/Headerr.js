@@ -82,7 +82,7 @@ function Headerr() {
               <a class='sidemenu'>
                 <Link to='/updateotm'> OTM's</Link>
               </a>
-              <a href='' class='dropdown'>
+              <a class='dropdown'>
                 <a class='dropbtn'>Clients</a>
                 <div class='dropdown-content'>
                   <Link to='/UpdateClientdata'>Student's</Link>
@@ -98,7 +98,7 @@ function Headerr() {
               <a class='sidemenu'>
                 <Link to='/tutors-invoice'>Invoice</Link>
               </a> */}
-              <a href='' class='dropdown'>
+              <a class='dropdown'>
                 <a class='dropbtn'>Invoice</a>
                 <div class='dropdown-content'>
                   <Link to='/invoicedata'>Client Invoice</Link>

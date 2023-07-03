@@ -16,6 +16,7 @@ function Student_invoice() {
   const [userToEdit, setUserToEdit] = useState([]);
   const [userToinvoice, setUserToinvoice] = useState([]);
   const componentRef = useRef();
+  const token = sessionStorage.getItem("token")
 
   //  variable for get today date=====================
   var today = new Date(),
@@ -44,7 +45,11 @@ function Student_invoice() {
   // =================== student data api ========================
   const fetchDataforinvoice = (userId) => {
     console.log("Tutor ID", userId);
-    fetch("http://127.0.0.1:5000/getclient/".concat(userId))
+    fetch("http://127.0.0.1:5000/getclient/".concat(userId), {
+      headers: {
+        'Authorization' : 'Bearer ' + token
+      }
+    })
       .then((res) => res.json())
       .then((data) => {
         // do something with data
@@ -62,12 +67,16 @@ function Student_invoice() {
 
   const fetchDataforupdateinvoice = (userId) => {
     console.log("Tutor ID", userId);
-    fetch("http://127.0.0.1:5000/getbudgetdataforview/".concat(userId))
+    fetch("http://127.0.0.1:5000/getbudgetdataforview/".concat(userId), {
+      headers: {
+        'Authorization' : 'Bearer ' + token
+      }
+    })
       .then((res) => res.json())
       .then((data) => {
         // do something with data
         console.log("Tutors data", data);
-        setUserToEdit(JSON.parse(data));
+        setUserToEdit(data);
         // navigate("/OTMform");
       })
       .catch((rejected) => {

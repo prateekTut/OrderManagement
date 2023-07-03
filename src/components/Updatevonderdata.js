@@ -37,7 +37,7 @@ function Updatevonderdata() {
         // do something with data
         handleShow();
         console.log("Tutors data", data);
-        setUserToEdit(JSON.parse(data)[0]);
+        setUserToEdit(data[0]);
         // navigate("/OTMform");
       })
       .catch((rejected) => {
@@ -125,35 +125,35 @@ function Updatevonderdata() {
       .then((rawData) => {
         // do something with data
         const parsedUsers = [...users];
-        const data = JSON.parse(rawData);
+        const data = rawData;
         data.forEach((user) => {
           parsedUsers.push({
-            client_id: user[0],
-            Client_name: user[1],
-            Client_contact: user[2],
-            Client_email: user[3],
-            Client_status: user[4],
-            University: user[5],
-            Business_name: user[6],
-            Student_login: user[7],
-            Student_password: user[8],
+            client_id: user.id,
+            Client_name: user.name,
+            Client_contact: user.contact,
+            Client_email: user.email,
+            Client_status: user.status,
+            University: user.university,
+            Business_name: user.business_name,
+            Student_login: user.login,
+            Student_password: user.password,
             vendoreinvoice: (
-              <button type='button' class='btn btn-success  btn-sm' onClick={() => vendoreinvoice(user[0])}>
+              <button type='button' class='btn btn-success  btn-sm' onClick={() => vendoreinvoice(user.id)}>
                 Invoice
               </button>
             ),
             View: (
-              <Button variant='btn btn-success btn-sm' onClick={() => fetchDataformodal(user[0])}>
+              <Button variant='btn btn-success btn-sm' onClick={() => fetchDataformodal(user.id)}>
                 View
               </Button>
             ),
             EditUser: (
-              <button type='button' class='btn btn-success btn-sm' onClick={() => editUser(user[0])}>
+              <button type='button' class='btn btn-success btn-sm' onClick={() => editUser(user.id)}>
                 Edit
               </button>
             ),
             DeleteUser: (
-              <button type='button' class='btn btn-danger  btn-sm' onClick={() => deleteUser(user[0])}>
+              <button type='button' class='btn btn-danger  btn-sm' onClick={() => deleteUser(user.id)}>
                 Delete
               </button>
             ),
@@ -239,10 +239,10 @@ function Updatevonderdata() {
             <Modal.Title className='modaltitle'>VENDORE INFORMATION</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <p className='modaldata'>Name : {userToEdit[1]}</p>
-            <p className='modaldata'>Contact No. : {userToEdit[2]}</p>
-            <p className='modaldata'>Email : {userToEdit[3]}</p>
-            <p className='modaldata'>Business Name : {userToEdit[6]}</p>
+            <p className='modaldata'>Name : {userToEdit.name}</p>
+            <p className='modaldata'>Contact No. : {userToEdit.contact}</p>
+            <p className='modaldata'>Email : {userToEdit.email}</p>
+            <p className='modaldata'>Business Name : {userToEdit.business_name}</p>
           </Modal.Body>
           <Modal.Footer>
             <Button variant='secondary' onClick={handleClose}>

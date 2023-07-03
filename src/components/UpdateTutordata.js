@@ -30,13 +30,18 @@ function UpdateTutordata() {
 
   const fetchDataformodal = (userId) => {
     console.log("Tutor ID", userId);
-     fetch("http://127.0.0.1:5000/gettutoruser/".concat(userId))
+     fetch("http://127.0.0.1:5000/gettutoruser/".concat(userId), {
+      headers: {
+        'Authorization' : 'Bearer ' + token
+      },
+      method: "GET",
+    })
       .then((res) => res.json())
       .then((data) => {
         // do something with data
         handleShow();
         console.log("Tutors data", data);
-        setUserToEdit(JSON.parse(data)[0]);
+        setUserToEdit(data[0]);
         // navigate("/OTMform");
       })
       .catch((rejected) => {
@@ -136,34 +141,37 @@ function UpdateTutordata() {
       .then((res) => res.json())
       .then((rawData) => {
         // do something with data
+        console.log("RAW", rawData)
         const parsedUsers = [...users];
-        const data = JSON.parse(rawData);
+        
+        const data = rawData;
+        console.log(data)
         data.forEach((user) => {
           parsedUsers.push({
-            Tutor_ID: user[0],
-            full_name: user[8],
-            Email: user[3],
-            Contact_No: user[4],
-            Address: user[5],
-            expert_Dob: user[6],
-            expert_status: user[7],
+            Tutor_ID: user.id,
+            full_name: user.Expert_firstname + " " + user.Expert_lastname,
+            Email: user.Expert_email,
+            Contact_No: user.Expert_contact,
+            Address: user.Expert_address,
+            expert_Dob: user.Expert_DOB,
+            expert_status: user.Expert_status,
             View: (
-              <Button variant='btn btn-success btn-sm' onClick={() => fetchDataformodal(user[0])}>
+              <Button variant='btn btn-success btn-sm' onClick={() => fetchDataformodal(user.id)}>
                 View
               </Button>
             ),
             EditUser: (
-              <button type='button' class='btn btn-success btn-sm' onClick={() => editUser(user[0])}>
+              <button type='button' class='btn btn-success btn-sm' onClick={() => editUser(user.id)}>
                 Edit
               </button>
             ),
             Invoice: (
-              <button type='button' class='btn btn-success btn-sm' onClick={() => tutorsinvoice(user[0])}>
+              <button type='button' class='btn btn-success btn-sm' onClick={() => tutorsinvoice(user.id)}>
                 invoice
               </button>
             ),
             DeleteUser: (
-              <button type='button' class='btn btn-danger  btn-sm' onClick={() => deleteUser(user[0])}>
+              <button type='button' class='btn btn-danger  btn-sm' onClick={() => deleteUser(user.id)}>
                 Delete
               </button>
             ),
@@ -252,12 +260,12 @@ function UpdateTutordata() {
             <Modal.Title className='modaltitle'>TUTORS INFORMATION</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <p className='modaldata'>Name : {userToEdit[1]}</p>
-            <p className='modaldata'>Email : {userToEdit[3]}</p>
-            <p className='modaldata'>Contact No. : {userToEdit[4]}</p>
-            <p className='modaldata'>Address : {userToEdit[5]}</p>
-            <p className='modaldata'>Expert DOB : {userToEdit[6]}</p>
-            <p className='modaldata'>Status : {userToEdit[7]}</p>
+            <p className='modaldata'>Name : {userToEdit.firstName}</p>
+            <p className='modaldata'>Email : {userToEdit.email}</p>
+            <p className='modaldata'>Contact No. : {userToEdit.contact}</p>
+            <p className='modaldata'>Address : {userToEdit.address}</p>
+            <p className='modaldata'>Expert DOB : {userToEdit.dob}</p>
+            <p className='modaldata'>Status : {userToEdit.status}</p>
           </Modal.Body>
           <Modal.Footer>
             <Button variant='secondary' onClick={handleClose}>

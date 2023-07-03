@@ -25,13 +25,16 @@ function Taskform() {
 
   const fetchDataforupdate = (userId) => {
     console.log("OTM ID", userId);
-    fetch("http://127.0.0.1:5000/gettaskid/".concat(userId)
-    )
+    fetch("http://127.0.0.1:5000/gettaskid/".concat(userId), {
+      headers: {
+        'Authorization' : 'Bearer ' + token
+      }
+    })
       .then((res) => res.json())
       .then((data) => {
         // do something with data
         console.log("budget DATA", data);
-        setUserToEdit(JSON.parse(data)[0]);
+        setUserToEdit(data[0]);
         // navigate("/Budgetform");
       })
       .catch((rejected) => {
@@ -48,7 +51,7 @@ function Taskform() {
       .then((data) => {
         // do something with data
         console.log(data);
-        setexpert(JSON.parse(data));
+        setexpert(data);
       })
       .catch((rejected) => {
         console.log(rejected);
@@ -64,7 +67,7 @@ function Taskform() {
       .then((data) => {
         // do something with data
         console.log(data);
-        setclient(JSON.parse(data));
+        setclient(data);
       })
       .catch((rejected) => {
         console.log(rejected);
@@ -81,7 +84,7 @@ function Taskform() {
       .then((data) => {
         // do something with data
         console.log(data);
-        setotmmamber(JSON.parse(data));
+        setotmmamber(data);
       })
       .catch((rejected) => {
         alert("select OTm  name");

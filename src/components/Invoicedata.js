@@ -38,7 +38,7 @@ function Invoicedata() {
         // do something with data
         handleShow();
         console.log("Tutors data", data);
-        setUserToEdit(JSON.parse(data)[0]);
+        setUserToEdit(data);
         // navigate("/OTMform");
       })
       .catch((rejected) => {
@@ -100,27 +100,28 @@ function Invoicedata() {
       .then((rawData) => {
         // do something with data
         const parsedUsers = [...users];
-        const data = JSON.parse(rawData);
+        const data = rawData;
+        console.log(data)
         data.forEach((user) => {
           parsedUsers.push({
-            Client_id: user[1],
-            Total_price: user[2],
-            Discount: user[3],
-            Category: user[4],
-            invoice_data: user[5],
+            Client_id: user.client_id,
+            Total_price: user.price,
+            Discount: user.discount,
+            Category: user.category,
+            invoice_data: user.date,
 
             View: (
-              <Button variant='btn btn-success btn-sm' onClick={() => fetchDataformodal(user[0])}>
+              <Button variant='btn btn-success btn-sm' onClick={() => fetchDataformodal(user.id)}>
                 View
               </Button>
             ),
             Invoice_btn: (
-              <Button variant='btn btn-success btn-sm' onClick={() => Invoice1(user[1])}>
+              <Button variant='btn btn-success btn-sm' onClick={() => Invoice1(user.client_id)}>
                 View
               </Button>
             ),
             DeleteUser: (
-              <button type='button' class='btn btn-danger  btn-sm' onClick={() => deleteUser(user[0])}>
+              <button type='button' class='btn btn-danger  btn-sm' onClick={() => deleteUser(user.id)}>
                 Delete
               </button>
             ),
@@ -216,11 +217,11 @@ function Invoicedata() {
           <Modal.Title className='modaltitle'>TASK INFORMATION</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p className='modaldata'>Client Id : {userToEdit[1]}</p>
-          <p className='modaldata'>Total Price : {userToEdit[2]}</p>
-          <p className='modaldata'>Discount 10% : {userToEdit[3]}</p>
-          <p className='modaldata'>Category : {userToEdit[4]}</p>
-          <p className='modaldata'>Invoice Date : {userToEdit[5]}</p>
+          <p className='modaldata'>Client Id : {userToEdit.client_id}</p>
+          <p className='modaldata'>Total Price : {userToEdit.total_price}</p>
+          <p className='modaldata'>Discount 10% : {userToEdit.discount}</p>
+          <p className='modaldata'>Category : {userToEdit.category}</p>
+          <p className='modaldata'>Invoice Date : {userToEdit.date}</p>
         </Modal.Body>
         <Modal.Footer>
           <Button variant='secondary' onClick={handleClose}>

@@ -38,16 +38,18 @@ function Login() {
       
       .then(result => {
         //JSON.parse(response._bodyText)
-        console.log("response data", result.type[0]); 
+        console.log("response data", result.type); 
         console.log("response token", result.access_token); 
-        //const roles = result[0];
+        const roles_arr = [];
         sessionStorage.setItem("token", result.access_token)
         
         var roles = result.type;
-        console.log(roles);
+        //roles_arr.append(roles)
+        //console.log(roles_arr);
         sessionStorage.setItem("roles", roles)
-        setAuth({roles});
-        console.log(sessionStorage.getItem("roles").split(" "));
+        var user_role = roles.split(" ")
+        setAuth({user_role});
+        //console.log("roles in login ", sessionStorage.getItem("roles"));
         navigate("/app_select"); 
 
       })

@@ -34,7 +34,7 @@ function TutorsInvoicetabledata() {
         // do something with data
         handleShow();
         console.log("Tutors data", data);
-        setUserToEdit(JSON.parse(data)[0]);
+        setUserToEdit(data[0]);
         // navigate("/OTMform");
       })
       .catch((rejected) => {
@@ -91,26 +91,27 @@ function TutorsInvoicetabledata() {
       .then((rawData) => {
         // do something with data
         const parsedUsers = [...users];
-        const data = JSON.parse(rawData);
+        const data = rawData;
+        console.log("RAW", rawData)
         data.forEach((user) => {
           parsedUsers.push({
-            Client_id: user[1],
-            Total_price: user[3],
-            Discount: user[2],
-            invoice_data: user[4],
+            Client_id: user.tutor_id,
+            Total_price: user.total_price,
+            Discount: user.discount,
+            invoice_data: user.invoice_id,
 
             View: (
-              <Button variant='btn btn-success btn-sm' onClick={() => fetchDataformodal(user[0])}>
+              <Button variant='btn btn-success btn-sm' onClick={() => fetchDataformodal(user.tutor_id)}>
                 View
               </Button>
             ),
             Invoice_btn: (
-              <Button variant='btn btn-success btn-sm' onClick={() => Invoice1(user[1])}>
+              <Button variant='btn btn-success btn-sm' onClick={() => Invoice1(user.invoice_id)}>
                 View
               </Button>
             ),
             DeleteUser: (
-              <button type='button' class='btn btn-danger  btn-sm' onClick={() => deleteUser(user[0])}>
+              <button type='button' class='btn btn-danger  btn-sm' onClick={() => deleteUser(user.tutor_id)}>
                 Delete
               </button>
             ),
@@ -184,8 +185,8 @@ function TutorsInvoicetabledata() {
 
           fetch("http://127.0.0.1:5000/invoicetutor", {
             headers: {
-        'Authorization' : 'Bearer ' + token
-      }
+              'Authorization' : 'Bearer ' + token
+            }
           })
             .then((response) => response.text())
             .then((result) => {
@@ -207,10 +208,10 @@ function TutorsInvoicetabledata() {
           <Modal.Title className='modaltitle'>TASK INFORMATION</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p className='modaldata'>Tutor_id : {userToEdit[1]}</p>
-          <p className='modaldata'>Discount : {userToEdit[2]}</p>
-          <p className='modaldata'>Total_price : {userToEdit[3]}</p>
-          <p className='modaldata'>Invoice_date : {userToEdit[4]}</p>
+          <p className='modaldata'>Tutor_id : {userToEdit.tutor_id}</p>
+          <p className='modaldata'>Discount : {userToEdit.discount}</p>
+          <p className='modaldata'>Total_price : {userToEdit.price}</p>
+          <p className='modaldata'>Invoice_date : {userToEdit.date}</p>
         </Modal.Body>
         <Modal.Footer>
           <Button variant='secondary' onClick={handleClose}>
