@@ -77,7 +77,7 @@ function Dashbord() {
   // ===================================================
 
   const fetchstudentData = () => {
-    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getstudentclientdata", {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getstudentclientdata", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -94,7 +94,7 @@ function Dashbord() {
   };
 
   const fetchvendorData = () => {
-    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getvendoreclientdata", {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getvendoreclientdata", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -110,7 +110,7 @@ function Dashbord() {
       });
   };
   const fetchtutorData = () => {
-    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getexpert", {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getexpert", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -126,7 +126,7 @@ function Dashbord() {
       });
   };
   const fetchotmData = () => {
-    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getotm1", {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getotm1", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -142,7 +142,7 @@ function Dashbord() {
       });
   };
   const fetchstudentbudgetData = () => {
-    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getbudgetdata", {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getbudgetdata", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -158,7 +158,7 @@ function Dashbord() {
       });
   };
   const getorderfordashbord = () => {
-    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getorderfordashbord", {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getorderfordashbord", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }

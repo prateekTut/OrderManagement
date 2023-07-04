@@ -8,7 +8,7 @@ function OTMdata() {
   const [show, setShow] = useState();
   const [Student, setStudent] = useState();
   const fetchData = () => {
-    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getordersdata")
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getordersdata")
       .then((res) => res.json())
       .then((data) => {
         // do something with data
@@ -21,7 +21,7 @@ function OTMdata() {
   };
   const deleteUser = (userId) => {
     console.log("Del", userId);
-    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/deleteotm/".concat(userId), {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/deleteotm/".concat(userId), {
       method: "delete",
     })
       .then((res) => res.text())
@@ -37,7 +37,7 @@ function OTMdata() {
   };
   const UpadeteUser = (userId) => {
     console.log("Del", userId);
-    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getordersdata/".concat(userId), {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getordersdata/".concat(userId), {
       method: "UPDATE",
     })
       .then((res) => res.text())

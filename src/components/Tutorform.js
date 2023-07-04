@@ -40,7 +40,7 @@ function Tutorform() {
         body: formdata,
       };
 
-      fetch("http://order-env.ap-south-1.elasticbeanstalk.com/updatetutor/".concat(userToEdit[0]), requestOptions)
+      fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/".concat(userToEdit[0]), requestOptions)
         .then((response) => response.json())
         .then((result) => {
           //   alert("Data Updated");
@@ -65,7 +65,7 @@ function Tutorform() {
 
   const fetchDataforupdate = (userId) => {
     console.log("Tutor ID", userId);
-    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/gettutoruser/".concat(userId))
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/gettutoruser/".concat(userId))
       .then((res) => res.json())
       .then((data) => {
         // do something with data

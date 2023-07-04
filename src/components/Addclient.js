@@ -51,7 +51,7 @@ function Addclient() {
       
       };
 
-      fetch("http://order-env.ap-south-1.elasticbeanstalk.com/addclient", requestOptions)
+      fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/addclient", requestOptions)
         .then((response) => response.text())
         .then((result) => {
           alert("Data inserted");

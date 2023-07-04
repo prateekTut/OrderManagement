@@ -20,7 +20,7 @@ function AddBudget() {
 
   const fetchData = () => {
                               
-    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getclientnamedata", {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getclientnamedata", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -86,7 +86,7 @@ function AddBudget() {
                               
                             };
 
-                            fetch("http://order-env.ap-south-1.elasticbeanstalk.com/Budget", requestOptions)
+                            fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/Budget", requestOptions)
                               .then((response) => response.text())
                               .then((result) => {
                                 alert("Data inserted");

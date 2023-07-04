@@ -44,7 +44,7 @@ function TutorsInvoice() {
   // =================== tutors data api ========================
   const fetchDataforinvoice = (userId) => {
     console.log("Tutor ID", userId);
-    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/gettutoruser/".concat(userId), {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/gettutoruser/".concat(userId), {
       headers: {
         'Authorization' : 'Bearer ' + token
       } 
@@ -66,7 +66,7 @@ function TutorsInvoice() {
 
   const fetchDataforupdateinvoice = (userId) => {
     console.log("tutors ID", userId);
-    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/gettutorsidforinvoice/".concat(userId))
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/gettutorsidforinvoice/".concat(userId))
       .then((res) => res.json())
       .then((data) => {
         // do something with data

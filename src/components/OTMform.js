@@ -40,7 +40,7 @@ function OTMform() {
         body: formdata,
       };
 
-      fetch("http://order-env.ap-south-1.elasticbeanstalk.com/updateotm/".concat(userToEdit[0]), requestOptions)
+      fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/updateotm/".concat(userToEdit[0]), requestOptions)
         .then((response) => response.json())
         .then((result) => {
           alert("Data Updated");
@@ -64,7 +64,7 @@ function OTMform() {
   // ====================   Email validetion function END  ==================
   const fetchDataforupdate = (userId) => {
     console.log("OTM ID", userId);
-    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getotmuser/".concat(userId))
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getotmuser/".concat(userId))
       .then((res) => res.json())
       .then((data) => {
         // do something with data

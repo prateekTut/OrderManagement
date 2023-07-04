@@ -31,7 +31,7 @@ function Login() {
       body: formdata,
     };
 
-    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/test", requestOptions)
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/test", requestOptions)
       .then((response) => 
         response.json()
       )
@@ -60,7 +60,7 @@ function Login() {
     // if used in more components, this should be in context
     // axios to /logout endpoint
     sessionStorage.removeItem("token")
-    fetch('http://order-env.ap-south-1.elasticbeanstalk.com/logout')
+    fetch('https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/logout')
     .then(() => {
       window.location.href = '/home'; // Redirect to home page after logout
     })
