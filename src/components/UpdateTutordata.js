@@ -30,7 +30,7 @@ function UpdateTutordata() {
 
   const fetchDataformodal = (userId) => {
     console.log("Tutor ID", userId);
-     fetch("http://127.0.0.1:5000/gettutoruser/".concat(userId), {
+     fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/gettutoruser/".concat(userId), {
       headers: {
         'Authorization' : 'Bearer ' + token
       },
@@ -51,7 +51,7 @@ function UpdateTutordata() {
       
  /*    const options = {
       method: 'GET',
-      url: "http://127.0.0.1:5000/gettutoruser/".concat(userId)
+      url: "https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/gettutoruser/".concat(userId)
       };
 
       try {
@@ -133,7 +133,7 @@ function UpdateTutordata() {
     },
   ];
   const fetchData = () => {
-    fetch("http://127.0.0.1:5000/getexpert", {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getexpert", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -188,7 +188,7 @@ function UpdateTutordata() {
   };
   const deleteUser = (userId) => {
     console.log("Del", userId);
-    fetch("http://127.0.0.1:5000/deleteexpert/".concat(userId), {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/deleteexpert/".concat(userId), {
       headers: {
         'Authorization' : 'Bearer ' + token
       },
@@ -378,7 +378,7 @@ function UpdateTutordata() {
                                   body: formdata,
                                 };
 
-                                fetch("http://127.0.0.1:5000/updatetutor/".concat(userToEdit[0]), requestOptions)
+                                fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/updatetutor/".concat(userToEdit[0]), requestOptions)
                                   .then((response) => response.json())
                                   .then((result) => {
                                     alert("Data Updated");

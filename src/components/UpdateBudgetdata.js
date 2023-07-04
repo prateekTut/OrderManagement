@@ -63,7 +63,7 @@ function UpdateBudgetdata() {
     },
   ];
   const fetchData = () => {
-    fetch("http://127.0.0.1:5000/getbudgetdata")
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getbudgetdata")
       .then((res) => res.json())
       .then((rawData) => {
         // do something with data
@@ -101,7 +101,7 @@ function UpdateBudgetdata() {
   };
   const deleteUser = (userId) => {
     console.log("Del", userId);
-    fetch("http://127.0.0.1:5000/deletebudget/".concat(userId), {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/deletebudget/".concat(userId), {
       method: "delete",
     })
       .then((res) => res.text())
@@ -281,7 +281,7 @@ function UpdateBudgetdata() {
                                   body: formdata,
                                 };
 
-                                fetch("http://127.0.0.1:5000/updatebudget/".concat(userToEdit[0]), requestOptions)
+                                fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/updatebudget/".concat(userToEdit[0]), requestOptions)
                                   .then((response) => response.json())
                                   .then((result) => {
                                     alert("Data Updated");

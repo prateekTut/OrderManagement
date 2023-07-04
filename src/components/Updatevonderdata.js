@@ -27,7 +27,7 @@ function Updatevonderdata() {
 
   const fetchDataformodal = (userId) => {
     console.log("Tutor ID", userId);
-    fetch("http://127.0.0.1:5000/getclient/".concat(userId), {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getclient/".concat(userId), {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -116,7 +116,7 @@ function Updatevonderdata() {
     },
   ];
   const fetchData = () => {
-    fetch("http://127.0.0.1:5000/getvendoreclientdata", {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getvendoreclientdata", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -170,7 +170,7 @@ function Updatevonderdata() {
   };
   const deleteUser = (userId) => {
     console.log("Del", userId);
-    fetch("http://127.0.0.1:5000/deleteclient/".concat(userId), {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/deleteclient/".concat(userId), {
       method: "delete",
       headers: {
         'Authorization' : 'Bearer ' + token
@@ -397,7 +397,7 @@ function Updatevonderdata() {
                                   body: formdata,
                                 };
 
-                                fetch("http://127.0.0.1:5000/updateclient/".concat(userToEdit[0]), requestOptions)
+                                fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/updateclient/".concat(userToEdit[0]), requestOptions)
                                   .then((response) => response.json())
                                   .then((result) => {
                                     alert("Data Updated");

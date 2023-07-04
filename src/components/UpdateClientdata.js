@@ -26,7 +26,7 @@ function UpdateClientdata() {
   const token = sessionStorage.getItem("token")
   const fetchDataformodal = (userId) => {
     console.log("Tutor ID", userId);
-    fetch("http://127.0.0.1:5000/getclient/".concat(userId), {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getclient/".concat(userId), {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -120,7 +120,7 @@ function UpdateClientdata() {
     },
   ];
   const fetchData = () => {
-    fetch("http://127.0.0.1:5000/getstudentclientdata", {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getstudentclientdata", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -180,7 +180,7 @@ function UpdateClientdata() {
   };
   const deleteUser = (userId) => {
     console.log("Del", userId);
-    fetch("http://127.0.0.1:5000/deleteclient/".concat(userId), {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/deleteclient/".concat(userId), {
       method: "delete",
       headers: {
         'Authorization' : 'Bearer ' + token
@@ -422,7 +422,7 @@ function UpdateClientdata() {
                                   body: formdata,
                                 };
 
-                                fetch("http://127.0.0.1:5000/updateclient/".concat(userToEdit[0]), requestOptions)
+                                fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/updateclient/".concat(userToEdit[0]), requestOptions)
                                   .then((response) => response.json())
                                   .then((result) => {
                                     alert("Data Updated");

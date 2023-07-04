@@ -27,7 +27,7 @@ function UpdateOTMdata() {
   
   const fetchDataformodal = (userId) => {
     console.log("Tutor ID", userId);
-    fetch("http://127.0.0.1:5000/getotmuser/".concat(userId), {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getotmuser/".concat(userId), {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -109,7 +109,7 @@ function UpdateOTMdata() {
     },
   ];
   const fetchData = () => {
-    fetch("http://127.0.0.1:5000/getotm1", {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getotm1", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -157,7 +157,7 @@ function UpdateOTMdata() {
       });
   };
   // const fetchData = () => {
-  //   fetch("http://127.0.0.1:5000/getotm1")
+  //   fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getotm1")
   //     .then((res) => res.json())
   //     .then((data) => {
   //       // do something with data
@@ -170,7 +170,7 @@ function UpdateOTMdata() {
   // };
   const deleteUser = (userId) => {
     console.log("Del", userId);
-    fetch("http://127.0.0.1:5000/deleteotm/".concat(userId), {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/deleteotm/".concat(userId), {
       method: "delete",
       headers: {
         'Authorization' : 'Bearer ' + token
@@ -397,7 +397,7 @@ function UpdateOTMdata() {
                                   body: formdata,
                                 };
 
-                                fetch("http://127.0.0.1:5000/updateotm/".concat(userToEdit[0]), requestOptions)
+                                fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/updateotm/".concat(userToEdit[0]), requestOptions)
                                   .then((response) => response.json())
                                   .then((result) => {
                                     alert("Data Updated");

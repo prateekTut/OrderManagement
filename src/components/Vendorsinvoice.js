@@ -44,7 +44,7 @@ function Vendorsinvoice() {
   // =================== vendor data api ========================
   const fetchDataforinvoice = (userId) => {
     console.log("vendor id", userId);
-    fetch("http://127.0.0.1:5000/getclient/".concat(userId))
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getclient/".concat(userId))
       .then((res) => res.json())
       .then((data) => {
         // do something with data
@@ -62,7 +62,7 @@ function Vendorsinvoice() {
 
   const fetchDataforupdateinvoice = (userId) => {
     console.log("vendor ID", userId);
-    fetch("http://127.0.0.1:5000/getclientvendoreid/".concat(userId))
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getclientvendoreid/".concat(userId))
       .then((res) => res.json())
       .then((data) => {
         // do something with data

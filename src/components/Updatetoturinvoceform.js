@@ -15,7 +15,7 @@ function Updatetoturinvoceform() {
 
   const fetchDataforupdate = (userId) => {
     console.log("OTM ID", userId);
-    fetch("http://127.0.0.1:5000/gettaskid/".concat(userId))
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/gettaskid/".concat(userId))
       .then((res) => res.json())
       .then((data) => {
         // do something with data
@@ -101,7 +101,7 @@ function Updatetoturinvoceform() {
                                 body: formdata,
                               };
 
-                              fetch("http://127.0.0.1:5000/updatevendorinvoicebudget/".concat(userToEdit[0]), requestOptions)
+                              fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/updatevendorinvoicebudget/".concat(userToEdit[0]), requestOptions)
                                 .then((response) => response.json())
                                 .then((result) => {
                                   alert("Data Updated");

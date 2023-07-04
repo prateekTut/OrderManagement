@@ -34,7 +34,7 @@ function Updatetaskdata() {
 
   const fetchDataformodal = (userId) => {
     console.log("Tutor ID", userId);
-    fetch("http://127.0.0.1:5000/gettaskid/".concat(userId), {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/gettaskid/".concat(userId), {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -57,7 +57,7 @@ function Updatetaskdata() {
   // ==================== for update task status start============
   const fetchDataforupdatestatus = (userId) => {
     console.log("OTM ID", userId);
-    fetch("http://127.0.0.1:5000/gettaskid/".concat(userId), {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/gettaskid/".concat(userId), {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -179,7 +179,7 @@ function Updatetaskdata() {
     },
   ];
   const fetchData = () => {
-    fetch("http://127.0.0.1:5000/getordersdata", {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getordersdata", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -239,7 +239,7 @@ function Updatetaskdata() {
   };
   const deleteUser = (userId) => {
     console.log("Del", userId);
-    fetch("http://127.0.0.1:5000/deleteorders/".concat(userId), {
+    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/deleteorders/".concat(userId), {
       method: "delete",
       headers: {
         'Authorization' : 'Bearer ' + token
@@ -354,7 +354,7 @@ function Updatetaskdata() {
                         }
                       };
 
-                      fetch("http://127.0.0.1:5000/updatestatustask/".concat(forstatususers[0].id), requestOptions)
+                      fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/updatestatustask/".concat(forstatususers[0].id), requestOptions)
                         .then((response) => response.status == 200)
                         .then((result) => {
                           statushandleClose();
