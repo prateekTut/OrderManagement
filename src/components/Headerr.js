@@ -19,7 +19,7 @@ function Headerr() {
     sessionStorage.removeItem("token")
     fetch('http://order-env.ap-south-1.elasticbeanstalk.com/logout')
     .then(() => {
-      window.location.href = '/home'; // Redirect to home page after logout
+      window.location.href = '/'; // Redirect to home page after logout
     })
     .catch((error) => {
       console.error('Error logging out:', error);
