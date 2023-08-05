@@ -10,6 +10,7 @@ import { Modal, Button } from "react-bootstrap";
 import "./css/table.css";
 import "./css/Heading.css";
 import { useRef } from "react";
+import { FRONTEND_API } from "./urls";
 
 function UpdateClientdata() {
   const navigate = useNavigate();
@@ -23,10 +24,10 @@ function UpdateClientdata() {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const token = sessionStorage.getItem("token")
+  const token = localStorage.getItem("token")
   const fetchDataformodal = (userId) => {
     console.log("Tutor ID", userId);
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getclient/".concat(userId), {
+    fetch(FRONTEND_API + "getclient/".concat(userId), {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -120,7 +121,7 @@ function UpdateClientdata() {
     },
   ];
   const fetchData = () => {
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getstudentclientdata", {
+    fetch(FRONTEND_API + "getstudentclientdata", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -180,7 +181,7 @@ function UpdateClientdata() {
   };
   const deleteUser = (userId) => {
     console.log("Del", userId);
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/deleteclient/".concat(userId), {
+    fetch(FRONTEND_API + "deleteclient/".concat(userId), {
       method: "delete",
       headers: {
         'Authorization' : 'Bearer ' + token
@@ -422,7 +423,7 @@ function UpdateClientdata() {
                                   body: formdata,
                                 };
 
-                                fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/updateclient/".concat(userToEdit[0]), requestOptions)
+                                fetch(FRONTEND_API + "updateclient/".concat(userToEdit[0]), requestOptions)
                                   .then((response) => response.json())
                                   .then((result) => {
                                     alert("Data Updated");

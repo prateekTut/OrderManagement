@@ -2,22 +2,24 @@ import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./css/Sidebar.css";
 import "./css/Header.css";
-import "./css/main.css";
+
 import Logo from "./img/logo.jpg";
 import useAuth from "../hooks/useAuth";
 import AuthContext from "../context/AuthProvider";
+import { FRONTEND_API } from "./urls";
 
 function Headerr() {
   const { auth } = useAuth();
   const { setAuth } = useContext(AuthContext);
 
   const navigate = useNavigate();
-
+  const roles = localStorage.getItem("roles")
   const logout = async () => {
     // if used in more components, this should be in context
     // axios to /logout endpoint
-    sessionStorage.removeItem("token")
-    fetch('http://order-env.ap-south-1.elasticbeanstalk.com/logout')
+    localStorage.removeItem("token")
+    localStorage.removeItem("roles")
+    fetch(FRONTEND_API + 'logout')
     .then(() => {
       window.location.href = '/'; // Redirect to home page after logout
     })
@@ -53,9 +55,9 @@ function Headerr() {
                       <Link to='/'>Register</Link>
                     </a>
                   </li> */
-                  console.log(auth)}
+                  console.log(roles)}
 
-                  {auth?.roles ? (
+                  {roles ? (
                     <li class='nav-item'>
                       <a class='nav-link ' href='#' tabindex='-1' onClick={logout}>
                         <Link to=''>Sign out</Link>
@@ -73,24 +75,27 @@ function Headerr() {
               </div>
             </div>
           </nav>
-          {auth?.roles == "admin" ? (
+          {roles == "admin" ? (
             <>
               <a id='anav' class='sidemenu'>
-                <Link to='/Updatetutors'> Tutor </Link>
+                <Link to='/Updatetutors'> Experts </Link>
               </a>
 
               <a class='sidemenu'>
-                <Link to='/updateotm'> OTM's</Link>
+                <Link to='/updateotm'> OTMs</Link>
               </a>
               <a class='dropdown'>
                 <a class='dropbtn'>Clients</a>
                 <div class='dropdown-content'>
-                  <Link to='/UpdateClientdata'>Student's</Link>
-                  <Link to='/Updatevonder'>Vendor's</Link>
+                  <Link to='/UpdateClientdata'>Student</Link>
+                  <Link to='/Updatevonder'>Vendor</Link>
                 </div>
               </a>
               <a class='sidemenu'>
-                <Link to='/Assingntask'>Assign Task</Link>
+                <Link to='/Assingntask'>Tasks</Link>
+              </a>
+              <a class='sidemenu'>
+                <Link to='/register'>Register</Link>
               </a>
               {/* <a class='sidemenu'>
                 <Link to='/invoicedata'>Invoice</Link>
@@ -106,12 +111,10 @@ function Headerr() {
                 </div>
               </a>
             </>
-          ) : auth?.roles ? (
-            <a class='sidemenu'>
-              <Link to='/Assingntask'>Assign Task</Link>
-            </a>
           ) : (
-            <p></p>
+            <a class='sidemenu'>
+              <Link to='/Assingntask'>Tasks</Link>
+            </a>
           )}
 
           {/* <a class='sidemenu'>

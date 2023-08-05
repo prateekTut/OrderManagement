@@ -9,6 +9,7 @@ import { Modal, Button } from "react-bootstrap";
 import "./css/table.css";
 import "./css/Heading.css";
 import { useRef } from "react";
+import { FRONTEND_API } from "./urls";
 
 function Invoicedata() {
   const navigate = useNavigate();
@@ -25,10 +26,10 @@ function Invoicedata() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const token = sessionStorage.getItem("token")
+  const token = localStorage.getItem("token")
   const fetchDataformodal = (userId) => {
     console.log("Tutor ID", userId);
-    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getinvoicedataid/".concat(userId), {
+    fetch(FRONTEND_API+"getinvoicedataid/".concat(userId), {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -91,7 +92,7 @@ function Invoicedata() {
     },
   ];
   const fetchData = () => {
-    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getinvoicedata", {
+    fetch(FRONTEND_API+"getinvoicedata", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -138,7 +139,7 @@ function Invoicedata() {
   };
   const deleteUser = (userId) => {
     console.log("Del", userId);
-    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/deleteinvoice/".concat(userId), {
+    fetch(FRONTEND_API+"deleteinvoice/".concat(userId), {
       method: "delete",
       headers: {
         'Authorization' : 'Bearer ' + token
@@ -192,7 +193,7 @@ function Invoicedata() {
         onClick={(event) => {
           event.preventDefault();
 
-          fetch("http://order-env.ap-south-1.elasticbeanstalk.com/invoiceclientid", {
+          fetch(FRONTEND_API+"invoiceclientid", {
             headers: {
               'Authorization' : 'Bearer ' + token
             }

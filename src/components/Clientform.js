@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { cloneDeep } from "lodash";
 import "./css/Resister.css";
 import "./css/main.css";
+import { FRONTEND_API } from "./urls";
 
 function Clientform() {
   const navigate = useNavigate();
@@ -42,7 +43,7 @@ function Clientform() {
         body: formdata,
       };
 
-      fetch("http://127.0.0.1:5000/updateclient/".concat(userToEdit[0]), requestOptions)
+      fetch(FRONTEND_API + "updateclient/".concat(userToEdit[0]), requestOptions)
         .then((response) => response.json())
         .then((result) => {
           alert("Data Updated");
@@ -66,7 +67,7 @@ function Clientform() {
   // ====================   Email validetion function END  ==================
   const fetchDataforupdate = (userId) => {
     console.log("Tutor ID", userId);
-    fetch("http://127.0.0.1:5000/getclient/".concat(userId))
+    fetch(FRONTEND_API + "getclient/".concat(userId))
       .then((res) => res.json())
       .then((data) => {
         // do something with data

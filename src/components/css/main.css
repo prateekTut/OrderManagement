@@ -3,7 +3,11 @@
     width: 100%;
     justify-content: center;
 }
+.main_content_header{
+    
+    margin-left: 170px;
 
+}
 #icon {
     height: 20px;
     width: 20px;

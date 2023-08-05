@@ -6,15 +6,14 @@ import "./css/Resister.css";
 import "./css/main.css";
 import DataTable from "react-data-table-component";
 import { Modal, Button } from "react-bootstrap";
-import { cloneDeep } from "lodash";
 import "./css/table.css";
 import "./css/Heading.css";
 import { useRef } from "react";
+import { FRONTEND_API } from "./urls";
 
 function Updatetaskdata() {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
-  const [statususer, setstatususer] = useState([]);
   const [forstatususers, setforstatususers] = useState([]);
   const [userToEdit, setUserToEdit] = useState([]);
   const [statusToUpdate, setstatusToUpdate] = useState([]);
@@ -34,7 +33,7 @@ function Updatetaskdata() {
 
   const fetchDataformodal = (userId) => {
     console.log("Tutor ID", userId);
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/gettaskid/".concat(userId), {
+    fetch(FRONTEND_API + "gettaskid/".concat(userId), {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -57,7 +56,7 @@ function Updatetaskdata() {
   // ==================== for update task status start============
   const fetchDataforupdatestatus = (userId) => {
     console.log("OTM ID", userId);
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/gettaskid/".concat(userId), {
+    fetch(FRONTEND_API + "gettaskid/".concat(userId), {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -179,7 +178,7 @@ function Updatetaskdata() {
     },
   ];
   const fetchData = () => {
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getordersdata", {
+    fetch(FRONTEND_API + "getordersdata", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -237,9 +236,10 @@ function Updatetaskdata() {
         console.log(rejected);
       });
   };
+  
   const deleteUser = (userId) => {
     console.log("Del", userId);
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/deleteorders/".concat(userId), {
+    fetch(FRONTEND_API + "deleteorders/".concat(userId), {
       method: "delete",
       headers: {
         'Authorization' : 'Bearer ' + token
@@ -256,10 +256,14 @@ function Updatetaskdata() {
         fetchData();
       });
   };
+  
+  
   const editUser = (userId) => {
     console.log("Task ID", userId);
     navigate(`/Assingntask/${userId}`);
   };
+
+
   const search = (event) => {
     const searchTerm = event.target.value;
     setinputdata(searchTerm);
@@ -354,7 +358,7 @@ function Updatetaskdata() {
                         }
                       };
 
-                      fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/updatestatustask/".concat(forstatususers[0].id), requestOptions)
+                      fetch(FRONTEND_API + "updatestatustask/".concat(forstatususers[0].id), requestOptions)
                         .then((response) => response.status == 200)
                         .then((result) => {
                           statushandleClose();

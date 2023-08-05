@@ -5,6 +5,7 @@ import PhoneInput from "react-phone-number-input";
 import UseTextInput from "./UseTextInput";
 import "./css/Resister.css";
 import "./css/main.css";
+import { FRONTEND_API } from "./urls";
 
 function Addclient() {
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ function Addclient() {
       
       };
 
-      fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/addclient", requestOptions)
+      fetch(FRONTEND_API + "addclient", requestOptions)
         .then((response) => response.text())
         .then((result) => {
           alert("Data inserted");

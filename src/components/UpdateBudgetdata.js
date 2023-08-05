@@ -9,6 +9,7 @@ import DataTable from "react-data-table-component";
 import "./css/table.css";
 import "./css/Heading.css";
 import { useRef } from "react";
+import { FRONTEND_API } from "./urls";
 
 function UpdateBudgetdata() {
   const usersData = useRef([]);
@@ -63,7 +64,7 @@ function UpdateBudgetdata() {
     },
   ];
   const fetchData = () => {
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getbudgetdata")
+    fetch(FRONTEND_API + "getbudgetdata")
       .then((res) => res.json())
       .then((rawData) => {
         // do something with data
@@ -101,7 +102,7 @@ function UpdateBudgetdata() {
   };
   const deleteUser = (userId) => {
     console.log("Del", userId);
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/deletebudget/".concat(userId), {
+    fetch(FRONTEND_API + "deletebudget/".concat(userId), {
       method: "delete",
     })
       .then((res) => res.text())
@@ -281,7 +282,7 @@ function UpdateBudgetdata() {
                                   body: formdata,
                                 };
 
-                                fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/updatebudget/".concat(userToEdit[0]), requestOptions)
+                                fetch(FRONTEND_API + "updatebudget/".concat(userToEdit[0]), requestOptions)
                                   .then((response) => response.json())
                                   .then((result) => {
                                     alert("Data Updated");

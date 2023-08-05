@@ -8,6 +8,7 @@ import Logo from "./img/logo.jpg";
 import "./css/Resister.css";
 import "./css/main.css";
 import "./css/Invoice.css";
+import { FRONTEND_API } from "./urls";
 
 function Vendorsinvoice() {
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ function Vendorsinvoice() {
   // =================== vendor data api ========================
   const fetchDataforinvoice = (userId) => {
     console.log("vendor id", userId);
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getclient/".concat(userId))
+    fetch(FRONTEND_API + "getclient/".concat(userId))
       .then((res) => res.json())
       .then((data) => {
         // do something with data
@@ -62,7 +63,7 @@ function Vendorsinvoice() {
 
   const fetchDataforupdateinvoice = (userId) => {
     console.log("vendor ID", userId);
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getclientvendoreid/".concat(userId))
+    fetch(FRONTEND_API + "getclientvendoreid/".concat(userId))
       .then((res) => res.json())
       .then((data) => {
         // do something with data

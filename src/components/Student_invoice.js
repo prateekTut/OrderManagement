@@ -8,6 +8,7 @@ import Logo from "./img/logo.jpg";
 import "./css/Resister.css";
 import "./css/main.css";
 import "./css/Invoice.css";
+import { FRONTEND_API } from "./urls";
 
 function Student_invoice() {
   const navigate = useNavigate();
@@ -45,7 +46,7 @@ function Student_invoice() {
   // =================== student data api ========================
   const fetchDataforinvoice = (userId) => {
     console.log("Tutor ID", userId);
-    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getclient/".concat(userId), {
+    fetch(FRONTEND_API + "getclient/".concat(userId), {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -67,7 +68,7 @@ function Student_invoice() {
 
   const fetchDataforupdateinvoice = (userId) => {
     console.log("Tutor ID", userId);
-    fetch("http://order-env.ap-south-1.elasticbeanstalk.com/getbudgetdataforview/".concat(userId), {
+    fetch(FRONTEND_API + "getbudgetdataforview/".concat(userId), {
       headers: {
         'Authorization' : 'Bearer ' + token
       }

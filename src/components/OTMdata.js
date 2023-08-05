@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 import "./css/table.css";
 import "./css/Heading.css";
 
+import { FRONTEND_API } from "./urls";
+
 function OTMdata() {
   const [users, setUsers] = useState([]);
   const [show, setShow] = useState();
   const [Student, setStudent] = useState();
   const fetchData = () => {
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getordersdata")
+    fetch(FRONTEND_API + "getordersdata")
       .then((res) => res.json())
       .then((data) => {
         // do something with data
@@ -21,7 +23,7 @@ function OTMdata() {
   };
   const deleteUser = (userId) => {
     console.log("Del", userId);
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/deleteotm/".concat(userId), {
+    fetch(FRONTEND_API + "deleteotm/".concat(userId), {
       method: "delete",
     })
       .then((res) => res.text())
@@ -37,7 +39,7 @@ function OTMdata() {
   };
   const UpadeteUser = (userId) => {
     console.log("Del", userId);
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getordersdata/".concat(userId), {
+    fetch(FRONTEND_API + "getordersdata/".concat(userId), {
       method: "UPDATE",
     })
       .then((res) => res.text())

@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { cloneDeep } from "lodash";
 import "./css/Resister.css";
 import "./css/main.css";
+import { FRONTEND_API } from "./urls";
 
 function Updateinvoiceform() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ function Updateinvoiceform() {
 
   const fetchDataforupdate = (userId) => {
     console.log("OTM ID", userId);
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/gettaskid/".concat(userId))
+    fetch(FRONTEND_API + "gettaskid/".concat(userId))
       .then((res) => res.json())
       .then((data) => {
         // do something with data
@@ -88,7 +89,7 @@ function Updateinvoiceform() {
                                 body: formdata,
                               };
 
-                              fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/updatevendorinvoicebudget/".concat(userToEdit[0]), requestOptions)
+                              fetch(FRONTEND_API + "updatevendorinvoicebudget/".concat(userToEdit[0]), requestOptions)
                                 .then((response) => response.json())
                                 .then((result) => {
                                   alert("Data Updated");

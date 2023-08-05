@@ -6,6 +6,7 @@ import { cloneDeep } from "lodash";
 import { useReactToPrint } from "react-to-print";
 import "./css/Resister.css";
 import "./css/main.css";
+import { FRONTEND_API } from "./urls";
 
 function Viewbudget() {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ function Viewbudget() {
   const componentRef = useRef();
   const fetchDataforupdate = (userId) => {
     console.log("Tutor ID", userId);
-    fetch("http://127.0.0.1:5000/getbudgetdataforview/".concat(userId))
+    fetch(FRONTEND_API + "getbudgetdataforview/".concat(userId))
       .then((res) => res.json())
       .then((data) => {
         // do something with data
@@ -30,7 +31,7 @@ function Viewbudget() {
   };
   const deleteUser = (userId) => {
     console.log("Del", userId);
-    fetch("http://127.0.0.1:5000/deletebudget/".concat(userId), {
+    fetch(FRONTEND_API + "deletebudget/".concat(userId), {
       method: "delete",
     })
       .then((res) => res.text())

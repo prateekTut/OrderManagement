@@ -3,11 +3,11 @@ import { useState } from "react";
 import Headerr from "./Headerr";
 import "./css/main.css";
 import "./css/Heading.css";
-
+import { FRONTEND_API } from "./urls";
 function Home() {
   const [users, setUsers] = useState([]);
   const fetchstudentData = () => {
-    fetch("http://127.0.0.1:5000/getstudentclientdata")
+    fetch(FRONTEND_API + "getstudentclientdata")
       .then((res) => res.json())
       .then((data) => {
         // do something with data

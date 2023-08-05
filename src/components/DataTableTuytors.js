@@ -4,6 +4,7 @@ import DataTable from "react-data-table-component";
 import "./css/table.css";
 import "./css/Heading.css";
 import { useRef } from "react";
+import { FRONTEND_API } from "./urls";
 
 function DataTableTuytors() {
   const [users, setUsers] = useState([]);
@@ -44,7 +45,7 @@ function DataTableTuytors() {
 
   // console.log(columns, data);
   const fetchData = () => {
-    fetch("http://127.0.0.1:5000/getexpert")
+    fetch(FRONTEND_API + "getexpert")
       .then((res) => res.json())
       .then((rawData) => {
         // do something with data
@@ -76,7 +77,7 @@ function DataTableTuytors() {
   };
   const deleteUser = (userId) => {
     console.log("Del", userId);
-    fetch("http://127.0.0.1:5000/deleteexpert/".concat(userId), {
+    fetch(FRONTEND_API + "deleteexpert/".concat(userId), {
       method: "delete",
     })
       .then((res) => res.text())

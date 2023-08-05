@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { cloneDeep } from "lodash";
 import { useNavigate } from "react-router-dom";
+import { FRONTEND_API } from "./urls";
 
 function Editvendoreinvoice() {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ function Editvendoreinvoice() {
   const [userToEdit, setUserToEdit] = useState([]);
   const fetchDataforupdate = (userId) => {
     console.log("OTM ID", userId);
-    fetch("http://127.0.0.1:5000/getvendordataforupinvoice/".concat(userId))
+    fetch(FRONTEND_API + "getvendordataforupinvoice/".concat(userId))
       .then((res) => res.json())
       .then((data) => {
         // do something with data

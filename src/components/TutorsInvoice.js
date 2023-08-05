@@ -8,6 +8,7 @@ import Logo from "./img/logo.jpg";
 import "./css/Resister.css";
 import "./css/main.css";
 import "./css/Invoice.css";
+import { FRONTEND_API } from "./urls";
 
 function TutorsInvoice() {
   const navigate = useNavigate();
@@ -32,19 +33,19 @@ function TutorsInvoice() {
   // ======================= calculation of discount , tex , total ======================
 
   var subtotalePrice = 0;
-  var totale1 = userToEdit.map((user) => (subtotalePrice += user[14]));
+  var totale1 = userToEdit.map((user) => (subtotalePrice += user.Expert_price));
   var discountformula = subtotalePrice * (1 - 0.1);
   var discount = subtotalePrice - discountformula;
   var GSTtaxformula = subtotalePrice * (1 + 0.18);
   var GSTtax = GSTtaxformula - subtotalePrice;
   var totalprice = subtotalePrice - discount + GSTtax;
-  const token = sessionStorage.getItem("token")
+  const token = localStorage.getItem("token")
   // ===========================end=========================================
 
   // =================== tutors data api ========================
   const fetchDataforinvoice = (userId) => {
     console.log("Tutor ID", userId);
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/gettutoruser/".concat(userId), {
+    fetch(FRONTEND_API + "gettutoruser/".concat(userId), {
       headers: {
         'Authorization' : 'Bearer ' + token
       } 
@@ -53,7 +54,11 @@ function TutorsInvoice() {
       .then((data) => {
         // do something with data
         console.log("Tutors data", data);
-        setUserToinvoice(JSON.parse(data)[0]);
+        data.map((tutors) => {
+          setUserToinvoice(tutors);
+        })
+       
+        console.log(userToinvoice.firstName)
         // navigate("/OTMform");
       })
       .catch((rejected) => {
@@ -66,12 +71,16 @@ function TutorsInvoice() {
 
   const fetchDataforupdateinvoice = (userId) => {
     console.log("tutors ID", userId);
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/gettutorsidforinvoice/".concat(userId))
+    fetch(FRONTEND_API + "gettutorsidforinvoice/".concat(userId), {
+      headers: {
+        'Authorization' : 'Bearer ' + token
+      } 
+    })
       .then((res) => res.json())
       .then((data) => {
         // do something with data
         console.log("tutors data", data);
-        setUserToEdit(JSON.parse(data));
+        setUserToEdit(data);
         // navigate("/OTMform");
       })
       .catch((rejected) => {
@@ -102,7 +111,7 @@ function TutorsInvoice() {
       <button type='button' id='invoicebutton' class='btn btn-success btn-m' onClick={handlePrint}>
         Print & Save as PDF
       </button>
-      <button type='button' id='invoicebutton' class='btn btn-success btn-m' onClick={() => editUser(userToinvoice[0])}>
+      <button type='button' id='invoicebutton' class='btn btn-success btn-m' onClick={() => editUser(userToinvoice.id)}>
         Edit Invoice
       </button>
       <div class='container' ref={componentRef}>
@@ -141,11 +150,11 @@ function TutorsInvoice() {
                 <h6 class='mb-3' id='Billed'>
                   Billed To
                 </h6>
-                {userToinvoice[1]}
-                &nbsp; {userToinvoice[2]}
+                {userToinvoice.firstName}
+                &nbsp; {userToinvoice.lastName}
                 <div>UK,</div>
                 <div>United Kingdom (UK)</div>
-                <div>Email: {userToinvoice[3]}</div>
+                <div>Email: {userToinvoice.email}</div>
                 {/* <div>Phone: +48 123 456 789</div> */}
               </div>
             </div>

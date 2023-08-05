@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./css/Resister.css";
 import "./css/main.css";
+import { FRONTEND_API } from "./urls";
 
 function AddBudget() {
   const navigate = useNavigate();
@@ -15,12 +16,12 @@ function AddBudget() {
   const [userToEdit, setUserToEdit] = useState([]);
   const [users, setUsers] = useState([]);
 
-  const token = sessionStorage.getItem("token")
+  const token = localStorage.getItem("token")
 
 
   const fetchData = () => {
                               
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getclientnamedata", {
+    fetch(FRONTEND_API + "getclientnamedata", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -86,7 +87,7 @@ function AddBudget() {
                               
                             };
 
-                            fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/Budget", requestOptions)
+                            fetch(FRONTEND_API + "Budget", requestOptions)
                               .then((response) => response.text())
                               .then((result) => {
                                 alert("Data inserted");

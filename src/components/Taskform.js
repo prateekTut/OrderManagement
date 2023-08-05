@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { cloneDeep } from "lodash";
 import "./css/Resister.css";
 import "./css/main.css";
+import { FRONTEND_API } from "./urls";
 
 function Taskform() {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ function Taskform() {
 
   const fetchDataforupdate = (userId) => {
     console.log("OTM ID", userId);
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/gettaskid/".concat(userId), {
+    fetch(FRONTEND_API + "gettaskid/".concat(userId), {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -42,7 +43,7 @@ function Taskform() {
       });
   };
   const fetchtutorsData = () => {
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getexpert", {
+    fetch(FRONTEND_API + "getexpert", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -58,7 +59,7 @@ function Taskform() {
       });
   };
   const fetchclientData = () => {
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getclientdata", {
+    fetch(FRONTEND_API + "getclientdata", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -75,7 +76,7 @@ function Taskform() {
       });
   };
   const fetchOTMData = () => {
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getotm1", {
+    fetch(FRONTEND_API + "getotm1", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -147,7 +148,7 @@ function Taskform() {
                               body: formdata,
                             };
 
-                            fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/updatetask/".concat(userToEdit[0]), requestOptions)
+                            fetch(FRONTEND_API + "updatetask/".concat(userToEdit[0]), requestOptions)
                               .then((response) => response.json())
                               .then((result) => {
                                 alert("Data Updated");

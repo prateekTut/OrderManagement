@@ -10,7 +10,8 @@ import { Link } from "react-router-dom";
 import Calendar from "react-calendar";
 import img from "./img/dashbord img.avif";
 import "./css/Dashbord.css";
-
+import useAuth from "../hooks/useAuth";
+import { FRONTEND_API } from "./urls";
 
 function Dashbord() {
 
@@ -21,12 +22,16 @@ function Dashbord() {
   const [budget, setbudget] = useState([]);
   const [order, setorder] = useState([]);
  
-  const token = sessionStorage.getItem("token")
-  const roles = sessionStorage.getItem("roles")
+  const token = localStorage.getItem("token")
+  const roles = localStorage.getItem("roles")
   
   console.log("token in dashboard", token)
   console.log("roles in dashboard", roles)
-  
+  const {setAuth} = useAuth();
+       
+  useEffect(() => { 
+    setAuth({roles});
+  }, []);
   // ==================graf ===========================
   const data01 = [
     { name: "Group tutors", value: Tutors.length },
@@ -77,7 +82,7 @@ function Dashbord() {
   // ===================================================
 
   const fetchstudentData = () => {
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getstudentclientdata", {
+    fetch(FRONTEND_API + "getstudentclientdata", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -94,7 +99,7 @@ function Dashbord() {
   };
 
   const fetchvendorData = () => {
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getvendoreclientdata", {
+    fetch(FRONTEND_API + "getvendoreclientdata", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -110,7 +115,7 @@ function Dashbord() {
       });
   };
   const fetchtutorData = () => {
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getexpert", {
+    fetch(FRONTEND_API + "getexpert", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -126,7 +131,7 @@ function Dashbord() {
       });
   };
   const fetchotmData = () => {
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getotm1", {
+    fetch(FRONTEND_API + "getotm1", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -142,7 +147,7 @@ function Dashbord() {
       });
   };
   const fetchstudentbudgetData = () => {
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getbudgetdata", {
+    fetch(FRONTEND_API + "getbudgetdata", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }
@@ -158,7 +163,7 @@ function Dashbord() {
       });
   };
   const getorderfordashbord = () => {
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/getorderfordashbord", {
+    fetch(FRONTEND_API + "getorderfordashbord", {
       headers: {
         'Authorization' : 'Bearer ' + token
       }

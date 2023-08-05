@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./components/Login";
+import NewLogin from "./components/NewLogin"
 import Headerr from "./components/Headerr";
 import Home from "./components/Home";
 import "./components/css/main.css";
@@ -42,6 +43,13 @@ import Updatetoturinvoceform from "./components/Updatetoturinvoceform";
 import TutorsInvoicetabledata from "./components/TutorsInvoicetabledata";
 import AppSelection from "./components/AppSelection";
 import { useLocation } from 'react-router-dom';
+import Register from "./components/Register";
+import AssignTaskConsole from "./components/AssignTaskConsole";
+import AddTaskNew from "./components/AddTaskNew";
+import OtmUsersConsole from "./components/OtmUsersConole";
+import ExpertsConsole from "./components/ExpertsConsole";
+import ClientStudentConsole from "./components/ClientStudentConsole";
+import ClientVendorConsole from "./components/ClientVendorConsole";
 
 
 function App() {
@@ -53,31 +61,34 @@ function App() {
 
   return (
     <>
-      <div class='main justify-content-center'>
+      <div className='main_content_header'>
         <div className='main_content_iner'>
           <Routes>
+          <Route path='/login' element={<NewLogin />} />
           <Route path='/app_select' element={<AppSelection />}  />
+
             <Route path='/' element={<Layout />}>
               {/* Public Routes */}
-              <Route path='/home' element={<Home />} />
-              <Route path='/login' element={<Login />} />
+            
+              
               <Route path='/unauthorized' element={<Unauthorized />} />
               
               <Route element={<RequireAuth allowedRoles={["admin"]} />}>
-                <Route path='/dashboard' element={<Dashbord />} />
+                <Route path='/register' element={<Register />} />
+          
                 <Route path='/tutors' element={<AddTutors />} />
                 <Route path='/otm' element={<Addotm />} />
-                <Route path='/updateotm' element={<UpdateOTMdata />} />
+                <Route path='/updateotm' element={<OtmUsersConsole />} />
                 <Route path='/updateotm/:userId' element={<OTMform />} />
-                <Route path='/Updatetutors' element={<UpdateTutordata />} />
+                <Route path='/Updatetutors' element={<ExpertsConsole />} />
                 <Route path='/Updatetutors/:userId' element={<Tutorform />} />
                 <Route path='/1' element={<DataTableTuytors />} />
                 <Route path='/new' element={<OTMdata />} />
                 <Route path='/Assingntask/:userId' element={<Taskform />} />
                 <Route path='/Addclient' element={<Addclient />} />
-                <Route path='/UpdateClientdata' element={<UpdateClientdata />} />
+                <Route path='/UpdateClientdata' element={<ClientStudentConsole />} />
                 <Route path='/UpdateClientdata/:userId' element={<Clientform />} />
-                <Route path='/Updatevonder' element={<Updatevonderdata />} />
+                <Route path='/Updatevonder' element={<ClientVendorConsole />} />
                 <Route path='/Updatevonder/:userId' element={<Vonderform />} />
                 <Route path='/Budget' element={<AddBudget />} />
                 <Route path='/Updatebudget' element={<UpdateBudgetdata />} />
@@ -93,14 +104,16 @@ function App() {
                 <Route path='/tutors-invoice/:userId' element={<TutorsInvoice />} />
                 <Route path='/Edit-tutors-invoice/:userId' element={<Edittutorsinvoice />} />
                 <Route path='/update-tutors-invoice/:userId' element={<Updatetoturinvoceform />} />
-
+               
                 <Route path='/invoicedata' element={<Invoicedata />} />
+               
               </Route>
 
-              <Route element={<RequireAuth allowedRoles={["admin", "otm"]} />}>
-                
-                <Route path='/Assingntask' element={<Updatetaskdata />} />
-                <Route path='/addtask/*' element={<Addtask />} />
+              <Route element={<RequireAuth allowedRoles={["admin", "otm", "lead", "expert"]} />}>
+                <Route path='/home' element={<Home />} />
+                <Route path='/dashboard' element={<Dashbord />} />
+                <Route path='/Assingntask' element={<AssignTaskConsole />} />
+                <Route path='/addtask/*' element={<AddTaskNew />} />
 
               </Route>
 

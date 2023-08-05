@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { cloneDeep } from "lodash";
 import "./css/Resister.css";
 import "./css/main.css";
+import { FRONTEND_API } from "./urls";
 
 function Budgetform() {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ function Budgetform() {
 
   const fetchDataforupdate = (userId) => {
     console.log("OTM ID", userId);
-    fetch("http://127.0.0.1:5000/getbudget/".concat(userId))
+    fetch(FRONTEND_API + "getbudget/".concat(userId))
       .then((res) => res.json())
       .then((data) => {
         // do something with data
@@ -30,7 +31,7 @@ function Budgetform() {
       });
   };
   const fetchData = () => {
-    fetch("http://127.0.0.1:5000/getclientnamedata")
+    fetch(FRONTEND_API + "getclientnamedata")
       .then((res) => res.json())
       .then((data) => {
         // do something with data
@@ -86,7 +87,7 @@ function Budgetform() {
                               body: formdata,
                             };
 
-                            fetch("http://127.0.0.1:5000/updatebudget/".concat(userToEdit[0]), requestOptions)
+                            fetch(FRONTEND_API + "updatebudget/".concat(userToEdit[0]), requestOptions)
                               .then((response) => response.json())
                               .then((result) => {
                                 //   alert("Data Updated");

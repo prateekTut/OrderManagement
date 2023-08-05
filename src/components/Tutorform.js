@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { cloneDeep } from "lodash";
 import "./css/Resister.css";
 import "./css/main.css";
+import { FRONTEND_API } from "./urls";
 
 function Tutorform() {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ function Tutorform() {
         body: formdata,
       };
 
-      fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/".concat(userToEdit[0]), requestOptions)
+      fetch(FRONTEND_API + "".concat(userToEdit[0]), requestOptions)
         .then((response) => response.json())
         .then((result) => {
           //   alert("Data Updated");
@@ -65,7 +66,7 @@ function Tutorform() {
 
   const fetchDataforupdate = (userId) => {
     console.log("Tutor ID", userId);
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/gettutoruser/".concat(userId))
+    fetch(FRONTEND_API + "gettutoruser/".concat(userId))
       .then((res) => res.json())
       .then((data) => {
         // do something with data

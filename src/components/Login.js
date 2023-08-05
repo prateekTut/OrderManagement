@@ -5,6 +5,7 @@ import "./css/Login.css";
 import useAuth from "../hooks/useAuth";
 import axios from "axios";
 import { contains, get } from "jquery";
+import { FRONTEND_API } from "./urls";
 
 function Login() {
 
@@ -31,7 +32,7 @@ function Login() {
       body: formdata,
     };
 
-    fetch("https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/test", requestOptions)
+    fetch(FRONTEND_API + "test", requestOptions)
       .then((response) => 
         response.json()
       )
@@ -60,7 +61,7 @@ function Login() {
     // if used in more components, this should be in context
     // axios to /logout endpoint
     sessionStorage.removeItem("token")
-    fetch('https://www.ordermodule-dev.ap-south-1.elasticbeanstalk.com/logout')
+    fetch(FRONTEND_API + 'logout')
     .then(() => {
       window.location.href = '/home'; // Redirect to home page after logout
     })

@@ -3,20 +3,28 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { cloneDeep } from "lodash";
 import { useNavigate } from "react-router-dom";
+import { FRONTEND_API } from "./urls";
 
 function Edittutorsinvoice() {
   const navigate = useNavigate();
+  const token = localStorage.getItem("token")
+
   let params = useParams();
   console.log(params, params.userId);
   const [userToEdit, setUserToEdit] = useState([]);
+
   const fetchDataforupdate = (userId) => {
     console.log("OTM ID", userId);
-    fetch("http://127.0.0.1:5000/gettutorsdataforupinvoice/".concat(userId))
+    fetch(FRONTEND_API + "gettutorsdataforupinvoice/".concat(userId), {
+      headers: {
+        'Authorization' : 'Bearer ' + token
+      } 
+    })
       .then((res) => res.json())
       .then((data) => {
         // do something with data
         console.log("==", data);
-        setUserToEdit(JSON.parse(data));
+        setUserToEdit(data);
       })
       .catch((rejected) => {
         console.log(rejected);
