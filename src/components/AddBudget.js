@@ -30,7 +30,7 @@ function AddBudget() {
       .then((data) => {
         // do something with data
         console.log(data);
-        setUsers(JSON.parse(data));
+        setUsers(data);
       })
       .catch((rejected) => {
         console.log(rejected);
@@ -108,7 +108,7 @@ function AddBudget() {
                               required>
                               <option>Select Client Name</option>
                               {users.map((user, index) => (
-                                <option value={user[1]}>{user[1]}</option>
+                                <option value={user}>{user}</option>
                               ))}
                             </select>
                           </div>
