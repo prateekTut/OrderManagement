@@ -17,8 +17,19 @@ function Student_invoice() {
   const [userToEdit, setUserToEdit] = useState([]);
   const [userToinvoice, setUserToinvoice] = useState([]);
   const componentRef = useRef();
-  const token = sessionStorage.getItem("token")
+  const token = localStorage.getItem("token")
 
+  // ======================= calculation of discount , tex , total ======================
+
+  var subtotalePrice = 0;
+  var totale1 = userToEdit.map((user) => (subtotalePrice += user.package_price));
+  var discountformula = subtotalePrice * (1 - 0.1);
+  var discount = subtotalePrice - discountformula;
+  var GSTtaxformula = subtotalePrice * (1 + 0.18);
+  var GSTtax = GSTtaxformula - subtotalePrice;
+  var totalprice = subtotalePrice - discount + GSTtax;
+
+  // ===========================end=========================================
   //  variable for get today date=====================
   var today = new Date(),
     date = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
@@ -31,17 +42,19 @@ function Student_invoice() {
   });
   // ===================end===============================
 
-  // ======================= calculation of discount , tex , total ======================
+  
+  // ===============================Edit invoice=====================
 
-  var subtotalePrice = 0;
-  var totale1 = userToEdit.map((user) => (subtotalePrice += user[2]));
-  var discountformula = subtotalePrice * (1 - 0.1);
-  var discount = subtotalePrice - discountformula;
-  var GSTtaxformula = subtotalePrice * (1 + 0.18);
-  var GSTtax = GSTtaxformula - subtotalePrice;
-  var totalprice = subtotalePrice - discount + GSTtax;
+  const editUser = (userId) => {
+    console.log("Task ID", userId);
+    navigate(`/Edit-vendor-invoice/${userId}`);
+  };
 
-  // ===========================end=========================================
+  // ===========================END============================
+  useEffect(() => {
+    fetchDataforinvoice(params.userId);
+    fetchDataforupdateinvoice(params.userId);
+  }, []);
 
   // =================== student data api ========================
   const fetchDataforinvoice = (userId) => {
@@ -55,7 +68,9 @@ function Student_invoice() {
       .then((data) => {
         // do something with data
         console.log("Tutors data", data);
-        setUserToinvoice(JSON.parse(data)[0]);
+        data.map((user) => {
+          setUserToinvoice(user);
+        })
         // navigate("/OTMform");
       })
       .catch((rejected) => {
@@ -87,19 +102,6 @@ function Student_invoice() {
 
   // =======================end====================================
 
-  // ===============================Edit invoice=====================
-
-  const editUser = (userId) => {
-    console.log("Task ID", userId);
-    navigate(`/Edit-vendor-invoice/${userId}`);
-  };
-
-  // ===========================END============================
-  useEffect(() => {
-    fetchDataforinvoice(params.userId);
-    fetchDataforupdateinvoice(params.userId);
-  }, []);
-
   return (
     <div>
       <div class='one'>
@@ -108,7 +110,7 @@ function Student_invoice() {
       <button type='button' id='invoicebutton' class='btn btn-success btn-m' onClick={handlePrint}>
         Print & Save as PDF
       </button>
-      <button type='button' id='invoicebutton' class='btn btn-success btn-m' onClick={() => editUser(userToinvoice[0])}>
+      <button type='button' id='invoicebutton' class='btn btn-success btn-m' onClick={() => editUser(userToinvoice.id)}>
         Edit Invoice
       </button>
       <div class='container' ref={componentRef}>
@@ -147,10 +149,10 @@ function Student_invoice() {
                 <h6 class='mb-3' id='Billed'>
                   Billed To
                 </h6>
-                {userToinvoice[1]}
+                {userToinvoice.name}
                 <div>UK,</div>
                 <div>United Kingdom (UK)</div>
-                <div>Email: {userToinvoice[3]}</div>
+                <div>Email: {userToinvoice.email}</div>
                 {/* <div>Phone: +48 123 456 789</div> */}
               </div>
             </div>
@@ -169,9 +171,9 @@ function Student_invoice() {
                 <tbody>
                   {userToEdit.map((user, index) => (
                     <tr key={index}>
-                      <td>{user[0]}</td>
+                      <td>{user.id}</td>
                       <td>{user[1]}</td>
-                      <td>{user[2]}</td>
+                      <td>{user.amount_paid}</td>
                       <td>1</td>
                     </tr>
                   ))}

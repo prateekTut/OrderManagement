@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useFetchers } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./css/Resister.css";
@@ -200,8 +200,9 @@ function Invoicedata() {
           })
             .then((response) => response.text())
             .then((result) => {
-              alert("Data is already exists in the database.");
+              //alert("Data is already exists in the database.");
               console.log(result);
+              fetchData();
               // navigate("/Updatetutors");
             })
             .catch((error) => alert("Data inserted", error));

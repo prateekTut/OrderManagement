@@ -17,7 +17,7 @@ function Vendorsinvoice() {
   const [userToEdit, setUserToEdit] = useState([]);
   const [userToinvoice, setUserToinvoice] = useState([]);
   const componentRef = useRef();
-
+  const token = localStorage.getItem("token")
   //  variable for get today date=====================
   var today = new Date(),
     date = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
@@ -33,7 +33,7 @@ function Vendorsinvoice() {
   // ======================= calculation of discount , tex , total ======================
 
   var subtotalePrice = 0;
-  var totale1 = userToEdit.map((user) => (subtotalePrice += user[2]));
+  var totale1 = userToEdit.map((user) => (subtotalePrice += user.price));
   var discountformula = subtotalePrice * (1 - 0.1);
   var discount = subtotalePrice - discountformula;
   var GSTtaxformula = subtotalePrice * (1 + 0.18);
@@ -45,12 +45,19 @@ function Vendorsinvoice() {
   // =================== vendor data api ========================
   const fetchDataforinvoice = (userId) => {
     console.log("vendor id", userId);
-    fetch(FRONTEND_API + "getclient/".concat(userId))
+    fetch(FRONTEND_API + "getclient/".concat(userId), {
+      headers: {
+        'Authorization' : 'Bearer ' + token
+      }
+    })
       .then((res) => res.json())
       .then((data) => {
         // do something with data
-        console.log("Tutors data", data);
-        setUserToinvoice(JSON.parse(data)[0]);
+        console.log("Tutors data main", data);
+        data.map((user) => {
+          setUserToinvoice(user);
+        })
+       
         // navigate("/OTMform");
       })
       .catch((rejected) => {
@@ -63,12 +70,16 @@ function Vendorsinvoice() {
 
   const fetchDataforupdateinvoice = (userId) => {
     console.log("vendor ID", userId);
-    fetch(FRONTEND_API + "getclientvendoreid/".concat(userId))
+    fetch(FRONTEND_API + "getclientvendoreid/".concat(userId), {
+      headers: {
+        'Authorization' : 'Bearer ' + token
+      }
+    })
       .then((res) => res.json())
       .then((data) => {
         // do something with data
         console.log("vendors data", data);
-        setUserToEdit(JSON.parse(data));
+        setUserToEdit(data);
         // navigate("/OTMform");
       })
       .catch((rejected) => {
@@ -138,10 +149,10 @@ function Vendorsinvoice() {
                 <h6 class='mb-3' id='Billed'>
                   Billed To
                 </h6>
-                {userToinvoice[1]}
+                {userToinvoice.name}
                 <div>UK,</div>
                 <div>United Kingdom (UK)</div>
-                <div>Email: {userToinvoice[3]}</div>
+                <div>Email: {userToinvoice.email}</div>
                 {/* <div>Phone: +48 123 456 789</div> */}
               </div>
             </div>
@@ -161,7 +172,7 @@ function Vendorsinvoice() {
                   {userToEdit.map((user, index) => (
                     <tr key={index}>
                       <td>{user[0]}</td>
-                      <td>{user[1]}</td>
+                      <td>{user.price}</td>
                       <td>{user[2]}</td>
                       <td>1</td>
                     </tr>

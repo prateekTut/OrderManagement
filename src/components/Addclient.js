@@ -20,17 +20,18 @@ function Addclient() {
   const [Student_login, setStudent_login] = useState("");
   const [Student_password, setStudent_password] = useState("");
   const [emailError, setEmailError] = useState("");
-  const token = sessionStorage.getItem("token")
+  const token = localStorage.getItem("token")
 
   // ====================   Email validetion function ==================
   const handleSubmit = (event) => {
     event.preventDefault();
     // Regex pattern for a 10-digit phone number
     // const phoneNumberPattern = /^\d{10}$/;
-    const regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const regex =  /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
 
     // Test the email against the pattern
-    if (Client_email.match(regex) && Client_contact.length >= 13) {
+    if (Client_email.match(regex) && !Client_contact.length < 10) {
       // The email is valid, do something with it
       setEmailError("");
       var formdata = new FormData();

@@ -64,13 +64,11 @@ function App() {
       <div className='main_content_header'>
         <div className='main_content_iner'>
           <Routes>
-          <Route path='/login' element={<NewLogin />} />
-          <Route path='/app_select' element={<AppSelection />}  />
-
+            <Route path='/login' element={<NewLogin />} />
+            <Route path='/app_select' element={<AppSelection />}  />
+  
             <Route path='/' element={<Layout />}>
               {/* Public Routes */}
-            
-              
               <Route path='/unauthorized' element={<Unauthorized />} />
               
               <Route element={<RequireAuth allowedRoles={["admin"]} />}>

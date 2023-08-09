@@ -15,15 +15,21 @@ function Budgetform() {
   const [userToEdit, setUserToEdit] = useState([]);
   const [updated, setUpdated] = useState(false);
   const [users, setUsers] = useState([]);
+  const token = localStorage.getItem("token")
 
   const fetchDataforupdate = (userId) => {
     console.log("OTM ID", userId);
-    fetch(FRONTEND_API + "getbudget/".concat(userId))
+    fetch(FRONTEND_API + "getbudget/".concat(userId), {
+      headers: {
+        'Authorization' : 'Bearer ' + token
+      }
+    })
       .then((res) => res.json())
       .then((data) => {
         // do something with data
         console.log("budget DATA", data);
-        setUserToEdit(JSON.parse(data)[0]);
+        setUserToEdit(data);
+        
         // navigate("/Budgetform");
       })
       .catch((rejected) => {
@@ -31,12 +37,16 @@ function Budgetform() {
       });
   };
   const fetchData = () => {
-    fetch(FRONTEND_API + "getclientnamedata")
+    fetch(FRONTEND_API + "getclientnamedata", {
+      headers: {
+        'Authorization' : 'Bearer ' + token
+      }
+    })
       .then((res) => res.json())
       .then((data) => {
         // do something with data
         console.log(data);
-        setUsers(JSON.parse(data));
+        setUsers(data);
       })
       .catch((rejected) => {
         console.log(rejected);
@@ -69,7 +79,7 @@ function Budgetform() {
                     </div>
                     <div class='modal-body'>
                       {updated ? <h1>Updated!</h1> : null}
-                      {userToEdit.length > 0 && (
+                      {userToEdit && (
                         <form
                           onSubmit={(e) => {
                             e.preventDefault();
@@ -85,15 +95,19 @@ function Budgetform() {
                             var requestOptions = {
                               method: "POST",
                               body: formdata,
+                              headers: {
+                                'Authorization' : 'Bearer ' + token
+                              }
                             };
 
-                            fetch(FRONTEND_API + "updatebudget/".concat(userToEdit[0]), requestOptions)
+                            fetch(FRONTEND_API + "updatebudget/".concat(userToEdit.id), requestOptions)
                               .then((response) => response.json())
                               .then((result) => {
-                                //   alert("Data Updated");
+                                
+                                //alert("Data Updated");
                                 console.log(typeof result, result);
                                 setUserToEdit([]); // clear
-                                console.log("result", JSON.parse(result));
+                                console.log("result", result);
                                 setUpdated(true);
                                 navigate("/UpdateClientdata");
                               })
@@ -114,7 +128,7 @@ function Budgetform() {
                               required>
                               <option>Select Client Name</option>
                               {users.map((user, index) => (
-                                <option value={user[1]}>{user[1]}</option>
+                                <option value={user}>{user}</option>
                               ))}
                             </select>
                           </div>
@@ -147,19 +161,6 @@ function Budgetform() {
                               required
                             />
                           </div>
-                          {/* <div class=''>
-                            <input
-                              type='number'
-                              value={userToEdit[4]}
-                              onInput={(e) => {
-                                let updatedData = cloneDeep(userToEdit);
-                                updatedData[4] = e.target.value;
-                                setUserToEdit(updatedData);
-                              }}
-                              class='form-control'
-                              placeholder='Pending Amount'
-                            />
-                          </div> */}
                           <div class=''>
                             <input
                               type='text'

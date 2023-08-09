@@ -123,6 +123,19 @@ function ClientStudentConsole() {
       <div class='one'>
          <h1>Student Clients </h1>
         </div>
+        <button className='Addbutton'>
+          <Link to='/Addclient'>
+            <button type='button' class='btn btn-success btn-sm'>
+              Add Student
+            </button>
+          </Link>
+          <Link to='/Budget'>
+            {" "}
+            <button type='button' class='btn btn-success btn-sm'>
+              Add Budget
+            </button>
+          </Link>
+        </button>
       <Box sx={{
           display:"flex",
           justifyContent:"center",

@@ -8,6 +8,11 @@
     margin-left: 170px;
 
 }
+.login_page{
+    
+    margin-left: -170px;
+
+}
 #icon {
     height: 20px;
     width: 20px;

@@ -12,17 +12,25 @@ function Viewbudget() {
   const navigate = useNavigate();
   let params = useParams();
   console.log(params, params.userId);
+  const token = localStorage.getItem("token")
   const [userToEdit, setUserToEdit] = useState([]);
 
   const componentRef = useRef();
   const fetchDataforupdate = (userId) => {
     console.log("Tutor ID", userId);
-    fetch(FRONTEND_API + "getbudgetdataforview/".concat(userId))
+    fetch(FRONTEND_API + "getbudgetdataforview/".concat(userId), {
+      headers: {
+        'Authorization' : 'Bearer ' + token
+      }
+    })
       .then((res) => res.json())
       .then((data) => {
         // do something with data
         console.log("Tutors data", data);
-        setUserToEdit(JSON.parse(data)[0]);
+        data.map((tutors) => {
+          setUserToEdit(tutors);
+        })
+       
         // navigate("/OTMform");
       })
       .catch((rejected) => {
@@ -33,6 +41,10 @@ function Viewbudget() {
     console.log("Del", userId);
     fetch(FRONTEND_API + "deletebudget/".concat(userId), {
       method: "delete",
+    }, {
+      headers: {
+        'Authorization' : 'Bearer ' + token
+      }
     })
       .then((res) => res.text())
       .then((data) => {
@@ -66,13 +78,13 @@ function Viewbudget() {
       <div id='budgetdata'>
         <div id='budgetbutton'>
           <td>
-            <button type='button' id='invoicebutton' class='btn btn-success btn-m' onClick={() => Invoice(userToEdit[1])}>
+            <button type='button' id='invoicebutton' class='btn btn-success btn-m' onClick={() => Invoice(userToEdit.client_id)}>
               Invoice
             </button>
-            <button id='Editbudgetbutton' type='button' class='btn btn-success btn-m' onClick={() => editUser(userToEdit[0])}>
+            <button id='Editbudgetbutton' type='button' class='btn btn-success btn-m' onClick={() => editUser(userToEdit.id)}>
               Edit
             </button>
-            <button type='button' class='btn btn-danger  btn-m' onClick={() => deleteUser(userToEdit[0])}>
+            <button type='button' class='btn btn-danger  btn-m' onClick={() => deleteUser(userToEdit.id)}>
               Delete
             </button>
           </td>
@@ -92,78 +104,41 @@ function Viewbudget() {
             <tr>
               <th scope='col'>Budget Id </th>
               <td>=</td>
-              <td>{userToEdit[0]}</td>
+              <td>{userToEdit.id}</td>
             </tr>
             <tr>
               <th scope='col'>Client_id</th>
               <td>=</td>
-              <td>{userToEdit[1]}</td>
+              <td>{userToEdit.client_id}</td>
             </tr>
             <tr>
               <th scope='col'>Package Price</th>
               <td>=</td>
-              <td>{userToEdit[2]}</td>
+              <td>{userToEdit.package_price}</td>
             </tr>{" "}
             <tr>
               <th scope='col'>Amount Paid</th>
               <td>=</td>
-              <td>{userToEdit[3]}</td>
+              <td>{userToEdit.amount_paid}</td>
             </tr>{" "}
             <tr>
               <th scope='col'>Pending Amount</th>
               <td>=</td>
-              <td>{userToEdit[4]}</td>
+              <td>{userToEdit.pending_amount}</td>
             </tr>{" "}
             <tr>
               <th scope='col'>Mode Of Payment</th>
               <td>=</td>
-              <td>{userToEdit[5]}</td>
+              <td>{userToEdit.mode_of_payment}</td>
             </tr>{" "}
             <tr>
               <th scope='col'>Status</th>
               <td>=</td>
-              <td>{userToEdit[6]}</td>
+              <td>{userToEdit.status}</td>
             </tr>{" "}
           </thead>
         </table>
       </div>
-
-      {/* <table class='table table table-hover'>
-        <thead>
-          <tr>
-            <th scope='col'>#</th>
-            <th scope='col'>Client_id</th>
-            <th scope='col'> Package_price</th>
-            <th scope='col'>Amount_Paid</th>
-            <th scope='col'>Pending_amount</th>
-            <th scope='col'>Mode_of_payment</th>
-            <th scope='col'>Status</th>
-            <th scope='col'>Edit</th>
-            <th scope='col'>Delete</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope='row'>{userToEdit[0]}</th>
-            <td>{userToEdit[1]}</td>
-            <td>{userToEdit[2]}</td>
-            <td>{userToEdit[3]}</td>
-            <td>{userToEdit[4]}</td>
-            <td>{userToEdit[5]}</td>
-            <td>{userToEdit[6]}</td>
-            <td>
-              <button type='button' class='btn btn-success btn-sm' onClick={() => editUser(userToEdit[0])}>
-                Edit
-              </button>
-            </td>
-            <td>
-              <button type='button' class='btn btn-danger  btn-sm' onClick={() => deleteUser(userToEdit[0])}>
-                Delete
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table> */}
     </div>
   );
 }
