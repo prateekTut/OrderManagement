@@ -57,7 +57,7 @@ function Editvendoreinvoice() {
               <td>{user.Order_id}</td>
               <td>{user.price}</td>
               <td>
-                <button type='button' class='btn btn-success btn-sm' onClick={() => editUser(user[0])}>
+                <button type='button' class='btn btn-success btn-sm' onClick={() => editUser(user.Order_id)}>
                   Edit
                 </button>
               </td>

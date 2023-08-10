@@ -91,7 +91,7 @@ function Dashbord() {
       .then((data) => {
         // do something with data
         // console.log(data.length);
-        setUsers(JSON.parse(data));
+        setUsers(data);
       })
       .catch((rejected) => {
         console.log(rejected);
@@ -108,7 +108,7 @@ function Dashbord() {
       .then((data) => {
         // do something with data
         // console.log(data.length);
-        setVendors(JSON.parse(data));
+        setVendors(data);
       })
       .catch((rejected) => {
         console.log(rejected);
@@ -124,7 +124,7 @@ function Dashbord() {
       .then((data) => {
         // do something with data
         // console.log(data.length);
-        setTutors(JSON.parse(data));
+        setTutors(data);
       })
       .catch((rejected) => {
         console.log(rejected);
@@ -140,7 +140,7 @@ function Dashbord() {
       .then((data) => {
         // do something with data
         // console.log(data.length);
-        setOtm(JSON.parse(data));
+        setOtm(data);
       })
       .catch((rejected) => {
         console.log(rejected);
@@ -156,7 +156,7 @@ function Dashbord() {
       .then((data) => {
         // do something with data
         // console.log(data.length);
-        setbudget(JSON.parse(data));
+        setbudget(data);
       })
       .catch((rejected) => {
         console.log(rejected);
@@ -172,7 +172,7 @@ function Dashbord() {
       .then((data) => {
         // do something with data
         // console.log(data.length);
-        setorder(JSON.parse(data));
+        setorder(data);
       })
       .catch((rejected) => {
         console.log(rejected);

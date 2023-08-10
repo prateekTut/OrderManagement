@@ -13,10 +13,15 @@ function Updateinvoiceform() {
   console.log(params, params.userId);
   const [users, setUsers] = useState([]);
   const [userToEdit, setUserToEdit] = useState([]);
+  const token = localStorage.getItem("token")
 
   const fetchDataforupdate = (userId) => {
     console.log("OTM ID", userId);
-    fetch(FRONTEND_API + "gettaskid/".concat(userId))
+    fetch(FRONTEND_API + "gettaskid/".concat(userId), {
+      headers: {
+          'Authorization' : 'Bearer ' + token
+      }
+      })
       .then((res) => res.json())
       .then((data) => {
         // do something with data
@@ -87,6 +92,11 @@ function Updateinvoiceform() {
                               var requestOptions = {
                                 method: "POST",
                                 body: formdata,
+                              
+                                headers: {
+                                    'Authorization' : 'Bearer ' + token
+                                
+                                }
                               };
 
                               fetch(FRONTEND_API + "updatevendorinvoicebudget/".concat(userToEdit[0]), requestOptions)
