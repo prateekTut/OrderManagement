@@ -57,6 +57,9 @@ function ExpertsConsole() {
       setOpen(false);
     };  
     
+    const addExpert = () => {
+      navigate('/registerExpert')
+    }
     const tutorsinvoice = (userId) => {
       console.log("Tutor ID", userId);
       navigate(`/tutors-invoice/${userId}`);
@@ -121,6 +124,12 @@ function ExpertsConsole() {
       <div class='one'>
          <h1>Our Experts</h1>
         </div>
+      {/*   <Button variant="contained" type='submit' color="success" 
+          onClick={() => addExpert()}
+          size="small" 
+          sx={{marginRight: 2}}>
+          Add Expert
+        </Button> */}
       <Box sx={{
           display:"flex",
           justifyContent:"center",
@@ -145,7 +154,7 @@ function ExpertsConsole() {
                           <StyledTableCell >Address</StyledTableCell>
                           <StyledTableCell >Invoice</StyledTableCell>
                           {/* <StyledTableCell >Update</StyledTableCell> */}
-                          <StyledTableCell >Delete</StyledTableCell>
+                         {/*  <StyledTableCell >Delete</StyledTableCell> */}
                       </StyledTableRow>
                   </TableHead>
                   
@@ -175,14 +184,14 @@ function ExpertsConsole() {
                             Update
                           </Button>
                         </StyledTableCell> */}
-                        <StyledTableCell>
+                        {/* <StyledTableCell>
                           <Button variant="contained" type='submit' color="error" 
                             onClick={() => deleteUser(user.id)}
                             size="small" 
                             sx={{marginRight: 2}}>
                             Delete
                           </Button>
-                        </StyledTableCell>
+                        </StyledTableCell> */}
                       </StyledTableRow>
                       )))}
                   </TableBody>

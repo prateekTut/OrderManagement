@@ -8,6 +8,7 @@ import { FRONTEND_API } from "./urls";
 function AddTaskNew() {
     const navigate = useNavigate();
     const token = localStorage.getItem("token")
+ 
     const location = useLocation();
     const from = location.state?.from?.pathname || "/Assingntask";
 
@@ -147,7 +148,7 @@ function AddTaskNew() {
                 console.log(result);
                 //navigate('/Assingntask');
             })
-            .catch((error) => alert("error", error));
+            .catch((error) => console.log(error));
     };
 
   return (

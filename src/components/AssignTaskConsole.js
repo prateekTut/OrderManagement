@@ -36,6 +36,8 @@ function AssignTaskConsole() {
 
     const token = localStorage.getItem("token")
     const roles = localStorage.getItem("roles")
+    const userId = localStorage.getItem("userId")
+
     const [Status, setStatus] = useState("");
     const [open, setOpen] = React.useState(false);
     const [openEdit, setOpenEdit] = React.useState(false);
@@ -172,6 +174,7 @@ function AssignTaskConsole() {
             /* handlestatusShow();
             console.log("budget DATA", data);
             setforstatususers(data); */
+      
             setOrders(data);
             setOpen(false);
             // navigate("/Budgetform");
@@ -238,7 +241,22 @@ function AssignTaskConsole() {
           .then((rawData) => {
             console.log(rawData);
             console.log(currentStatus);
-            setOrders(rawData);
+            if(roles == "admin"){
+                console.log("admin")
+                setOrders(rawData);
+            }else if(roles == "expert"){
+                console.log("expert", userId)
+                /* rawData.map((order) => {
+                    if(userId == order.expert_id){
+                        setOrders(order);
+                    }
+                }) */
+                const filteredOrders = rawData.filter(order => order.expert_id == userId);
+                console.log(filteredOrders);
+                setOrders(filteredOrders);
+            }else{
+                setOrders(rawData);
+            }
             console.log("orders set");
           })
           .catch((rejected) => {
@@ -370,7 +388,12 @@ function AssignTaskConsole() {
                         <Button variant="contained" href="/addtask">Add Task</Button>
                     </Grid>
                     <Grid item xs={6}>
-                        <FormControl sx={{width: 250}} >
+                        
+                    </Grid>
+                    
+                </Grid>
+                
+                <FormControl sx={{width: 250, marginTop:2}} >
                         <InputLabel id="demo-simple-select-label">Subject</InputLabel>
                         <Select
                             labelId="demo-simple-select-label"
@@ -385,13 +408,30 @@ function AssignTaskConsole() {
                             
                         ))}
                         </Select>
-                        </FormControl>
-                    </Grid>
-                    
-                </Grid>
+                </FormControl>
     
                 </Box>
             )
+            }
+            { roles != "admin" && roles != "lead" && roles != "otm" && (
+                <FormControl sx={{width: 250, marginTop: 10}} >
+                        <InputLabel id="demo-simple-select-label">Subject</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={subjectValue}
+                            label="subjects"
+                            onChange={handleChange}
+                        >
+                        {subjects.map((data) => ( 
+                            
+                            <MenuItem value={data}>{data}</MenuItem>
+                            
+                        ))}
+                        </Select>
+                </FormControl>
+            )
+
             }
             {orders && orders.Error ? (
                 <Box sx={{
@@ -402,13 +442,17 @@ function AssignTaskConsole() {
                 </Box>
             ) : (
                 
+                <div>
+               
                 
                 <Box sx={{
                         display:"flex",
                         justifyContent:"center",
                         alignItems:"center",
-                        marginBottom: 5
+                        marginBottom: 5,
+                        marginTop: 2
                         }}>
+                        
                     <TableContainer component={Paper} sx={{
                        
                        
@@ -484,10 +528,10 @@ function AssignTaskConsole() {
                                                 sx={{marginRight: 2, marginTop: 2}}>
                                                 Edit
                                             </Button>    
-                                            <Button variant='contained' size='small' color='error'  
+                                            {/* <Button variant='contained' size='small' color='error'  
                                                 onClick={() => deleteUser(orderData.id)}  sx={{marginTop: 2}}
                                                 >Delete
-                                            </Button>
+                                            </Button> */}
                                         </Box>
                                     )}
                                     </StyledTableCell>
@@ -497,6 +541,7 @@ function AssignTaskConsole() {
                         </Table>
                     </TableContainer>
                 </Box>
+                </div>
             )} 
             {orders == null && (
                 <Box sx={{

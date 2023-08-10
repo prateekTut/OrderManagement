@@ -142,7 +142,7 @@ function ClientVendorConsole() {
                           {/* <StyledTableCell >Budget</StyledTableCell> */}
                           <StyledTableCell >Invoice</StyledTableCell>
                           {/* <StyledTableCell >Update</StyledTableCell> */}
-                          <StyledTableCell >Delete</StyledTableCell>
+                          {/* <StyledTableCell >Delete</StyledTableCell> */}
                       </StyledTableRow>
                   </TableHead>
                   
@@ -179,14 +179,14 @@ function ClientVendorConsole() {
                             Update
                           </Button>
                         </StyledTableCell> */}
-                        <StyledTableCell>
+                        {/* <StyledTableCell>
                           <Button variant="contained" type='submit' color="error" 
                             onClick={() => deleteUser(user.id)}
                             size="small" 
                             sx={{marginRight: 2}}>
                             Delete
                           </Button>
-                        </StyledTableCell>
+                        </StyledTableCell> */}
                       </StyledTableRow>
                       )))}
                   </TableBody>

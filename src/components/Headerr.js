@@ -19,6 +19,7 @@ function Headerr() {
     // axios to /logout endpoint
     localStorage.removeItem("token")
     localStorage.removeItem("roles")
+    localStorage.removeItem("userId")
     fetch(FRONTEND_API + 'logout')
     .then(() => {
       window.location.href = '/'; // Redirect to home page after logout

@@ -50,6 +50,8 @@ import OtmUsersConsole from "./components/OtmUsersConole";
 import ExpertsConsole from "./components/ExpertsConsole";
 import ClientStudentConsole from "./components/ClientStudentConsole";
 import ClientVendorConsole from "./components/ClientVendorConsole";
+import AddExpert from "./components/AddExpert";
+
 
 
 function App() {
@@ -73,7 +75,8 @@ function App() {
               
               <Route element={<RequireAuth allowedRoles={["admin"]} />}>
                 <Route path='/register' element={<Register />} />
-          
+                <Route path='/registerExpert' element={<AddExpert />} />
+
                 <Route path='/tutors' element={<AddTutors />} />
                 <Route path='/otm' element={<Addotm />} />
                 <Route path='/updateotm' element={<OtmUsersConsole />} />

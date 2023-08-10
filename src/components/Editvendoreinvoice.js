@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { cloneDeep } from "lodash";
 import { useNavigate } from "react-router-dom";
 import { FRONTEND_API } from "./urls";
+const token = localStorage.getItem("token")
 
 function Editvendoreinvoice() {
   const navigate = useNavigate();
@@ -12,12 +13,16 @@ function Editvendoreinvoice() {
   const [userToEdit, setUserToEdit] = useState([]);
   const fetchDataforupdate = (userId) => {
     console.log("OTM ID", userId);
-    fetch(FRONTEND_API + "getvendordataforupinvoice/".concat(userId))
+    fetch(FRONTEND_API + "getvendordataforupinvoice/".concat(userId), {
+      headers: {
+        'Authorization' : 'Bearer ' + token
+      }
+    })
       .then((res) => res.json())
       .then((data) => {
         // do something with data
         console.log("==", data);
-        setUserToEdit(JSON.parse(data));
+        setUserToEdit(data);
       })
       .catch((rejected) => {
         console.log(rejected);
@@ -49,8 +54,8 @@ function Editvendoreinvoice() {
           {userToEdit.map((user, index) => (
             <tr key={index}>
               {/* <td>{user[0]}</td> */}
-              <td>{user[1]}</td>
-              <td>{user[2]}</td>
+              <td>{user.Order_id}</td>
+              <td>{user.price}</td>
               <td>
                 <button type='button' class='btn btn-success btn-sm' onClick={() => editUser(user[0])}>
                   Edit

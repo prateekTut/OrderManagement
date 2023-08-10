@@ -74,6 +74,8 @@ export default function NewLogin() {
           var roles = result.type;
           localStorage.setItem("roles", roles)
           var user_role = roles.split(" ")
+          localStorage.setItem("userId", result.userId);
+          console.log(result);
           console.log(user_role + "in login");
           setAuth({roles});
           navigate(from, { replace: true });
