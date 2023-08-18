@@ -20,6 +20,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useNavigate } from "react-router-dom";
 import { FRONTEND_API } from "./urls";
+import { Flex } from 'reflexbox';
 
 function ExpertsConsole() {
     const [expertUsers, setExpertUsers] = useState([]);
@@ -27,6 +28,8 @@ function ExpertsConsole() {
     const [open, setOpen] = React.useState(false);
     const [expertUsersId, setExpertUsersId] = useState([]);
     const navigate = useNavigate();
+    const [searchQuery, setSearchQuery] = useState('');
+
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
@@ -118,18 +121,34 @@ function ExpertsConsole() {
       const handleUpdate = () =>{
         
       }
+      const handleSearchChange = (event) => {
+        setSearchQuery(event.target.value);
+      };
+  
+      const filteredExperts = expertUsers.filter((client) =>
+        client.Expert_firstname.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        client.Expert_lastname.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        client.Expert_email.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+
+
 
     return (
       <div>
       <div class='one'>
          <h1>Our Experts</h1>
         </div>
-      {/*   <Button variant="contained" type='submit' color="success" 
-          onClick={() => addExpert()}
-          size="small" 
-          sx={{marginRight: 2}}>
-          Add Expert
-        </Button> */}
+      
+        <Flex justifyContent="flex-end" sx={{ marginBottom: 2, marginRight: 3, marginBottom: 2 }}>
+          <TextField
+            label="Search"
+            variant="outlined"
+            size="small"
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+        </Flex>
+
       <Box sx={{
           display:"flex",
           justifyContent:"center",
@@ -139,7 +158,7 @@ function ExpertsConsole() {
           
 
           <TableContainer component={Paper} sx={{
-              marginTop: 6,
+        
               marginBottom: 6,
               marginRight: 2
               }}
@@ -159,8 +178,8 @@ function ExpertsConsole() {
                   </TableHead>
                   
                   <TableBody>
-                  {expertUsers !== null && (
-                    expertUsers.map((user) => (
+                  { (
+                    filteredExperts.map((user) => (
 
                       <StyledTableRow key={user.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                         <StyledTableCell component="th" scope="row">{user.Expert_firstname + " " + user.Expert_lastname}</StyledTableCell>

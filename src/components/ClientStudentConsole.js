@@ -1,5 +1,5 @@
 import React from 'react'
-import { FormControl, MenuItem, InputLabel, BottomNavigation, BottomNavigationAction, TextField, Grid } from '@mui/material';
+import { FormControl, MenuItem, InputLabel, BottomNavigation, BottomNavigationAction, TextField, Grid, Autocomplete, TablePagination } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useState, useEffect } from "react";
 import Box from '@mui/material/Box';
@@ -20,13 +20,15 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Viewbudget from './Viewbudget';
 import { FRONTEND_API } from "./urls";
+import { Flex } from 'reflexbox';
 
 function ClientStudentConsole() {
     const [client, setClient] = useState([]);
     const token = localStorage.getItem("token")
-    const [open, setOpen] = React.useState(false);
-    const [clientId, setClientId] = useState([]);
     const navigate = useNavigate();
+
+    const [searchQuery, setSearchQuery] = useState('');
+
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
           backgroundColor: theme.palette.common.black,
@@ -47,19 +49,11 @@ function ClientStudentConsole() {
     },
     }));
 
-    const handleUserUpdate = (id) => {
-      setOpen(true);
-      setClientId(id);
-    };
-    
-    const handleCloseUpdate = () => {
-      setOpen(false);
-    };  
-
     const viewBudgetData = (userId) => {
       console.log("student ID", userId);
       navigate(`/viewbudget/${userId}`);
     };
+    
     const viewInvoiceData = (userId) => {
       console.log("student ID", userId);
       navigate(`/student-invoice/${userId}`);
@@ -93,57 +87,56 @@ function ClientStudentConsole() {
       fetchData();
     }, [setClient]);
 
+    const handleSearchChange = (event) => {
+      setSearchQuery(event.target.value);
+    };
 
-      const deleteUser = (userId) => {
-        console.log("Del", userId);
-        fetch(FRONTEND_API + "deleteotm/".concat(userId), {
-          method: "delete",
-          headers: {
-            'Authorization' : 'Bearer ' + token
-          }
-        })
-          .then((res) => res.text())
-          .then((data) => {
-            console.log(data);
-          })
-          .catch((rejected) => {
-            console.log(rejected);
-          })
-          .finally(() => {
-            fetchClientsData();
-          });
-      };
-
-      const handleUpdate = () =>{
-        
-      }
+    const filteredClients = client.filter((client) =>
+      client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      client.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      client.university.toLowerCase().includes(searchQuery.toLowerCase())
+      // ... add more fields to search
+    );
 
     return (
       <div>
       <div class='one'>
          <h1>Student Clients </h1>
         </div>
-        <button className='Addbutton'>
-          <Link to='/Addclient'>
-            <button type='button' class='btn btn-success btn-sm'>
+        <Flex justifyContent="flex-start">
+          <Link to='/addStudent'>
+            <Button variant="contained" type='submit' color="success"          
+              size="small" >
               Add Student
-            </button>
+            </Button>
           </Link>
           <Link to='/Budget'>
-            {" "}
-            <button type='button' class='btn btn-success btn-sm'>
+            <Button variant="contained" type='submit' color="success"          
+              size="small" 
+              sx={{marginLeft: 2}}>
               Add Budget
-            </button>
+            </Button>
           </Link>
-        </button>
+        </Flex>
+        <Flex justifyContent="flex-end" sx={{ marginBottom: 2, marginRight: 3, marginBottom: 2 }}>
+          <TextField
+            label="Search"
+            variant="outlined"
+            size="small"
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+        </Flex>
+
       <Box sx={{
           display:"flex",
           justifyContent:"center",
           alignItems:"center",
           
           }}>
+          
+         
           <TableContainer component={Paper} sx={{
-              marginTop: 6,
               marginBottom: 6,
               marginRight: 2
               }}
@@ -163,8 +156,8 @@ function ClientStudentConsole() {
                   </TableHead>
                   
                   <TableBody>
-                  {client !== null && (
-                    client.map((user) => (
+                  {(
+                    filteredClients.map((user) => (
 
                       <StyledTableRow key={user.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                         <StyledTableCell component="th" scope="row">{user.name}</StyledTableCell>
@@ -174,6 +167,7 @@ function ClientStudentConsole() {
                         <StyledTableCell>
                             <Button variant="contained" type='submit' color="success" 
                                 onClick={() => viewBudgetData(user.id)}
+                                disabled={!user.budget}
                                 size="small" 
                                 sx={{marginRight: 2}}>
                                 Budget
@@ -181,36 +175,34 @@ function ClientStudentConsole() {
                         </StyledTableCell>
                         <StyledTableCell>
                           <Button variant="contained" type='submit' color="success" 
+                            disabled={!user.invoice}
                             onClick={() => viewInvoiceData(user.id)}
                             size="small" 
                             sx={{marginRight: 2}}>
                             Invoice
                           </Button>
                         </StyledTableCell>
-                       {/*  <StyledTableCell>
-                          <Button variant="contained" type='submit' color="success" 
-                            onClick={() => handleUserUpdate(user.id)}
-                            size="small" 
-                            sx={{marginRight: 2}}>
-                            Update
-                          </Button>
-                        </StyledTableCell> */}
-                       {/*  <StyledTableCell>
-                          <Button variant="contained" type='submit' color="error" 
-                            onClick={() => deleteUser(user.id)}
-                            size="small" 
-                            sx={{marginRight: 2}}>
-                            Delete
-                          </Button>
-                        </StyledTableCell> */}
                       </StyledTableRow>
                       )))}
                   </TableBody>
               </Table>
+
+              {/* <TablePagination
+                rowsPerPageOptions={[10, 25, 50]}
+                component="div"
+                count={filteredRows.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={(event, newPage) => setPage(newPage)}
+                onRowsPerPageChange={(event) => {
+                  setRowsPerPage(parseInt(event.target.value, 10));
+                  setPage(0);
+                }}
+              /> */}
           </TableContainer>
       </Box>
 
-        <div>
+       {/*  <div>
           <Dialog
             open={open}
             onClose={handleCloseUpdate}
@@ -237,7 +229,7 @@ function ClientStudentConsole() {
                   </Button>
                 </DialogActions>
             </Dialog>
-          </div>
+          </div> */}
         </div>
     )
 }

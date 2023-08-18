@@ -19,6 +19,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { FRONTEND_API } from "./urls";
+import { Flex } from 'reflexbox';
 
 function ClientVendorConsole() {
     const [client, setClient] = useState([]);
@@ -26,6 +27,7 @@ function ClientVendorConsole() {
     const [open, setOpen] = React.useState(false);
     const [clientId, setClientId] = useState([]);
     const navigate = useNavigate();
+    const [searchQuery, setSearchQuery] = useState('');
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
@@ -85,27 +87,16 @@ function ClientVendorConsole() {
       fetchData();
     }, [setClient]);
 
+    const handleSearchChange = (event) => {
+      setSearchQuery(event.target.value);
+    };
 
-
-      const deleteUser = (userId) => {
-        console.log("Del", userId);
-        fetch(FRONTEND_API + "deleteotm/".concat(userId), {
-          method: "delete",
-          headers: {
-            'Authorization' : 'Bearer ' + token
-          }
-        })
-          .then((res) => res.text())
-          .then((data) => {
-            console.log(data);
-          })
-          .catch((rejected) => {
-            console.log(rejected);
-          })
-          .finally(() => {
-            fetchVendorData();
-          });
-      };
+    const filteredClients = client.filter((client) =>
+      client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      client.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      client.business_name.toLowerCase().includes(searchQuery.toLowerCase())
+      // ... add more fields to search
+    );
 
       const handleUpdate = () =>{
         
@@ -119,7 +110,22 @@ function ClientVendorConsole() {
       <div>
       <div class='one'>
          <h1>Vendor Clients </h1>
-        </div>
+      </div>
+      <Link to='/addVendor'>
+        <button type='button' class='btn btn-success btn-sm'>
+          Add Vendor
+        </button>
+      </Link>
+      <Flex justifyContent="flex-end" sx={{ marginBottom: 2, marginRight: 3, marginBottom: 2 }}>
+          <TextField
+            label="Search"
+            variant="outlined"
+            size="small"
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+      </Flex>
+
       <Box sx={{
           display:"flex",
           justifyContent:"center",
@@ -127,7 +133,6 @@ function ClientVendorConsole() {
      
           }}>
           <TableContainer component={Paper} sx={{
-              marginTop: 6,
               marginBottom: 6,
               marginRight: 2
               }}
@@ -147,8 +152,8 @@ function ClientVendorConsole() {
                   </TableHead>
                   
                   <TableBody>
-                  {client !== null && (
-                    client.map((user) => (
+                  { (
+                    filteredClients.map((user) => (
 
                       <StyledTableRow key={user.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                         <StyledTableCell component="th" scope="row">{user.name}</StyledTableCell>

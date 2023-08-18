@@ -51,6 +51,8 @@ import ExpertsConsole from "./components/ExpertsConsole";
 import ClientStudentConsole from "./components/ClientStudentConsole";
 import ClientVendorConsole from "./components/ClientVendorConsole";
 import AddExpert from "./components/AddExpert";
+import AddStudent from "./components/AddStudent";
+import AddVendor from "./components/AddVendor";
 
 
 
@@ -86,7 +88,8 @@ function App() {
                 <Route path='/1' element={<DataTableTuytors />} />
                 <Route path='/new' element={<OTMdata />} />
                 <Route path='/Assingntask/:userId' element={<Taskform />} />
-                <Route path='/Addclient' element={<Addclient />} />
+                <Route path='/addStudent' element={<AddStudent />} />
+                <Route path='/addVendor' element={<AddVendor />} />
                 <Route path='/UpdateClientdata' element={<ClientStudentConsole />} />
                 <Route path='/UpdateClientdata/:userId' element={<Clientform />} />
                 <Route path='/Updatevonder' element={<ClientVendorConsole />} />

@@ -148,6 +148,7 @@ export default function Register() {
                 autoComplete="email"
                 autoFocus
               />
+            
               <TextField
                 margin="normal"
                 required
@@ -168,7 +169,7 @@ export default function Register() {
                 id="contact"
                 
               />
-                <FormControl fullWidth>
+                <FormControl fullWidth sx={{marginTop:2}}>
                 <InputLabel id="demo-simple-select-label">User</InputLabel>
                 <Select
                     labelId="demo-simple-select-label"
@@ -177,9 +178,7 @@ export default function Register() {
                     label="user"
                     
                     onChange={handleChange}
-                    sx={{
-                        marginTop: 2
-                    }}
+
                 >
                     <MenuItem value='admin'>Admin</MenuItem>
                     <MenuItem value='otm'>Otm</MenuItem>
@@ -196,7 +195,7 @@ export default function Register() {
                 Register
               </Button>
               {alert && status=="400" ? <Alert severity='error'>{alertContent}</Alert> : <></> }
-              {alert && status=="200" ? <Alert severity='info'>{alertContent}</Alert> : <></> }
+              {alert && status=="200" ? <Alert severity='success'>{alertContent}</Alert> : <></> }
               {/* <Grid container>
                 <Grid item xs>
                   <Link href="#" className='LinkColor'>

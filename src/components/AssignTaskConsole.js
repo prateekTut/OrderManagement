@@ -21,6 +21,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { withStyles } from "@material-ui/core/styles";
 import MuiBottomNavigationAction from "@mui/material/BottomNavigationAction";
 import { FRONTEND_API } from "./urls";
+import { event } from 'jquery';
+import { DialogContentText, Alert} from '@mui/material';
 
 function AssignTaskConsole() {
 
@@ -37,18 +39,52 @@ function AssignTaskConsole() {
     const token = localStorage.getItem("token")
     const roles = localStorage.getItem("roles")
     const userId = localStorage.getItem("userId")
+    
+    const today = new Date().toISOString().split('T')[0];
 
     const [Status, setStatus] = useState("");
     const [open, setOpen] = React.useState(false);
     const [openEdit, setOpenEdit] = React.useState(false);
     
+    const [orderStatusValid, setOrderStatusValid] = useState(null);
+    const [expertValid, setExpertValid] = useState(null);
+    const [otmValid, setOtmValid] = useState(null);
+    const [expertStartDateValid, setExpertStartDateValid] = useState(null);
+    const [expertEndDateValid, setExpertEndDateValid] = useState(null);
+
+    const [dialogOpen, setDialogOpen] = useState(false);
+
+    const validateStatus = (value) => value != '';
+    const validateExpert = (value) => value != '';
+    const validateOtm = (value) => value != '';
+    const validateExpertStartDate = (value) => value != '';
+    const validateExpertEndDate = (value) => value != '';
 
     const [expert, setexpert] = useState([]);
     const [Expert_startDate, setExpert_startDate] = useState("");
     const [Expert_endDate, setExpert_endDate] = useState("");
     const [Qc_Expert_name, setQc_Expert_name] = useState("");
     const [otmMember, setOtmMember] = useState([]);
+
     const [otmUser, setOtmUser] = React.useState('');
+
+    const resetFormFields = () => {
+        setStatus("");
+        setExpert_startDate("");
+        setExpert_endDate("");
+        setQc_Expert_name("");
+        setOtmUser("");
+        // Reset other form fields if needed
+    };
+
+    const resetValidationFields = () => {
+        setOrderStatusValid(null);
+        setExpertValid(null);
+        setOtmValid(null);
+        setExpertEndDateValid(null);
+        setExpertStartDateValid(null);
+    };
+
 
     const BottomNavigationAction = styled(MuiBottomNavigationAction)(`
         color: #007A78;
@@ -83,31 +119,7 @@ function AssignTaskConsole() {
     },
     }));
 
-    const handleChangeQc = (event) => {
-        setQc_Expert_name(event.target.value);
-        console.log(event.target.value);
-        
-    };
-    
-    const handleChangeOtm = (event) => {
-        setOtmUser(event.target.value);
-    };
-
     const fetchDataForEdit = () =>{
-        /* fetch(FRONTEND_API + "getexpert", {
-            headers: {
-              'Authorization' : 'Bearer ' + token
-            }
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              // do something with data
-              console.log(data);   
-              setexpert(data);
-            })
-            .catch((rejected) => {
-              console.log(rejected);
-            }); */
        
         fetch(FRONTEND_API + "getotm1", {
             headers: {
@@ -125,10 +137,38 @@ function AssignTaskConsole() {
             });
     };
 
-    const handleChangeStatus = (event) => {
-        setStatus(event.target.value); 
+    const handleChangeQc = (event) => {
+        const value = event.target.value
+        setQc_Expert_name(value);
+        setExpertValid(validateExpert(value))
         console.log(event.target.value);
         
+    };
+    
+    const handleChangeOtm = (event) => {
+        const value = event.target.value
+        setOtmUser(value);
+        setOtmValid(validateOtm(value));
+    };
+
+    const handleChangeStatus = (event) => {
+        const value = event.target.value
+        setStatus(value); 
+        setOrderStatusValid(validateStatus(value))
+        console.log(event.target.value);
+        
+    };
+
+    const handleExpertStartDateChange = (event) =>{
+        const value = event.target.value
+        setExpert_startDate(value); 
+        setExpertStartDateValid(validateExpertStartDate(value))
+    };
+
+    const handleExpertEndDateChange = (event) =>{
+        const value = event.target.value
+        setExpert_endDate(value); 
+        setExpertEndDateValid(validateExpertEndDate(value))
     };
 
     const handleModalUpdate = (id, prevStat) => {
@@ -146,43 +186,75 @@ function AssignTaskConsole() {
     
     const handleCloseEdit = () => {
         setOpenEdit(false);
+        //resetFormFields();
     };
 
     const handleClose = () => {
         setOpen(false);
+        //resetFormFields();
     };
     
-    const handleUpdate = () =>{
+    const handleUpdate = () => {
+        console.log(orderStatusValid, expertValid);
+        if(Status == "pass"){
+            if(orderStatusValid)
+            {
+                updateStatusData();
+              
+            }else{
+                setDialogOpen(true);
+            }
+        }else if(Status == "assigned"){
+            if(orderStatusValid && expertValid && expertStartDateValid && expertEndDateValid){
+                updateStatusData();
+            }else{
+                setDialogOpen(true);
+            }
+        }else if (Status == "qc" || Status == "fail" || Status == "rework"){
+            if(orderStatusValid && expertValid){
+                updateStatusData();
+            }else{
+                setDialogOpen(true);
+            }
+        }
+       
+    }
+
+    const updateStatusData = () => {
+
         var formdata = new FormData();
-        console.log("Status in handle update", Status);
-        console.log("ID in handle update", ordersId);
         formdata.append("status", Status)
         formdata.append("expert_id", Qc_Expert_name)
-        console.log("id ep", Qc_Expert_name);
+        formdata.append("expert_start_date", Expert_startDate)
+        formdata.append("expert_end_date", Expert_endDate)
+
         var requestOptions = {
             method: "POST",
             body: formdata,
             headers: {
                 'Authorization' : 'Bearer ' + token
             }
-          };
+        };
         fetch(FRONTEND_API + "updateStatusWithId/".concat(ordersId), requestOptions)
         .then((res) => res.json())
         .then((data) => {
             // do something with data
             console.log("budget DATA", data);
-            /* handlestatusShow();
-            console.log("budget DATA", data);
-            setforstatususers(data); */
-      
+           
+            resetFormFields();
+            resetValidationFields();
             setOrders(data);
             setOpen(false);
-            // navigate("/Budgetform");
+           
         })
         .catch((rejected) => {
             console.log(rejected);
         });
     }
+
+    const handleCloseDialog = () => {
+        setDialogOpen(false);
+    };
 
     const handleOrderUpdate = () => {
 
@@ -463,8 +535,8 @@ function AssignTaskConsole() {
                             <TableHead>
                                 <StyledTableRow>
                                     <StyledTableCell>Order ID</StyledTableCell>
-                                    <StyledTableCell>Client ID</StyledTableCell>
-                                    <StyledTableCell >Expert ID</StyledTableCell>
+                                    <StyledTableCell>Client</StyledTableCell>
+                                    <StyledTableCell >Expert</StyledTableCell>
                                     <StyledTableCell >Start Date</StyledTableCell>
                                     <StyledTableCell >End Date</StyledTableCell>
                                     <StyledTableCell >Expert Start Date</StyledTableCell>
@@ -641,6 +713,9 @@ function AssignTaskConsole() {
                     id="demo-simple-select"
                     value={Status}
                     label="Status"
+                    variant='outlined'
+                    error={orderStatusValid == false}
+                    helperText={orderStatusValid == false && 'Select Status'}
                     onChange={handleChangeStatus}>
                         <MenuItem value={'qc'}>QC</MenuItem>
                         <MenuItem value={'pass'}>Pass</MenuItem>
@@ -658,6 +733,9 @@ function AssignTaskConsole() {
                             id="demo-simple-select"
                             value={Qc_Expert_name}
                             label="Experts"
+                            variant='outlined'
+                            error={expertValid == false}
+                            helperText={expertValid == false && 'Select Expert'}
                             onChange={handleChangeQc}
                             
                         >
@@ -693,6 +771,9 @@ function AssignTaskConsole() {
                             id="demo-simple-select"
                             value={Status}
                             label="Status"
+                            variant='outlined'
+                            error={orderStatusValid == false}
+                            helperText={orderStatusValid == false && 'Select Status'}
                             onChange={handleChangeStatus} >
                             
                             <MenuItem value={'assigned'}>Assigned</MenuItem>
@@ -709,6 +790,9 @@ function AssignTaskConsole() {
                                     id="demo-simple-select"
                                     value={Qc_Expert_name}
                                     label="Experts"
+                                    variant='outlined'
+                                    error={expertValid == false}
+                                    helperText={expertValid == false && 'Select Expert'}
                                     onChange={handleChangeQc}
                                     
                                 >
@@ -720,6 +804,38 @@ function AssignTaskConsole() {
                                 </Select>
                         </FormControl>
                     </Grid>
+
+                    <Grid item xs={6}>
+                    <FormControl fullWidth sx={{ marginTop: 3}}>
+                        <TextField id="outlined-basic" type='date'   
+                            value={Expert_startDate}
+                            variant='outlined'
+                            error={expertStartDateValid == false}
+                            helperText={expertStartDateValid == false && 'Select Start Date'}
+                            onChange={handleExpertStartDateChange}
+                            inputProps={{ min: today }}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            label="Expert Start Date"
+                            />
+                    </FormControl>
+                    </Grid>
+                    <Grid item xs={6}>
+                    <FormControl fullWidth sx={{ marginTop: 3}}>
+                        <TextField id="outlined-basic"  type='date' 
+                            value={Expert_endDate}
+                            error={expertEndDateValid == false}
+                            helperText={expertEndDateValid == false && 'Select End Date'}
+                            onChange={handleExpertEndDateChange}
+                            inputProps={{ min: today }}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            label="Expert End Date"
+                            variant="outlined" />
+                    </FormControl>
+                </Grid>
                 
                 </Box>
             )}
@@ -734,7 +850,20 @@ function AssignTaskConsole() {
             </DialogActions>
         </Dialog>
 
-       
+       {/* validation Dialog */}
+        <Dialog open={dialogOpen} onClose={handleCloseDialog}>
+            <DialogTitle>Form Validation Failed</DialogTitle>
+            <DialogContent>
+            <DialogContentText>Please fill in all required fields correctly.</DialogContentText>
+            </DialogContent>
+            <DialogActions>
+            <Button onClick={handleCloseDialog} color="primary">
+                OK
+            </Button>
+            </DialogActions>
+        </Dialog>
+
+
         <Dialog
         open={openEdit}
         onClose={handleClose}
@@ -756,6 +885,7 @@ function AssignTaskConsole() {
                                 console.log(e.target.value);
                                 setExpert_startDate(e.target.value);
                             }}
+                            inputProps={{ min: today }}
                             InputLabelProps={{
                                 shrink: true,
                             }}
@@ -771,6 +901,7 @@ function AssignTaskConsole() {
                                 console.log(e.target.value);
                                 setExpert_endDate(e.target.value);
                             }} 
+                            inputProps={{ min: today }}
                             InputLabelProps={{
                                 shrink: true,
                             }}
@@ -791,6 +922,9 @@ function AssignTaskConsole() {
                             id="demo-simple-select"
                             value={Qc_Expert_name}
                             label="Experts"
+                            variant='outlined'
+                            error={expertValid == false}
+                            helperText={expertValid == false && 'Select Expert'}
                             onChange={handleChangeQc}
                         >
                         {expert.map((data) => ( 
@@ -813,6 +947,9 @@ function AssignTaskConsole() {
                             value={otmUser}
                             label="Otm Member"
                             onChange={handleChangeOtm}
+                            variant='outlined'
+                            error={otmValid == false}
+                            helperText={otmValid == false && 'Select Otm'}
                         >
                         {otmMember.map((data) => ( 
                             

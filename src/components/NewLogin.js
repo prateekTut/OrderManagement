@@ -45,8 +45,30 @@ export default function NewLogin() {
     const [status, setStatus] = useState('');
     const [alertContent, setAlertContent] = useState('');
 
+
     const from = location.state?.from?.pathname || "/app_select";
 
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const validateEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    const validatePassword = (value) => value.length >= 6;
+
+    const [emailValid, setEmailValid] = useState(true);
+    const [passwordValid, setPasswordValid] = useState(true);
+    
+    const handleEmailChange = (event) => {
+      const newEmail = event.target.value;
+      setEmail(newEmail);
+      setEmailValid(validateEmail(newEmail));
+    };
+  
+    const handlePasswordChange = (event) => {
+      const newPassword = event.target.value;
+      setPassword(newPassword);
+      setPasswordValid(validatePassword(newPassword));
+    };
+  
     const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -134,7 +156,11 @@ export default function NewLogin() {
                 name="email"
                 autoComplete="email"
                 autoFocus
+                value={email}
+                onChange={handleEmailChange}
+                sx={{ color: emailValid ? 'initial' : 'red' }}
               />
+              {!emailValid && <p>Invalid email format</p>}
               <TextField
                 margin="normal"
                 required
@@ -144,7 +170,11 @@ export default function NewLogin() {
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                value={password}
+                onChange={handlePasswordChange}
+                sx={{ borderColor: passwordValid ? 'initial' : 'red' }}
               />
+               {!passwordValid && <p>Password must be at least 6 characters</p>}
               <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"

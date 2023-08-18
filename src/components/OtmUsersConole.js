@@ -19,12 +19,15 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { FRONTEND_API } from "./urls";
+import { Flex } from 'reflexbox';
 
 function OtmUsersConsole() {
     const [otmUsers, setOtmUsers] = useState([]);
     const token = localStorage.getItem("token")
     const [open, setOpen] = React.useState(false);
     const [otmUsersId, setOtmUsersId] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
@@ -104,6 +107,17 @@ function OtmUsersConsole() {
           });
       };
 
+      const handleSearchChange = (event) => {
+        setSearchQuery(event.target.value);
+      };
+  
+      const filteredOtms = otmUsers.filter((client) =>
+        client.firstname.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        client.lastname.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        client.email.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+
+
       const handleUpdate = () =>{
         
       }
@@ -113,6 +127,15 @@ function OtmUsersConsole() {
        <div class='one'>
          <h1>Our Otm Users</h1>
         </div>
+        <Flex justifyContent="flex-end" sx={{ marginBottom: 2, marginRight: 3, marginBottom: 2 }}>
+          <TextField
+            label="Search"
+            variant="outlined"
+            size="small"
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+        </Flex>
       <Box sx={{
           display:"flex",
           justifyContent:"center",
@@ -138,8 +161,8 @@ function OtmUsersConsole() {
                   </TableHead>
                   
                   <TableBody>
-                  {otmUsers !== null && (
-                    otmUsers.map((user) => (
+                  {(
+                    filteredOtms.map((user) => (
 
                       <StyledTableRow key={user.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                         <StyledTableCell component="th" scope="row">{user.firstname + " " + user.lastname}</StyledTableCell>
