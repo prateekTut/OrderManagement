@@ -52,6 +52,12 @@ function AssignTaskConsole() {
     const [expertStartDateValid, setExpertStartDateValid] = useState(null);
     const [expertEndDateValid, setExpertEndDateValid] = useState(null);
 
+    const [expertPriceValid, setExpertPriceValid] = useState(null);
+    const [wordCountValid, setWordCountValid] = useState(null);
+
+    const [expertPrice, setExpertPrice] = useState("");
+    const [wordCount, setWordCount] = useState("");
+
     const [dialogOpen, setDialogOpen] = useState(false);
 
     const validateStatus = (value) => value != '';
@@ -59,6 +65,9 @@ function AssignTaskConsole() {
     const validateOtm = (value) => value != '';
     const validateExpertStartDate = (value) => value != '';
     const validateExpertEndDate = (value) => value != '';
+
+    const validateExpertPrice = (value) => !isNaN(value) && value.length < 5;
+    const validateWordCount = (value) => !isNaN(value) && value.length < 5;
 
     const [expert, setexpert] = useState([]);
     const [Expert_startDate, setExpert_startDate] = useState("");
@@ -120,12 +129,20 @@ function AssignTaskConsole() {
     }));
 
     const fetchDataForEdit = () =>{
-       
-        fetch(FRONTEND_API + "getotm1", {
-            headers: {
-                'Authorization' : 'Bearer ' + token
+        var formdata = new FormData();
+
+        formdata.append("type", "otm");
+
+
+        var requestOptions = {
+          method: "POST",
+          body: formdata,
+          headers: {
+            'Authorization' : 'Bearer ' + token
             }
-            })
+        };
+
+        fetch(FRONTEND_API + "getUsers", requestOptions)
             .then((res) => res.json())
             .then((data) => {
                 // do something with data
@@ -141,6 +158,22 @@ function AssignTaskConsole() {
         const value = event.target.value
         setQc_Expert_name(value);
         setExpertValid(validateExpert(value))
+        console.log(event.target.value);
+        
+    };
+
+    const onChangeExpertPrice = (event) => {
+        const value = event.target.value
+        setExpertPrice(value);
+        setExpertPriceValid(validateExpertPrice(value))
+        console.log(event.target.value);
+        
+    };
+
+    const onChangeWordCount = (event) => {
+        const value = event.target.value
+        setWordCount(value);
+        setWordCountValid(validateWordCount(value))
         console.log(event.target.value);
         
     };
@@ -179,8 +212,20 @@ function AssignTaskConsole() {
 
     const handleModalEdit = (id) => {
         fetchDataForEdit();
-        setOpenEdit(true);
+        
         setOrdersIdEdit(id);
+        const filteredOrders = orders.filter(order => order.id == id);
+        console.log("in modal edit", filteredOrders);
+        console.log("in modal edit", filteredOrders[0].expert_price);
+        //const formattedDate = dateObject;
+        const dateEndObject = new Date(filteredOrders[0].expert_end_date);
+        const  dateStartObject= new Date(filteredOrders[0].expert_start_date);
+
+        setExpert_endDate(dateEndObject.toISOString().split('T')[0]);
+        setExpert_startDate(dateStartObject.toISOString().split('T')[0]);
+        setWordCount(filteredOrders[0].word_count);
+        setExpertPrice(filteredOrders[0].expert_price);
+        setOpenEdit(true);
     };
 
     
@@ -216,6 +261,8 @@ function AssignTaskConsole() {
             }else{
                 setDialogOpen(true);
             }
+        }else{
+            setDialogOpen(true);
         }
        
     }
@@ -257,32 +304,33 @@ function AssignTaskConsole() {
     };
 
     const handleOrderUpdate = () => {
-
-        var formdata = new FormData();
-       
-        formdata.append("Expert_startDate", Expert_startDate);
-        formdata.append("Expert_endDate", Expert_endDate);
-        formdata.append("Qc_Expert_name", Qc_Expert_name);
-        formdata.append("Otm_username", otmUser);
+        if(wordCountValid || expertPriceValid || Expert_startDate != null){
+            var formdata = new FormData();
         
-        var requestOptions = {
-            method: "POST",
-            body: formdata,
-            headers: {
-                'Authorization' : 'Bearer ' + token
-            }
-          };
-        fetch(FRONTEND_API + "updateOrderWithId/".concat(ordersIdEdit), requestOptions)
-        .then((res) => res.json())
-        .then((data) => {
-            // do something with data
-            console.log("budget DATA", data);
-            setOrders(data);
-            setOpenEdit(false);
-        })
-        .catch((rejected) => {
-            console.log(rejected);
-        });
+            formdata.append("Expert_startDate", Expert_startDate);
+            formdata.append("Expert_endDate", Expert_endDate);
+            formdata.append("word_count", wordCount);
+            formdata.append("expert_price", expertPrice);
+            
+            var requestOptions = {
+                method: "POST",
+                body: formdata,
+                headers: {
+                    'Authorization' : 'Bearer ' + token
+                }
+            };
+            fetch(FRONTEND_API + "updateOrderWithId/".concat(ordersIdEdit), requestOptions)
+            .then((res) => res.json())
+            .then((data) => {
+                // do something with data
+                console.log("budget DATA", data);
+                setOrders(data);
+                setOpenEdit(false);
+            })
+            .catch((rejected) => {
+                console.log(rejected);
+            });
+        }
     }
 
 
@@ -291,6 +339,16 @@ function AssignTaskConsole() {
         
         fetchDataForSubject(event.target.value, bottomNavSub);
     };
+
+    const handleDate = (expertDate) => {
+       
+        var formattedDate = null
+        if(expertDate != null){
+            const dateObject = new Date(expertDate);
+            formattedDate = dateObject.toDateString();
+        }
+        return formattedDate;
+    }
 
     const fetchDataForSubject = (subject, status) => {
         console.log(subject);
@@ -323,7 +381,8 @@ function AssignTaskConsole() {
                         setOrders(order);
                     }
                 }) */
-                const filteredOrders = rawData.filter(order => order.expert_id == userId);
+                console.log(rawData);
+                const filteredOrders = rawData.filter(order => order.expertId == userId);
                 console.log(filteredOrders);
                 setOrders(filteredOrders);
             }else{
@@ -366,26 +425,7 @@ function AssignTaskConsole() {
           console.log(rejected);
           }); */
     }
-    const deleteUser = (userId) => {
-        console.log("Del", userId);
-        fetch(FRONTEND_API + "deleteorders/".concat(userId), {
-          method: "DELETE",
-          headers: {
-            'Authorization' : 'Bearer ' + token
-          }
-        })
-          .then((res) => res.text())
-          .then((data) => {
-            console.log(data);
-            window.location.reload()
-          })
-          .catch((rejected) => {
-            console.log(rejected);
-          })
-          .finally(() => {
-            fetchData();
-          });
-      };
+   
 
 
     useEffect(() => {
@@ -541,7 +581,7 @@ function AssignTaskConsole() {
                                     <StyledTableCell >End Date</StyledTableCell>
                                     <StyledTableCell >Expert Start Date</StyledTableCell>
                                     <StyledTableCell >Expert End Date</StyledTableCell>
-                                    <StyledTableCell >Budget</StyledTableCell>
+                                    
                                     <StyledTableCell >Order Status</StyledTableCell>
                                     <StyledTableCell >Word Count</StyledTableCell>
                                     <StyledTableCell >Expert Price</StyledTableCell>
@@ -551,7 +591,7 @@ function AssignTaskConsole() {
                             </TableHead>
                             
                             <TableBody>
-                            
+                            {console.log(orders)}
                             {orders !== null && (
                                 orders.map((orderData) => (
                                 
@@ -561,17 +601,17 @@ function AssignTaskConsole() {
                                     <StyledTableCell component="th" scope="row">{orderData.id}</StyledTableCell>
                                     <StyledTableCell>{orderData.client_id} </StyledTableCell>
                                     <StyledTableCell>{orderData.expert_id}</StyledTableCell>
-                                    <StyledTableCell>{orderData.order_start_date}</StyledTableCell>
-                                    <StyledTableCell>{orderData.order_end_date}</StyledTableCell>
-                                    <StyledTableCell>{orderData.expert_start_date}</StyledTableCell>
-                                    <StyledTableCell>{orderData.expert_end_date}</StyledTableCell>
-                                    <StyledTableCell>{orderData.budget}</StyledTableCell>
+                                    <StyledTableCell>{handleDate(orderData.order_start_date)}</StyledTableCell>
+                                    <StyledTableCell>{handleDate(orderData.order_end_date)}</StyledTableCell>
+                                    <StyledTableCell>{handleDate(orderData.expert_start_date)}</StyledTableCell>
+                                    <StyledTableCell>{handleDate(orderData.expert_end_date)}</StyledTableCell>
+                                
                                     <StyledTableCell>{orderData.order_status}</StyledTableCell>
                                     <StyledTableCell>{orderData.word_count}</StyledTableCell>
                                     <StyledTableCell>{orderData.expert_price}</StyledTableCell>
                                     <StyledTableCell>{orderData.description}</StyledTableCell>
                                     <StyledTableCell>
-                                    {roles != "admin" && orderData.id != null && (
+                                    {roles == "lead" && orderData.id != null && (
                                         <Button variant="contained" type='submit' color="success" 
                                                 onClick={() => handleModalUpdate(orderData.id, orderData.order_status)}
                                                 size="small" 
@@ -916,23 +956,19 @@ function AssignTaskConsole() {
                             marginTop: 3,
                             m:1
                         }}>
-                        <InputLabel id="demo-simple-select-label">Qc Expert</InputLabel>
-                        <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            value={Qc_Expert_name}
-                            label="Experts"
-                            variant='outlined'
-                            error={expertValid == false}
-                            helperText={expertValid == false && 'Select Expert'}
-                            onChange={handleChangeQc}
-                        >
-                        {expert.map((data) => ( 
+                          <TextField
+                            margin="normal"
+                            required
+                            id="wordCount"
+                            label="Word Count"
+                            name="wordCount"
+                            value={wordCount}
+                            onChange={onChangeWordCount}
+                            error={wordCountValid == false}
+                            helperText={wordCountValid == false && 'Invalid word count'}
                             
-                            <MenuItem value={data.Expert_firstname}>{data.Expert_firstname}</MenuItem>
-                            
-                        ))}
-                        </Select>
+                        />
+                       
                         </FormControl>
                     </Grid>
                     <Grid item xs={6}>
@@ -940,23 +976,18 @@ function AssignTaskConsole() {
                             marginTop: 3,
                             m:1
                         }}>
-                        <InputLabel id="demo-simple-select-label">Otm Member</InputLabel>
-                        <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            value={otmUser}
-                            label="Otm Member"
-                            onChange={handleChangeOtm}
-                            variant='outlined'
-                            error={otmValid == false}
-                            helperText={otmValid == false && 'Select Otm'}
-                        >
-                        {otmMember.map((data) => ( 
+                        <TextField
+                            margin="normal"
+                            required
+                            id="expertPrice"
+                            label="Expert Price"
+                            name="expertPrice"
+                            value={expertPrice}
+                            onChange={onChangeExpertPrice}
+                            error={expertPriceValid == false}
+                            helperText={expertPriceValid == false && 'Invalid Price'}
                             
-                            <MenuItem value={data.firstname}>{data.firstname}</MenuItem>
-                            
-                        ))}
-                        </Select>
+                        />
                         </FormControl>
                     </Grid>
                 </Grid>

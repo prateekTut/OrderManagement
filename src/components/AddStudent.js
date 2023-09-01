@@ -233,8 +233,6 @@ function AddStudent() {
                     id="login"
                     label="Student Login"
                     name="text"
-                    
-                    
                 />
               </FormControl>
               <FormControl fullWidth sx={{m:1, marginTop: 1}}>

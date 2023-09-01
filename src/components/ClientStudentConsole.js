@@ -1,5 +1,5 @@
 import React from 'react'
-import { FormControl, MenuItem, InputLabel, BottomNavigation, BottomNavigationAction, TextField, Grid, Autocomplete, TablePagination } from '@mui/material';
+import { FormControl, DialogContentText, TextField, Grid, Autocomplete, TablePagination } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useState, useEffect } from "react";
 import Box from '@mui/material/Box';
@@ -22,12 +22,27 @@ import Viewbudget from './Viewbudget';
 import { FRONTEND_API } from "./urls";
 import { Flex } from 'reflexbox';
 
+
 function ClientStudentConsole() {
     const [client, setClient] = useState([]);
     const token = localStorage.getItem("token")
     const navigate = useNavigate();
 
     const [searchQuery, setSearchQuery] = useState('');
+    const [open, setOpen] = React.useState(false);
+    const [idToUpdate, setIdToUpdate] = useState('');
+    const [phone, setPhone] = useState("");
+    const [University, setUniversity] = useState("");
+
+    const [clientPhoneValid, setClientPhoneValid] = useState(null);
+
+    const [clientUnivValid, setClientUnivValid] = useState(null);
+    
+    const [dialogOpen, setDialogOpen] = useState(false);
+
+
+    const validatePhone = (value) =>  !isNaN(value) && value.length == 10;
+    const validateUniv = (value) => value.length >= 4;
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
@@ -58,7 +73,17 @@ function ClientStudentConsole() {
       console.log("student ID", userId);
       navigate(`/student-invoice/${userId}`);
     };
+
+    const viewOrdersHistory = (clientId) => {
+      console.log("student ID", clientId);
+      navigate(`/student-order-history/${clientId}`);
+    };
     
+    
+    const updateProfile = (clientId) => {
+      navigate(`/editClients/${clientId}`);
+    };
+
     const fetchClientsData = async () => {
       try{
         const response = await fetch(FRONTEND_API + "getstudentclientdata", {
@@ -103,21 +128,7 @@ function ClientStudentConsole() {
       <div class='one'>
          <h1>Student Clients </h1>
         </div>
-        <Flex justifyContent="flex-start">
-          <Link to='/addStudent'>
-            <Button variant="contained" type='submit' color="success"          
-              size="small" >
-              Add Student
-            </Button>
-          </Link>
-          <Link to='/Budget'>
-            <Button variant="contained" type='submit' color="success"          
-              size="small" 
-              sx={{marginLeft: 2}}>
-              Add Budget
-            </Button>
-          </Link>
-        </Flex>
+      
         <Flex justifyContent="flex-end" sx={{ marginBottom: 2, marginRight: 3, marginBottom: 2 }}>
           <TextField
             label="Search"
@@ -148,9 +159,9 @@ function ClientStudentConsole() {
                           <StyledTableCell>Email</StyledTableCell>
                           <StyledTableCell >Contact</StyledTableCell>
                           <StyledTableCell >University</StyledTableCell>
-                          <StyledTableCell >Budget</StyledTableCell>
-                          <StyledTableCell >Invoice</StyledTableCell>
-                          {/* <StyledTableCell >Update</StyledTableCell> */}
+                          {/* <StyledTableCell >Budget</StyledTableCell> */}
+                          <StyledTableCell >Order History</StyledTableCell>
+                          <StyledTableCell >Update</StyledTableCell>
                           {/* <StyledTableCell >Delete</StyledTableCell> */}
                       </StyledTableRow>
                   </TableHead>
@@ -165,21 +176,22 @@ function ClientStudentConsole() {
                         <StyledTableCell>{user.contact}</StyledTableCell>
                         <StyledTableCell>{user.university}</StyledTableCell>
                         <StyledTableCell>
-                            <Button variant="contained" type='submit' color="success" 
-                                onClick={() => viewBudgetData(user.id)}
-                                disabled={!user.budget}
-                                size="small" 
-                                sx={{marginRight: 2}}>
-                                Budget
-                          </Button>
-                        </StyledTableCell>
-                        <StyledTableCell>
                           <Button variant="contained" type='submit' color="success" 
                             disabled={!user.invoice}
-                            onClick={() => viewInvoiceData(user.id)}
+                            onClick={() => viewOrdersHistory(user.id)}
                             size="small" 
                             sx={{marginRight: 2}}>
-                            Invoice
+                            Orders
+                          </Button>
+                        </StyledTableCell>
+
+                        <StyledTableCell>
+                          <Button variant="contained" type='submit' color="success" 
+
+                            onClick={() => updateProfile(user.id)}
+                            size="small" 
+                            sx={{marginRight: 2}}>
+                            Update
                           </Button>
                         </StyledTableCell>
                       </StyledTableRow>
@@ -187,51 +199,11 @@ function ClientStudentConsole() {
                   </TableBody>
               </Table>
 
-              {/* <TablePagination
-                rowsPerPageOptions={[10, 25, 50]}
-                component="div"
-                count={filteredRows.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={(event, newPage) => setPage(newPage)}
-                onRowsPerPageChange={(event) => {
-                  setRowsPerPage(parseInt(event.target.value, 10));
-                  setPage(0);
-                }}
-              /> */}
+              
           </TableContainer>
       </Box>
-
-       {/*  <div>
-          <Dialog
-            open={open}
-            onClose={handleCloseUpdate}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-            >
-                <DialogTitle id="alert-dialog-title">
-                {"Update Expert Details."}
-                </DialogTitle>
-                  <DialogContent sx={{
-                      marginTop:2
-                  }}>
-                    <FormControl fullWidth sx={{
-                        marginTop:2
-                    }}>
-                    <InputLabel id="demo-simple-select-label">Update Expert</InputLabel>
-                    
-                    </FormControl>
-                  </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleCloseUpdate}>Close</Button>
-                  <Button onClick={handleUpdate} autoFocus>
-                      Update
-                  </Button>
-                </DialogActions>
-            </Dialog>
-          </div> */}
-        </div>
+    </div>
     )
 }
 
-export default ClientStudentConsole
+export default ClientStudentConsole   

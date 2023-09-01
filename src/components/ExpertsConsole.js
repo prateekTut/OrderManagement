@@ -23,187 +23,172 @@ import { FRONTEND_API } from "./urls";
 import { Flex } from 'reflexbox';
 
 function ExpertsConsole() {
-    const [expertUsers, setExpertUsers] = useState([]);
-    const token = localStorage.getItem("token")
-    const [open, setOpen] = React.useState(false);
-    const [expertUsersId, setExpertUsersId] = useState([]);
-    const navigate = useNavigate();
-    const [searchQuery, setSearchQuery] = useState('');
+  const [expertUsers, setExpertUsers] = useState([]);
+  const token = localStorage.getItem("token")
+  const [open, setOpen] = React.useState(false);
+  const [expertUsersId, setExpertUsersId] = useState([]);
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
 
 
-    const StyledTableCell = styled(TableCell)(({ theme }) => ({
-        [`&.${tableCellClasses.head}`]: {
-          backgroundColor: theme.palette.common.black,
-          color: theme.palette.common.white,
-        },
-        [`&.${tableCellClasses.body}`]: {
-          fontSize: 14,
-        },
-      }));
-      
-    const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: theme.palette.common.black,
+      color: theme.palette.common.white,
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+    },
+  }));
+
+  const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
-        backgroundColor: theme.palette.action.hover,
+      backgroundColor: theme.palette.action.hover,
     },
     // hide last border
     '&:last-child td, &:last-child th': {
-        border: 0,
+      border: 0,
     },
-    }));
+  }));
 
-    const handleUserUpdate = (id) => {
-      setOpen(true);
-      setExpertUsersId(id);
-    };
-    
-    const handleCloseUpdate = () => {
-      setOpen(false);
-    };  
-    
-    const addExpert = () => {
-      navigate('/registerExpert')
-    }
-    const tutorsinvoice = (userId) => {
-      console.log("Tutor ID", userId);
-      navigate(`/tutors-invoice/${userId}`);
-    };
+  const handleUserUpdate = (expertId) => {
+    //setOpen(true);
+    //setExpertUsersId(id);
+    navigate(`/updateExpert/${expertId}`)
+  };
 
-    const fetchExpertsData = async () => {
-      try{
-        const response = await fetch(FRONTEND_API + "getexpert", {
-          headers: {
-            'Authorization' : 'Bearer ' + token
-          }
-        });
-        const rawData = await response.json();
-        console.log(rawData)
-        return rawData;
-      }
-      catch(rejected)  {
-        console.log(rejected);
-        return null
-      }
-    };
+  const handleCloseUpdate = () => {
+    setOpen(false);
+  };
 
-    useEffect(() => {
-      const fetchData = async () => {
-        const rawData = await fetchExpertsData();
-        if (rawData) {
-          console.log("raw ", rawData);
-          setExpertUsers(rawData);
+
+  // const tutorsinvoice = (userId) => {
+  //   console.log("Tutor ID", userId);
+  //   navigate(`/tutors-invoice/${userId}`);
+  // };
+
+  const fetchExpertsData = async () => {
+    try {
+      var formdata = new FormData();
+      formdata.append("type", "expert");
+
+      var requestOptions = {
+        method: "POST",
+        body: formdata,
+        headers: {
+          'Authorization': 'Bearer ' + token
         }
-      };
-      fetchData();
-    }, [setExpertUsers]);
 
-      const deleteUser = (userId) => {
-        console.log("Del", userId);
-        fetch(FRONTEND_API + "deleteexpert/".concat(userId), {
-          headers: {
-            'Authorization' : 'Bearer ' + token
-          },
-          method: "delete",
-        })
-          .then((res) => res.text())
-          .then((data) => {
-            console.log(data);
-          })
-          .catch((rejected) => {
-            console.log(rejected);
-          })
-          .finally(() => {
-            //fetchData();
-            fetchExpertsData();
-          });
-         
       };
+      const response = await fetch(FRONTEND_API + "getUsers", requestOptions);
+      const rawData = await response.json();
+      console.log(rawData)
+      return rawData;
+    }
+    catch (rejected) {
+      console.log(rejected);
+      return null
+    }
+  };
 
-      const handleUpdate = () =>{
-        
+  useEffect(() => {
+    const fetchData = async () => {
+      const rawData = await fetchExpertsData();
+      if (rawData) {
+        console.log("raw ", rawData);
+        setExpertUsers(rawData);
       }
-      const handleSearchChange = (event) => {
-        setSearchQuery(event.target.value);
-      };
-  
-      const filteredExperts = expertUsers.filter((client) =>
-        client.Expert_firstname.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        client.Expert_lastname.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        client.Expert_email.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+    };
+    fetchData();
+  }, [setExpertUsers]);
+
+
+  const handleUpdate = () => {
+
+  }
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const filteredExperts = expertUsers.filter((client) =>
+    client.firstname.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    client.lastname.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    client.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
 
 
-    return (
-      <div>
+  return (
+    <div>
       <div class='one'>
-         <h1>Our Experts</h1>
-        </div>
-      
-        <Flex justifyContent="flex-end" sx={{ marginBottom: 2, marginRight: 3, marginBottom: 2 }}>
-          <TextField
-            label="Search"
-            variant="outlined"
-            size="small"
-            value={searchQuery}
-            onChange={handleSearchChange}
-          />
-        </Flex>
+        <h1>Our Experts</h1>
+      </div>
+
+      <Flex justifyContent="flex-end" sx={{ marginBottom: 2, marginRight: 3, marginBottom: 2 }}>
+        <TextField
+          label="Search"
+          variant="outlined"
+          size="small"
+          value={searchQuery}
+          onChange={handleSearchChange}
+        />
+      </Flex>
 
       <Box sx={{
-          display:"flex",
-          justifyContent:"center",
-          alignItems:"center",
-          
-          }}>
-          
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
 
-          <TableContainer component={Paper} sx={{
-        
-              marginBottom: 6,
-              marginRight: 2
-              }}
-              aria-label="customized table" >
-              <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                  <TableHead>
-                      <StyledTableRow>
-                          <StyledTableCell>Name</StyledTableCell>
-                          <StyledTableCell>Email</StyledTableCell>
-                          <StyledTableCell >Contact</StyledTableCell>
-                          <StyledTableCell >Status</StyledTableCell>
-                          <StyledTableCell >Address</StyledTableCell>
-                          <StyledTableCell >Invoice</StyledTableCell>
-                          {/* <StyledTableCell >Update</StyledTableCell> */}
-                         {/*  <StyledTableCell >Delete</StyledTableCell> */}
-                      </StyledTableRow>
-                  </TableHead>
-                  
-                  <TableBody>
-                  { (
-                    filteredExperts.map((user) => (
+      }}>
 
-                      <StyledTableRow key={user.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                        <StyledTableCell component="th" scope="row">{user.Expert_firstname + " " + user.Expert_lastname}</StyledTableCell>
-                        <StyledTableCell>{user.Expert_email} </StyledTableCell>
-                        <StyledTableCell>{user.Expert_contact}</StyledTableCell>
-                        <StyledTableCell>{user.Expert_status}</StyledTableCell>
-                        <StyledTableCell>{user.Expert_address}</StyledTableCell>
-                        <StyledTableCell>
+
+        <TableContainer component={Paper} sx={{
+
+          marginBottom: 6,
+          marginRight: 2
+        }}
+          aria-label="customized table" >
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <StyledTableRow>
+                <StyledTableCell>Name</StyledTableCell>
+                <StyledTableCell>Email</StyledTableCell>
+                <StyledTableCell >Contact</StyledTableCell>
+                <StyledTableCell >DOB</StyledTableCell>
+                <StyledTableCell >Address</StyledTableCell>
+                {/* <StyledTableCell >Invoice</StyledTableCell> */}
+                <StyledTableCell >Update</StyledTableCell>
+                {/*  <StyledTableCell >Delete</StyledTableCell> */}
+              </StyledTableRow>
+            </TableHead>
+
+            <TableBody>
+              {(
+                filteredExperts.map((user) => (
+
+                  <StyledTableRow key={user.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                    <StyledTableCell component="th" scope="row">{user.firstname + " " + user.lastname}</StyledTableCell>
+                    <StyledTableCell>{user.email} </StyledTableCell>
+                    <StyledTableCell>{user.contact}</StyledTableCell>
+                    <StyledTableCell>{user.DOB}</StyledTableCell>
+                    <StyledTableCell>{user.address}</StyledTableCell>
+                    {/* <StyledTableCell>
                           <Button variant="contained" type='submit' color="success" 
                             onClick={() => tutorsinvoice(user.id)}
                             size="small" 
                             sx={{marginRight: 2}}>
                             Invoice
                           </Button>
-                        </StyledTableCell>
-                      {/*   <StyledTableCell>
-                          <Button variant="contained" type='submit' color="success" 
-                            onClick={() => handleUserUpdate(user.id)}
-                            size="small" 
-                            sx={{marginRight: 2}}>
-                            Update
-                          </Button>
                         </StyledTableCell> */}
-                        {/* <StyledTableCell>
+                    <StyledTableCell>
+                      <Button variant="contained" type='submit' color="success"
+                        onClick={() => handleUserUpdate(user.id)}
+                        size="small"
+                        sx={{ marginRight: 2 }}>
+                        Update
+                      </Button>
+                    </StyledTableCell>
+                    {/* <StyledTableCell>
                           <Button variant="contained" type='submit' color="error" 
                             onClick={() => deleteUser(user.id)}
                             size="small" 
@@ -211,43 +196,15 @@ function ExpertsConsole() {
                             Delete
                           </Button>
                         </StyledTableCell> */}
-                      </StyledTableRow>
-                      )))}
-                  </TableBody>
-              </Table>
-          </TableContainer>
+                  </StyledTableRow>
+                )))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Box>
 
-        <div>
-          <Dialog
-            open={open}
-            onClose={handleCloseUpdate}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-            >
-                <DialogTitle id="alert-dialog-title">
-                {"Update Expert Details."}
-                </DialogTitle>
-                  <DialogContent sx={{
-                      marginTop:2
-                  }}>
-                    <FormControl fullWidth sx={{
-                        marginTop:2
-                    }}>
-                    <InputLabel id="demo-simple-select-label">Update Expert</InputLabel>
-                    
-                    </FormControl>
-                  </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleCloseUpdate}>Close</Button>
-                  <Button onClick={handleUpdate} autoFocus>
-                      Update
-                  </Button>
-                </DialogActions>
-            </Dialog>
-          </div>
-        </div>
-    )
+    </div>
+  )
 }
 
 export default ExpertsConsole

@@ -53,7 +53,10 @@ import ClientVendorConsole from "./components/ClientVendorConsole";
 import AddExpert from "./components/AddExpert";
 import AddStudent from "./components/AddStudent";
 import AddVendor from "./components/AddVendor";
-
+import EditClientsDetails from "./components/EditClientsDetails";
+import StudentOrderHistory from "./components/StudentOrderHistory";
+import UpdateExpert from "./components/UpdateExpert";
+import TeamLeadConsole from "./components/TeamLeadConsole";
 
 
 function App() {
@@ -81,9 +84,9 @@ function App() {
 
                 <Route path='/tutors' element={<AddTutors />} />
                 <Route path='/otm' element={<Addotm />} />
-                <Route path='/updateotm' element={<OtmUsersConsole />} />
+               
                 <Route path='/updateotm/:userId' element={<OTMform />} />
-                <Route path='/Updatetutors' element={<ExpertsConsole />} />
+               
                 <Route path='/Updatetutors/:userId' element={<Tutorform />} />
                 <Route path='/1' element={<DataTableTuytors />} />
                 <Route path='/new' element={<OTMdata />} />
@@ -91,8 +94,9 @@ function App() {
                 <Route path='/addStudent' element={<AddStudent />} />
                 <Route path='/addVendor' element={<AddVendor />} />
                 <Route path='/UpdateClientdata' element={<ClientStudentConsole />} />
-                <Route path='/UpdateClientdata/:userId' element={<Clientform />} />
                 <Route path='/Updatevonder' element={<ClientVendorConsole />} />
+                <Route path='/UpdateClientdata/:userId' element={<Clientform />} />
+                <Route path="/updateExpert/:expertId" element={<UpdateExpert/>} />
                 <Route path='/Updatevonder/:userId' element={<Vonderform />} />
                 <Route path='/Budget' element={<AddBudget />} />
                 <Route path='/Updatebudget' element={<UpdateBudgetdata />} />
@@ -108,17 +112,26 @@ function App() {
                 <Route path='/tutors-invoice/:userId' element={<TutorsInvoice />} />
                 <Route path='/Edit-tutors-invoice/:userId' element={<Edittutorsinvoice />} />
                 <Route path='/update-tutors-invoice/:userId' element={<Updatetoturinvoceform />} />
-               
+                <Route path="/editClients/:clientId" element={<EditClientsDetails />} />
+                <Route path="/student-order-history/:clientId" element={<StudentOrderHistory />} />
                 <Route path='/invoicedata' element={<Invoicedata />} />
                
               </Route>
 
-              <Route element={<RequireAuth allowedRoles={["admin", "otm", "lead", "expert"]} />}>
+              <Route element={<RequireAuth allowedRoles={["admin", "hr", "otm", "lead", "expert"]} />}>
                 <Route path='/home' element={<Home />} />
                 <Route path='/dashboard' element={<Dashbord />} />
                 <Route path='/Assingntask' element={<AssignTaskConsole />} />
                 <Route path='/addtask/*' element={<AddTaskNew />} />
 
+              </Route>
+
+              <Route element={<RequireAuth allowedRoles={["admin", "hr" ]} />}>
+                
+                <Route path='/teamLead' element={<TeamLeadConsole />} />
+                <Route path='/updateotm' element={<OtmUsersConsole />} />
+                <Route path='/Updatetutors' element={<ExpertsConsole />} />
+               
               </Route>
 
 

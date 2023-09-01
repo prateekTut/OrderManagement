@@ -41,9 +41,15 @@ function Vendorsinvoice() {
   var totalprice = subtotalePrice - discount + GSTtax;
 
   // ===========================end=========================================
-
+  
+  useEffect(() => {
+    fetchClientInfo(params.userId);
+    fetchOrderData(params.userId);
+  }, []);
+  
   // =================== vendor data api ========================
-  const fetchDataforinvoice = (userId) => {
+  
+  const fetchClientInfo = (userId) => {
     console.log("vendor id", userId);
     fetch(FRONTEND_API + "getclient/".concat(userId), {
       headers: {
@@ -68,7 +74,7 @@ function Vendorsinvoice() {
 
   // ==========================vendor invoice api ====================
 
-  const fetchDataforupdateinvoice = (userId) => {
+  const fetchOrderData = (userId) => {
     console.log("vendor ID", userId);
     fetch(FRONTEND_API + "getclientvendoreid/".concat(userId), {
       headers: {
@@ -97,10 +103,7 @@ function Vendorsinvoice() {
   };
 
   // ===========================END============================
-  useEffect(() => {
-    fetchDataforinvoice(params.userId);
-    fetchDataforupdateinvoice(params.userId);
-  }, []);
+
 
   return (
     <div>
@@ -171,9 +174,9 @@ function Vendorsinvoice() {
                 <tbody>
                   {userToEdit.map((user, index) => (
                     <tr key={index}>
-                      <td>{user[0]}</td>
+                      <td>{user.Order_id}</td>
+                      <td>{user.task_subject}</td>
                       <td>{user.price}</td>
-                      <td>{user[2]}</td>
                       <td>1</td>
                     </tr>
                   ))}

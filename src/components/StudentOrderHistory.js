@@ -1,5 +1,5 @@
 import React from 'react'
-import { FormControl, MenuItem, InputLabel, BottomNavigation, BottomNavigationAction, TextField, Grid } from '@mui/material';
+import { FormControl, DialogContentText, TextField, Grid, Autocomplete, TablePagination } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useState, useEffect } from "react";
 import Box from '@mui/material/Box';
@@ -18,16 +18,19 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import Viewbudget from './Viewbudget';
 import { FRONTEND_API } from "./urls";
 import { Flex } from 'reflexbox';
+import { useParams } from "react-router-dom";
 
-function ClientVendorConsole() {
+function StudentOrderHistory() {
+ 
+    let params = useParams();
+    console.log(params, params.clientId);
+
     const [client, setClient] = useState([]);
     const token = localStorage.getItem("token")
-    const [open, setOpen] = React.useState(false);
-    const [clientId, setClientId] = useState([]);
     const navigate = useNavigate();
-    const [searchQuery, setSearchQuery] = useState('');
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
@@ -49,14 +52,11 @@ function ClientVendorConsole() {
     },
     }));
 
-    const handleUserUpdate = (id) => {
-      navigate(`/editClients/${id}`);
-    };
-    
+   
 
-    const fetchVendorData = async () => {
+    const fetchClientsData = async () => {
       try{
-        const response = await fetch(FRONTEND_API + "getvendoreclientdata", {
+        const response = await fetch(FRONTEND_API + "getStudentOrderHistory/".concat(params.clientId), {
           headers: {
             'Authorization' : 'Bearer ' + token
           }
@@ -71,10 +71,9 @@ function ClientVendorConsole() {
       }
     };
 
-
     useEffect(() => {
       const fetchData = async () => {
-        const rawData = await fetchVendorData();
+        const rawData = await fetchClientsData();
         if (rawData) {
           console.log("raw ", rawData);
           setClient(rawData);
@@ -83,47 +82,27 @@ function ClientVendorConsole() {
       fetchData();
     }, [setClient]);
 
-    const handleSearchChange = (event) => {
-      setSearchQuery(event.target.value);
-    };
-
-    const filteredClients = client.filter((client) =>
-      client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      client.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      client.business_name.toLowerCase().includes(searchQuery.toLowerCase())
-      // ... add more fields to search
-    );
-
-      const vendorBudget = (id) =>{
-        
-      }
-      const vendoreinvoice = (userId) => {
+  
+    const viewOrdersInvoice = (userId) => { 
         console.log("Tutor ID", userId);
-        navigate(`/vendor-invoice/${userId}`);
-      };
-
+        navigate(`/student-invoice/${userId}`);
+    };
+   
     return (
       <div>
-      <div class='one'>
-         <h1>Vendor Clients </h1>
-      </div>
-      
-      <Flex justifyContent="flex-end" sx={{ marginBottom: 2, marginRight: 3, marginBottom: 2 }}>
-          <TextField
-            label="Search"
-            variant="outlined"
-            size="small"
-            value={searchQuery}
-            onChange={handleSearchChange}
-          />
-      </Flex>
+        <div class='one'>
+         <h1>Student Order History </h1>
+        </div>
+        
 
       <Box sx={{
           display:"flex",
           justifyContent:"center",
           alignItems:"center",
-     
+          
           }}>
+          
+         
           <TableContainer component={Paper} sx={{
               marginBottom: 6,
               marginRight: 2
@@ -132,60 +111,56 @@ function ClientVendorConsole() {
               <Table sx={{ minWidth: 650 }} aria-label="simple table">
                   <TableHead>
                       <StyledTableRow>
-                          <StyledTableCell>Name</StyledTableCell>
-                          <StyledTableCell>Email</StyledTableCell>
-                          <StyledTableCell >Contact</StyledTableCell>
-                          <StyledTableCell >Business</StyledTableCell>
-                          <StyledTableCell >Budget</StyledTableCell>
+                          <StyledTableCell>Order ID</StyledTableCell>
+                          <StyledTableCell>Order Budget</StyledTableCell>
+                          <StyledTableCell >Task</StyledTableCell>
+                          <StyledTableCell >Amount Paid</StyledTableCell>
                           <StyledTableCell >Invoice</StyledTableCell>
-                          <StyledTableCell >Update</StyledTableCell>
-                          {/* <StyledTableCell >Delete</StyledTableCell> */}
+                          {/* <StyledTableCell >University</StyledTableCell>
+                          {/* <StyledTableCell >Budget</StyledTableCell> */}
+                          {/* <StyledTableCell >Order History</StyledTableCell>
+                          <StyledTableCell >Update</StyledTableCell> 
+                          <StyledTableCell >Delete</StyledTableCell>  */}
+                          
                       </StyledTableRow>
                   </TableHead>
                   
                   <TableBody>
-                  { (
-                    filteredClients.map((user) => (
+                  {(
+                    client.map((user) => (
 
                       <StyledTableRow key={user.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                        <StyledTableCell component="th" scope="row">{user.name}</StyledTableCell>
-                        <StyledTableCell>{user.email} </StyledTableCell>
-                        <StyledTableCell>{user.contact}</StyledTableCell>
-                        <StyledTableCell>{user.business_name}</StyledTableCell>
-                        <StyledTableCell>
-                        <Button variant="contained" type='submit' color="success" 
-                          onClick={() => vendorBudget(user.id)}
-                          disabled={!user.budget}
-                          size="small" 
-                          sx={{marginRight: 2}}>
-                          Budget
-                        </Button>
-                        </StyledTableCell>
+                        <StyledTableCell component="th" scope="row">{user.id}</StyledTableCell>
+                        <StyledTableCell>{user.order_budget} </StyledTableCell>
+                        <StyledTableCell>{user.task}</StyledTableCell>
+                        <StyledTableCell>{user.amount_paid}</StyledTableCell>
                         <StyledTableCell>
                           <Button variant="contained" type='submit' color="success" 
-                            disabled={!user.invoice}
-                            onClick={() => vendoreinvoice(user.id)}
+                          
+                            onClick={() => viewOrdersInvoice(user.id)}
                             size="small" 
                             sx={{marginRight: 2}}>
-                            Invoice
+                            Invoices
                           </Button>
                         </StyledTableCell>
+                        {/* <StyledTableCell>{user.university}</StyledTableCell>
                         <StyledTableCell>
-                          <Button variant="contained" type='submit' color="success" 
-                            onClick={() => handleUserUpdate(user.id)}
-                            size="small" 
-                            sx={{marginRight: 2}}>
-                            Update
-                          </Button>
+                          
                         </StyledTableCell>
+
+                        <StyledTableCell>
+                         
+                        </StyledTableCell> */}
                       </StyledTableRow>
                       )))}
                   </TableBody>
               </Table>
+
+              
           </TableContainer>
       </Box>
-        </div>
+    </div>
     )
 }
 
-export default ClientVendorConsole
+export default StudentOrderHistory   

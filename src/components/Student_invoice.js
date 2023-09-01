@@ -9,26 +9,46 @@ import "./css/Resister.css";
 import "./css/main.css";
 import "./css/Invoice.css";
 import { FRONTEND_API } from "./urls";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, TextField } from "@mui/material";
+
 
 function Student_invoice() {
   const navigate = useNavigate();
   let params = useParams();
-  console.log(params, params.userId);
+  //console.log(params, params.userId);
   const [userToEdit, setUserToEdit] = useState([]);
   const [userToinvoice, setUserToinvoice] = useState([]);
   const componentRef = useRef();
   const token = localStorage.getItem("token")
+  const [openEdit, setOpenEdit] = React.useState(false);
+
+  const [amount, setAmount] = useState("");
+
+  const [amountValid, setAmountValid] = useState(null);
+
+  
 
   // ======================= calculation of discount , tex , total ======================
 
   var subtotalePrice = 0;
-  var totale1 = userToEdit.map((user) => (subtotalePrice += user.package_price));
+  var total = userToEdit.map((user) => (subtotalePrice += user.amount_paid));
+  var totalAmount = userToEdit.map((user) => (user.order_budget));
   var discountformula = subtotalePrice * (1 - 0.1);
   var discount = subtotalePrice - discountformula;
   var GSTtaxformula = subtotalePrice * (1 + 0.18);
   var GSTtax = GSTtaxformula - subtotalePrice;
-  var totalprice = subtotalePrice - discount + GSTtax;
+  
+  //var amountPaid = userToEdit.map((user) => (user.amount_paid === 0 ? 0 : user.amount_paid));
+  var amountPaid = userToEdit.reduce((total, user) => total + user.amount_paid, 0);
+  amountPaid = amountPaid === 0 ? 0 : amountPaid;
+    
+  var totalprice = subtotalePrice + GSTtax;
 
+
+  var totalGstOnAmount = totalAmount * (0.18);
+  var totalCalculatedGst =  parseFloat(totalAmount) + totalGstOnAmount;
+
+  var remainingAmount = totalCalculatedGst - amountPaid;
   // ===========================end=========================================
   //  variable for get today date=====================
   var today = new Date(),
@@ -42,26 +62,42 @@ function Student_invoice() {
   });
   // ===================end===============================
 
-  
+  const validateAmount = (value) => {
+    if(value > parseFloat(amountPaid) && value <= remainingAmount){
+      console.log(remainingAmount);
+      return true;
+    }
+    else if(value == remainingAmount){
+      console.log(value);
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
   // ===============================Edit invoice=====================
 
-  const editUser = (userId) => {
-    console.log("Task ID", userId);
-    navigate(`/Edit-vendor-invoice/${userId}`);
+  const onAmountChange = (event) => {
+    //console.log("Task ID", orderId);
+    const newValue = event.target.value;
+    //navigate(`/Edit-vendor-invoice/${orderId}`);
+    setAmount(newValue);
+    setAmountValid(validateAmount(newValue));
   };
 
   // ===========================END============================
   useEffect(() => {
-    fetchDataforinvoice(params.userId);
-    fetchDataforupdateinvoice(params.userId);
+    fetchClientForInvoice(params.userId);
+    fetchOrderData(params.userId);
   }, []);
 
   // =================== student data api ========================
-  const fetchDataforinvoice = (userId) => {
+  const fetchClientForInvoice = (userId) => {
     console.log("Tutor ID", userId);
-    fetch(FRONTEND_API + "getclient/".concat(userId), {
+    fetch(FRONTEND_API + "getClientFromOrderId/".concat(userId), {
       headers: {
-        'Authorization' : 'Bearer ' + token
+        'Authorization': 'Bearer ' + token
       }
     })
       .then((res) => res.json())
@@ -81,11 +117,11 @@ function Student_invoice() {
 
   // ==========================student invoice api ====================
 
-  const fetchDataforupdateinvoice = (userId) => {
+  const fetchOrderData = (userId) => {
     console.log("Tutor ID", userId);
     fetch(FRONTEND_API + "getbudgetdataforview/".concat(userId), {
       headers: {
-        'Authorization' : 'Bearer ' + token
+        'Authorization': 'Bearer ' + token
       }
     })
       .then((res) => res.json())
@@ -102,17 +138,75 @@ function Student_invoice() {
 
   // =======================end====================================
 
-  return (
+    const handleClose = () => {
+      setOpenEdit(false);
+      resetFormFields();
+    };
+
+    const handleOrderUpdate = () => {
+      if(amountValid){
+        var formdata = new FormData();
+        console.log(amount)
+        console.log(amountPaid)
+        formdata.append("paid_amount", parseFloat(amount) + parseFloat(amountPaid));
+        formdata.append("order_id", params.userId)
+        var requestOptions = {
+            method: "POST",
+            body: formdata,
+            headers: {
+            'Authorization' : 'Bearer ' + token
+            }
+        
+        };
+
+        fetch(FRONTEND_API + "updateOrderAmount", requestOptions)
+          .then((response) =>  { 
+              if(response.status == 200){
+                return response.json();
+              }
+          })
+          .then((result) => {
+            console.log(result);
+              resetFormFields();
+              resetValidationFields();
+              setOpenEdit(false);
+              fetchClientForInvoice(params.userId);
+              fetchOrderData(params.userId);
+          })
+          .catch((error) => {
+            console.log(error)
+          });
+        }
+    };
+
+    const handleModalEdit = (id) => {
+      
+      setOpenEdit(true);
+     
+    };
+
+    const resetFormFields = () => { 
+      setAmount("");
+    }
+    const resetValidationFields = () => { 
+      setAmountValid(null);
+    }
+
+    return (
     <div>
       <div class='one'>
         <h1>Student invoice</h1>
       </div>
-      <button type='button' id='invoicebutton' class='btn btn-success btn-m' onClick={handlePrint}>
+      <Button variant="contained" type='submit' color="success" onClick={handlePrint}>
         Print & Save as PDF
-      </button>
-      <button type='button' id='invoicebutton' class='btn btn-success btn-m' onClick={() => editUser(userToinvoice.id)}>
+      </Button>
+      <Button
+        sx={{ marginLeft: 2 }}
+        variant="contained" type='submit' color="success" 
+        disabled = {remainingAmount == 0}
+        onClick={() => handleModalEdit(userToinvoice.order_id)}>
         Edit Invoice
-      </button>
+      </Button>
       <div class='container' ref={componentRef}>
         <span>
           <p id='companylogo'>
@@ -164,6 +258,10 @@ function Student_invoice() {
                     <th class='center'>#</th>
                     <th>Item's</th>
                     <th class='right'>Price</th>
+                    <th class='right'>GST(18%)</th>
+                    <th class='right'>Total Amount</th>
+                    <th class='right'>Amount Paid</th>
+                    <th class='right'>Remaining Amount</th>
                     <th class='center'>Qty</th>
                     {/* <th class='right'>Total</th> */}
                   </tr>
@@ -171,9 +269,13 @@ function Student_invoice() {
                 <tbody>
                   {userToEdit.map((user, index) => (
                     <tr key={index}>
-                      <td>{user.id}</td>
-                      <td>{user[1]}</td>
+                      <td>{user.order_id}</td>
+                      <td>{user.task}</td>
+                      <td>{user.order_budget}</td>
+                      <td>{totalGstOnAmount}</td>
+                      <td>{totalCalculatedGst}</td>
                       <td>{user.amount_paid}</td>
+                      <td>{remainingAmount}</td>
                       <td>1</td>
                     </tr>
                   ))}
@@ -190,28 +292,30 @@ function Student_invoice() {
                       <td class='left'>
                         <strong>Subtotal</strong>
                       </td>
-                      <td class='right'>{subtotalePrice}</td>
+                      <td class='right'>{subtotalePrice - GSTtax}</td>
                     </tr>
-                    <tr>
+                    {/* <tr>
                       <td class='left'>
                         <strong>Discount (10%)</strong>
                       </td>
                       <td class='right'>{discount.toFixed(2)}</td>
-                    </tr>
+                    </tr> */}
                     <tr>
                       <td class='left'>
                         <strong>GST (18%)</strong>
                       </td>
                       <td class='right'>{GSTtax.toFixed(2)}</td>
                     </tr>
+                    
                     <tr>
                       <td class='left'>
                         <strong>Total</strong>
                       </td>
                       <td class='right'>
-                        <strong>{totalprice.toFixed(2)}</strong>
+                        <strong>{((subtotalePrice - GSTtax) + GSTtax).toFixed(2)}</strong>
                       </td>
                     </tr>
+                   
                   </tbody>
                 </table>
               </div>
@@ -238,6 +342,46 @@ function Student_invoice() {
           </div>
         </div>
       </div>
+      <Dialog
+        open={openEdit}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        fullWidth
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Update Order Invoice"}
+        </DialogTitle>
+        <DialogContent sx={{
+          marginTop: 2
+        }}>
+          <Grid item xs={6}>
+            <FormControl fullWidth >
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="paid_amount"
+                label="Amount Paid"
+                name="paid_amount"
+                value={amount}
+                onChange={onAmountChange}
+                error={amountValid == false}
+                helperText={amountValid == false && 'Invalid Amount'}
+                
+              />
+            </FormControl>
+          </Grid>
+
+
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Close</Button>
+          <Button onClick={handleOrderUpdate} autoFocus>
+            Update Invoice
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

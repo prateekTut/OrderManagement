@@ -12,6 +12,9 @@ import img from "./img/dashbord img.avif";
 import "./css/Dashbord.css";
 import useAuth from "../hooks/useAuth";
 import { FRONTEND_API } from "./urls";
+import { Button } from "@mui/material";
+import { Flex } from 'reflexbox';
+import { useNavigate } from "react-router-dom";
 
 function Dashbord() {
 
@@ -21,16 +24,19 @@ function Dashbord() {
   const [Otm, setOtm] = useState([]);
   const [budget, setbudget] = useState([]);
   const [order, setorder] = useState([]);
- 
+
   const token = localStorage.getItem("token")
   const roles = localStorage.getItem("roles")
-  
+  const userId = localStorage.getItem("userId")
+
   console.log("token in dashboard", token)
   console.log("roles in dashboard", roles)
-  const {setAuth} = useAuth();
-       
-  useEffect(() => { 
-    setAuth({roles});
+  const { setAuth } = useAuth();
+  const navigate = useNavigate();
+
+
+  useEffect(() => {
+    setAuth({ roles });
   }, []);
   // ==================graf ===========================
   const data01 = [
@@ -84,7 +90,7 @@ function Dashbord() {
   const fetchstudentData = () => {
     fetch(FRONTEND_API + "getstudentclientdata", {
       headers: {
-        'Authorization' : 'Bearer ' + token
+        'Authorization': 'Bearer ' + token
       }
     })
       .then((res) => res.json())
@@ -101,7 +107,7 @@ function Dashbord() {
   const fetchvendorData = () => {
     fetch(FRONTEND_API + "getvendoreclientdata", {
       headers: {
-        'Authorization' : 'Bearer ' + token
+        'Authorization': 'Bearer ' + token
       }
     })
       .then((res) => res.json())
@@ -117,7 +123,7 @@ function Dashbord() {
   const fetchtutorData = () => {
     fetch(FRONTEND_API + "getexpert", {
       headers: {
-        'Authorization' : 'Bearer ' + token
+        'Authorization': 'Bearer ' + token
       }
     })
       .then((res) => res.json())
@@ -131,11 +137,18 @@ function Dashbord() {
       });
   };
   const fetchotmData = () => {
-    fetch(FRONTEND_API + "getotm1", {
-      headers: {
-        'Authorization' : 'Bearer ' + token
-      }
-    })
+    var formdata = new FormData();
+      formdata.append("type", "otm");
+
+      var requestOptions = {
+        method: "POST",
+        body: formdata,
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
+
+      };
+    fetch(FRONTEND_API + "getUsers", requestOptions)
       .then((res) => res.json())
       .then((data) => {
         // do something with data
@@ -149,7 +162,7 @@ function Dashbord() {
   const fetchstudentbudgetData = () => {
     fetch(FRONTEND_API + "getbudgetdata", {
       headers: {
-        'Authorization' : 'Bearer ' + token
+        'Authorization': 'Bearer ' + token
       }
     })
       .then((res) => res.json())
@@ -165,7 +178,7 @@ function Dashbord() {
   const getorderfordashbord = () => {
     fetch(FRONTEND_API + "getorderfordashbord", {
       headers: {
-        'Authorization' : 'Bearer ' + token
+        'Authorization': 'Bearer ' + token
       }
     })
       .then((res) => res.json())
@@ -188,11 +201,172 @@ function Dashbord() {
     getorderfordashbord();
   }, []);
 
+  const [hours, setHours] = useState(0);
+  const [minutes, setMinutes] = useState(0);
+  const [seconds, setSeconds] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+  const currentNewDate = new Date();
+  const [currentDate, setCurrentDate] = useState()
+  const [currentTime, setCurrentTime] = useState()
+
+  // Function to start the timer
+  const startTimer = () => {
+
+    // Extract the date and time components
+    setCurrentDate(currentNewDate.toLocaleDateString()); // Date in "MM/DD/YYYY" or "DD/MM/YYYY" format
+    setCurrentTime(currentNewDate.toLocaleTimeString()); // Time in "HH:MM:SS AM/PM" format
+    startWork();
+    
+  };
+
+  // Function to stop the timer
+  const stopTimer = () => {
+    endWork();
+    setIsRunning(false);
+  };
+
+  // Use useEffect to start and stop the timer when 'isRunning' changes
+  useEffect(() => {
+    let intervalId;
+
+    if (isRunning) {
+      intervalId = setInterval(() => {
+        // Increment seconds and update minutes and hours as needed
+        setSeconds((prevSeconds) => {
+          if (prevSeconds === 59) {
+            setMinutes((prevMinutes) => {
+              if (prevMinutes === 59) {
+                setHours((prevHours) => prevHours + 1);
+                return 0;
+              }
+              return prevMinutes + 1;
+            });
+            return 0;
+          }
+          return prevSeconds + 1;
+        });
+      }, 1000); // Update every 1 second
+    } else {
+      clearInterval(intervalId);
+    }
+
+    // Cleanup: Clear the interval when the component unmounts or 'isRunning' changes
+    return () => clearInterval(intervalId);
+  }, [isRunning]);
+
+
+  const startWork = () => {
+    var formdata = new FormData();
+    formdata.append("date", currentDate);
+    formdata.append("start_time", currentTime);
+    //formdata.append("end_time", Client_email);
+    //formdata.append("working_hours", "vendor");
+
+    var requestOptions = {
+      method: "POST",
+      body: formdata,
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
+
+    };
+
+    fetch(FRONTEND_API + "start_work/".concat(userId), requestOptions)
+      .then((response) => {
+        if (response.status == 200) {
+          //setStatus("200")
+          return response.json();
+        }
+      })
+      .then((result) => {
+        setIsRunning(true);
+        alert(result.message)
+      })
+      .catch((error) => alert("error", error));
+  }
+
+  const endWork = () => {
+    var formdata = new FormData();
+    //formdata.append("date", Client_name);
+    //formdata.append("start_time", Client_contact);
+    const endTime = currentNewDate.toLocaleTimeString();
+    const working_hours = Math.floor(hours / (1000 * 60)); 
+    const final_hours = working_hours + minutes;
+
+    console.log(final_hours);
+    formdata.append("end_time", endTime);
+    formdata.append("working_hours", final_hours);
+
+    var requestOptions = {
+        method: "POST",
+        body: formdata,
+        headers: {
+        'Authorization' : 'Bearer ' + token
+        }
+
+    };
+
+    fetch(FRONTEND_API + "end_work/".concat(userId), requestOptions)
+        .then((response) =>  { 
+            if(response.status == 200){
+                //setStatus("200")
+                return response.json();
+            }
+        })
+        .then((result) => {
+            alert(result.message)
+        })
+        .catch((error) => alert("error", error));
+  }
+
+  const handleClick = () => {
+    navigate("/UpdateClientdata");
+  };
+  
+  const handleClickTask = () =>{
+    navigate("/Assingntask");
+  };
+  
+  const handleClickVendor = () =>{
+    navigate("/Updatevonder");
+  };
+
+  
+  const handleClickOtm = () =>{
+    navigate("/updateotm");
+  };
+  
+  
   return (
     <div>
+
       <div class='one'>
         <h1> #No.1 Academic Writing Services </h1>
       </div>
+      {roles != "admin" && roles != "hr" && (
+        <Flex justifyContent="flex-end" sx={{ marginBottom: 4, marginRight: 3 }}>
+          <div>
+
+            <h2>Timer: {hours}h {minutes}m {seconds}s</h2>
+
+            {isRunning ? (
+              <Button variant="contained" type='submit' color="success" onClick={stopTimer} >
+                Stop
+              </Button>
+
+            ) : (
+              <Button variant="contained" type='submit' color="success" onClick={startTimer} >
+                Start
+              </Button>
+
+            )}
+
+          </div>
+
+        </Flex>
+      )
+      }
+
       <div class='row'>
         <div class='col-sm'>
           {" "}
@@ -201,11 +375,11 @@ function Dashbord() {
               Student's <br />
               <p>{users.length}</p>
             </span>
-            <Link to='/UpdateClientdata'>
-              <button type='button' class='btn btn-success btn-m' id='button1'>
+            
+              <Button variant="contained" type='submit' color="success" onClick = {handleClick} disabled={roles != 'admin'}>
                 View
-              </button>
-            </Link>
+              </Button>
+            
           </div>
         </div>
         <div class='col-sm'>
@@ -214,11 +388,14 @@ function Dashbord() {
               Vendor's <br />
               <p>{Vendors.length}</p>
             </span>
-            <Link to='/Updatevonder'>
+            {/* <Link to='/Updatevonder'>
               <button type='button' class='btn btn-success btn-m' id='button2'>
                 View
               </button>
-            </Link>
+            </Link> */}
+            <Button variant="contained" type='submit' color="success" onClick = {handleClickVendor} disabled={roles != 'admin'}>
+                View
+              </Button>
           </div>
         </div>
         <div class='col-sm'>
@@ -228,11 +405,15 @@ function Dashbord() {
               OTM's <br />
               <p>{Otm.length}</p>
             </span>
-            <Link to='/updateotm'>
+            {/* <Link to='/updateotm'>
               <button type='button' class='btn btn-success btn-m' id='button3'>
                 View
               </button>
-            </Link>
+            </Link> */}
+
+              <Button variant="contained" type='submit' color="success" onClick = {handleClickOtm} disabled={roles != 'admin'}>
+                View
+              </Button>
           </div>
         </div>{" "}
         <div class='col-sm'>
@@ -241,11 +422,11 @@ function Dashbord() {
               Student <br></br>Budget's <br />
               <p>{budget.length}</p>
             </span>
-            <Link to='/UpdateClientdata'>
+            {/* <Link to='/UpdateClientdata'>
               <button type='button' class='btn btn-success btn-m' id='button4'>
                 View
               </button>
-            </Link>
+            </Link> */}
           </div>
         </div>
         <div class='col-sm'>
@@ -256,11 +437,14 @@ function Dashbord() {
               Month <br /> Order's <br />
               <p>{order.length}</p>
             </span>
-            <Link to='/Assingntask'>
+            {/* <Link to='/Assingntask'>
               <button type='button' class='btn btn-success btn-m' id='button5'>
                 View
               </button>
-            </Link>
+            </Link> */}
+             <Button variant="contained" type='submit' color="success" onClick = {handleClickTask} disabled={roles != 'admin'}>
+                View
+              </Button>
           </div>
         </div>
       </div>

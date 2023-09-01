@@ -29,6 +29,7 @@ function Headerr() {
     });
   };
 
+  
   return (
     <div>
       <div className='main_content_iner'>
@@ -43,19 +44,11 @@ function Headerr() {
                 <ul class='navbar-nav me-auto mb-2 mb-lg-0'>
                   <li class='nav-item'>
                     <a class='nav-link active' aria-current='page'>
-                      <Link to='/home'> Home </Link>
+                      <Link to='/dashboard'> Home </Link>
                     </a>
                   </li>
-                  <li class='nav-item'>
-                    {/* <a class='nav-link active' aria-current='page'>
-                      <Link to='/allbutton'> All Buttons</Link>
-                    </a> */}
-                  </li>
-                  {/* <li class='nav-item'>
-                    <a class='nav-link '  tabindex='-1' aria-disabled=''>
-                      <Link to='/'>Register</Link>
-                    </a>
-                  </li> */
+                  
+                  {
                   console.log(roles)}
 
                   {roles ? (
@@ -85,6 +78,11 @@ function Headerr() {
               <a class='sidemenu'>
                 <Link to='/updateotm'> OTMs</Link>
               </a>
+              
+              <a class='sidemenu'>
+                <Link to='/teamLead'> Team Leads</Link>
+              </a>
+
               <a class='dropdown'>
                 <a class='dropbtn'>Clients</a>
                 <div class='dropdown-content'>
@@ -98,12 +96,6 @@ function Headerr() {
               <a class='sidemenu'>
                 <Link to='/register'>Register</Link>
               </a>
-              {/* <a class='sidemenu'>
-                <Link to='/invoicedata'>Invoice</Link>
-              </a>
-              <a class='sidemenu'>
-                <Link to='/tutors-invoice'>Invoice</Link>
-              </a> */}
               <a class='dropdown'>
                 <a class='dropbtn'>Invoice</a>
                 <div class='dropdown-content'>
@@ -113,14 +105,37 @@ function Headerr() {
               </a>
             </>
           ) : (
+            null
+          )}
+          { roles == "otm" || roles == "lead" || roles=="expert" ? (
             <a class='sidemenu'>
               <Link to='/Assingntask'>Tasks</Link>
+           </a> 
+          ):(
+            null
+          )
+            
+          }
+          { roles == "hr" ? (
+            <>
+              <a id='anav' class='sidemenu'>
+              <Link to='/Updatetutors'> Experts </Link>
             </a>
-          )}
 
-          {/* <a class='sidemenu'>
-            <Link to='/Updatebudget'>Budget</Link>
-          </a> */}
+            <a class='sidemenu'>
+              <Link to='/updateotm'> OTMs</Link>
+            </a>
+            
+            <a class='sidemenu'>
+                <Link to='/teamLead'> Team Leads</Link>
+              </a>
+          </>
+          ) : (
+            null
+          )
+
+          }
+
         </div>
       </div>
     </div>
