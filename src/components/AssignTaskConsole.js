@@ -18,7 +18,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { withStyles } from "@material-ui/core/styles";
 import MuiBottomNavigationAction from "@mui/material/BottomNavigationAction";
 import { FRONTEND_API } from "./urls";
 import { event } from 'jquery';

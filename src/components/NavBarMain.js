@@ -22,15 +22,14 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import useStyles from './menuBarStyle';
 import menuItems from './SideBarItems';
-import { ExpandLess, ExpandMore } from "@material-ui/icons";
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { NavLink as RouterLink } from 'react-router-dom';
-import {
-    Drawer,
-    ListItemIcon,
-    ListItemText,
-    List,
-    Collapse
-  } from "@material-ui/core";
+import Drawer from '@mui/material/Drawer';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import List from '@mui/material/List';
+import Collapse from '@mui/material/Collapse';
 
 const pages = ['Home'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -109,7 +108,7 @@ const NavBarMain = (props) => {
                   [classes.button] : true,
                   [classes.subMenu] : level
                 })}>
-                  { name } { menu[ name ] ? <ExpandLess /> : <ExpandMore />}
+                  { name } { menu[ name ] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                   </Button>
                 </ListItem>
                 <Collapse

@@ -101,7 +101,7 @@ function TeamLeadConsole() {
     return (
         <div>
             <div class='one'>
-                <h1>Our Otm Users</h1>
+                <h1>Our Team Leads</h1>
             </div>
             <Flex justifyContent="flex-end" sx={{ marginBottom: 2, marginRight: 3, marginBottom: 2 }}>
                 <TextField
