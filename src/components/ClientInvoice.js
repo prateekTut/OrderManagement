@@ -12,7 +12,7 @@ import { FRONTEND_API } from "./urls";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, TextField } from "@mui/material";
 
 
-function Student_invoice() {
+function ClientInvoice() {
   const navigate = useNavigate();
   let params = useParams();
   //console.log(params, params.userId);
@@ -48,7 +48,7 @@ function Student_invoice() {
   var totalGstOnAmount = totalAmount * (0.18);
   var totalCalculatedGst =  parseFloat(totalAmount) + totalGstOnAmount;
 
-  var remainingAmount = totalCalculatedGst - amountPaid;
+  var remainingAmount = totalAmount - amountPaid;
   // ===========================end=========================================
   //  variable for get today date=====================
   var today = new Date(),
@@ -258,8 +258,6 @@ function Student_invoice() {
                     <th class='center'>#</th>
                     <th>Item's</th>
                     <th class='right'>Price</th>
-                    <th class='right'>GST(18%)</th>
-                    <th class='right'>Total Amount</th>
                     <th class='right'>Amount Paid</th>
                     <th class='right'>Remaining Amount</th>
                     <th class='center'>Qty</th>
@@ -272,8 +270,6 @@ function Student_invoice() {
                       <td>{user.order_id}</td>
                       <td>{user.task}</td>
                       <td>{user.order_budget}</td>
-                      <td>{totalGstOnAmount}</td>
-                      <td>{totalCalculatedGst}</td>
                       <td>{user.amount_paid}</td>
                       <td>{remainingAmount}</td>
                       <td>1</td>
@@ -292,7 +288,7 @@ function Student_invoice() {
                       <td class='left'>
                         <strong>Subtotal</strong>
                       </td>
-                      <td class='right'>{subtotalePrice - GSTtax}</td>
+                      <td class='right'>{subtotalePrice.toFixed(2) - GSTtax.toFixed(2)}</td>
                     </tr>
                     {/* <tr>
                       <td class='left'>
@@ -386,4 +382,4 @@ function Student_invoice() {
   );
 }
 
-export default Student_invoice;
+export default ClientInvoice;

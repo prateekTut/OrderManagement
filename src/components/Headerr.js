@@ -96,13 +96,13 @@ function Headerr() {
               <a class='sidemenu'>
                 <Link to='/register'>Register</Link>
               </a>
-              <a class='dropdown'>
+              {/* <a class='dropdown'>
                 <a class='dropbtn'>Invoice</a>
                 <div class='dropdown-content'>
                   <Link to='/invoicedata'>Client Invoice</Link>
                   <Link to='/tutors-invoice'>Tutor Invoice</Link>
                 </div>
-              </a>
+              </a> */}
             </>
           ) : (
             null

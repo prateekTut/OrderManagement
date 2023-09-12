@@ -76,7 +76,7 @@ function ClientStudentConsole() {
 
     const viewOrdersHistory = (clientId) => {
       console.log("student ID", clientId);
-      navigate(`/student-order-history/${clientId}`);
+      navigate(`/order-history/${clientId}`);
     };
     
     

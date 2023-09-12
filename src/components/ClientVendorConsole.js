@@ -94,9 +94,12 @@ function ClientVendorConsole() {
       // ... add more fields to search
     );
 
-      const vendorBudget = (id) =>{
-        
+      const VendorOrderHistory = (clientId) =>{
+        console.log("student ID", clientId);
+        navigate(`/vendor-order-history/${clientId}`);
       }
+
+
       const vendoreinvoice = (userId) => {
         console.log("Tutor ID", userId);
         navigate(`/vendor-invoice/${userId}`);
@@ -136,8 +139,8 @@ function ClientVendorConsole() {
                           <StyledTableCell>Email</StyledTableCell>
                           <StyledTableCell >Contact</StyledTableCell>
                           <StyledTableCell >Business</StyledTableCell>
-                          <StyledTableCell >Budget</StyledTableCell>
-                          <StyledTableCell >Invoice</StyledTableCell>
+                          <StyledTableCell >Order History</StyledTableCell>
+                          {/* <StyledTableCell >Invoice</StyledTableCell> */}
                           <StyledTableCell >Update</StyledTableCell>
                           {/* <StyledTableCell >Delete</StyledTableCell> */}
                       </StyledTableRow>
@@ -154,14 +157,14 @@ function ClientVendorConsole() {
                         <StyledTableCell>{user.business_name}</StyledTableCell>
                         <StyledTableCell>
                         <Button variant="contained" type='submit' color="success" 
-                          onClick={() => vendorBudget(user.id)}
-                          disabled={!user.budget}
+                          onClick={() => VendorOrderHistory(user.id)}
+                          disabled={!user.invoice}
                           size="small" 
                           sx={{marginRight: 2}}>
-                          Budget
+                          Orders
                         </Button>
                         </StyledTableCell>
-                        <StyledTableCell>
+                        {/* <StyledTableCell>
                           <Button variant="contained" type='submit' color="success" 
                             disabled={!user.invoice}
                             onClick={() => vendoreinvoice(user.id)}
@@ -169,7 +172,7 @@ function ClientVendorConsole() {
                             sx={{marginRight: 2}}>
                             Invoice
                           </Button>
-                        </StyledTableCell>
+                        </StyledTableCell> */}
                         <StyledTableCell>
                           <Button variant="contained" type='submit' color="success" 
                             onClick={() => handleUserUpdate(user.id)}

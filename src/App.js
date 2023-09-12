@@ -34,7 +34,7 @@ import Vendorsinvoice from "./components/Vendorsinvoice";
 import Editvendoreinvoice from "./components/Editvendoreinvoice";
 import Updateinvoiceform from "./components/Updateinvoiceform";
 import Tryform from "./components/tryform";
-import Student_invoice from "./components/Student_invoice";
+import Student_invoice from "./components/ClientInvoice";
 import Dashbord from "./components/Dashbord";
 import Invoicedata from "./components/Invoicedata";
 import TutorsInvoice from "./components/TutorsInvoice";
@@ -57,6 +57,8 @@ import EditClientsDetails from "./components/EditClientsDetails";
 import StudentOrderHistory from "./components/StudentOrderHistory";
 import UpdateExpert from "./components/UpdateExpert";
 import TeamLeadConsole from "./components/TeamLeadConsole";
+import ClientInvoice from "./components/ClientInvoice";
+import VendorOrderHistory from "./components/VendorOrderHistory";
 
 
 function App() {
@@ -103,7 +105,7 @@ function App() {
                 <Route path='/Updatebudget/:userId' element={<Budgetform />} />
                 <Route path='/allbutton' element={<Allbutton />} />
                 <Route path='/viewbudget/:userId' element={<Viewbudget />} />
-                <Route path='/student-invoice/:userId' element={<Student_invoice />} />
+                <Route path='/client-invoice/:userId' element={<ClientInvoice />} />
                 <Route path='/vendor-invoice/:userId' element={<Vendorsinvoice />} />
                 <Route path='/Edit-vendor-invoice/:userId' element={<Editvendoreinvoice />} />
                 <Route path='/update-vendor-invoice/:userId' element={<Updateinvoiceform />} />
@@ -113,7 +115,8 @@ function App() {
                 <Route path='/Edit-tutors-invoice/:userId' element={<Edittutorsinvoice />} />
                 <Route path='/update-tutors-invoice/:userId' element={<Updatetoturinvoceform />} />
                 <Route path="/editClients/:clientId" element={<EditClientsDetails />} />
-                <Route path="/student-order-history/:clientId" element={<StudentOrderHistory />} />
+                <Route path="/order-history/:clientId" element={<StudentOrderHistory />} />
+                <Route path="/vendor-order-history/:clientId" element={<VendorOrderHistory />} />
                 <Route path='/invoicedata' element={<Invoicedata />} />
                
               </Route>

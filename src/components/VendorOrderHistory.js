@@ -14,16 +14,15 @@ import { Button } from '@mui/material';
 import { Link, useNavigate } from "react-router-dom";
 import { styled } from '@mui/material/styles';
 import './css/style.css'
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Viewbudget from './Viewbudget';
-import { FRONTEND_API } from "./urls";
-import { Flex } from 'reflexbox';
-import { useParams } from "react-router-dom";
 
-function StudentOrderHistory() {
+import { FRONTEND_API } from "./urls";
+import { useParams } from "react-router-dom";
+import { DateRange } from 'react-date-range';
+
+import 'react-date-range/dist/styles.css'; // main css file
+import 'react-date-range/dist/theme/default.css'; // theme css file
+
+function VendorOrderHistory() {
  
     let params = useParams();
     console.log(params, params.clientId);
@@ -52,35 +51,74 @@ function StudentOrderHistory() {
     },
     }));
 
-   
+    const [dateRange, setDateRange] = useState([
+        {
+          startDate: new Date(),
+          endDate: new Date(),
+          key: 'selection',
+        },
+      ]);
 
-    const fetchClientsData = async () => {
-      try{
-        const response = await fetch(FRONTEND_API + "getStudentOrderHistory/".concat(params.clientId), {
-          headers: {
-            'Authorization' : 'Bearer ' + token
-          }
-        });
-        const rawData = await response.json();
-        console.log(rawData)
-        return rawData;
-      }
-      catch(rejected)  {
-        console.log(rejected);
-        return null
-      }
+    const [showDateRangePicker, setShowDateRangePicker] = useState(false);
+
+    const handleButtonClick = () => {
+        setShowDateRangePicker(!showDateRangePicker);
+        if(showDateRangePicker){
+            fetchClientsData();
+        }
     };
 
-    useEffect(() => {
-      const fetchData = async () => {
-        const rawData = await fetchClientsData();
-        if (rawData) {
-          console.log("raw ", rawData);
-          setClient(rawData);
-        }
-      };
-      fetchData();
-    }, [setClient]);
+    const handleDateRangeChange = (ranges) => {
+        setDateRange([ranges.selection]);
+    };
+
+    // Extract the start date and end date from the state
+  
+    const fetchClientsData =  () => {
+
+        var formdata = new FormData();
+        //const startDate = dateRange[0].startDate;
+        //const endDate = dateRange[0].endDate;
+        const startDate = dateRange[0].startDate.toLocaleDateString('en-US');
+        const endDate = dateRange[0].endDate.toLocaleDateString('en-US');
+
+        formdata.append("start_date", startDate);
+        formdata.append("end_date", endDate)
+        var requestOptions = {
+            method: "POST",
+            body: formdata,
+            headers: {
+            'Authorization' : 'Bearer ' + token
+            }
+        
+        };
+
+        fetch(FRONTEND_API + "getVendorOrderHistory/".concat(params.clientId), requestOptions)
+            .then((response) =>  { 
+                if(response.status == 200){
+                return response.json();
+                }
+            })
+            .then((result) => {
+            console.log(result);
+            setClient(result);
+            })
+            .catch((error) => {
+            console.log(error)
+            });
+        
+    };
+
+    // useEffect(() => {
+    //   const fetchData = async () => {
+    //     const rawData = await fetchClientsData();
+    //     if (rawData) {
+    //       console.log("raw ", rawData);
+    //       setClient(rawData);
+    //     }
+    //   };
+    //   fetchData();
+    // }, [setClient]);
 
   
     const viewOrdersInvoice = (userId) => { 
@@ -91,9 +129,22 @@ function StudentOrderHistory() {
     return (
       <div>
         <div class='one'>
-         <h1>Order History </h1>
+         <h1>Vendor Order History </h1>
         </div>
-        
+
+        <div>
+            <Button variant='contained' 
+                onClick={handleButtonClick}>Select Date</Button>
+            <br></br>
+            {showDateRangePicker && (
+                <DateRange
+                editableDateInputs={true}
+                onChange={handleDateRangeChange}
+                moveRangeOnFirstSelection={false}
+                ranges={dateRange}
+                />
+            )}
+        </div>
 
       <Box sx={{
           display:"flex",
@@ -163,4 +214,4 @@ function StudentOrderHistory() {
     )
 }
 
-export default StudentOrderHistory   
+export default VendorOrderHistory   
