@@ -14,10 +14,6 @@ import { Button } from '@mui/material';
 import { Link } from "react-router-dom";
 import { styled } from '@mui/material/styles';
 import './css/style.css'
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import { FRONTEND_API } from "./urls";
 
 import { useNavigate } from "react-router-dom";

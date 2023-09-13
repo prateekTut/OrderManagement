@@ -35,7 +35,7 @@ export default function EditClientsDetails() {
     const [email, setEmail] = useState("");
     const [address, setAddress] = useState("");
     const [phone, setPhone] = useState("");
-    //const [expertStatus, setExpertStatus] = useState("");
+    const [password, setPassword] = useState("");
     const [dob, setDob] = useState("");
     const token = localStorage.getItem("token")
 
@@ -44,7 +44,7 @@ export default function EditClientsDetails() {
     const [clientPhoneValid, setClientPhoneValid] = useState(null);
     const [clientEmailValid, setClientEmailValid] = useState(null);
     const [dobValid, setDobValid] = useState(null);
-
+    const [clientPasswordValid, setClientPasswordValid] = useState(null);
 
     const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -53,7 +53,7 @@ export default function EditClientsDetails() {
     const validatePhone = (value) => !isNaN(value) && value.length == 10;
     const validateEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
     const validateDob = (value) => value.length > 0;
-
+    const validatePassword = (value) => value.length >= 6;
 
     const resetValidationFields = () => {
 
@@ -61,7 +61,7 @@ export default function EditClientsDetails() {
         setClientEmailValid(null);
         setClientAddressValid(null);
         setDobValid(null);
-
+        setClientPasswordValid(null);
     };
 
     const resetFormFields = () => {
@@ -71,6 +71,7 @@ export default function EditClientsDetails() {
         setPhone("");
         setLastName("");
         setDob("");
+        setPassword(""); 
     }
 
     useEffect(() => {
@@ -101,8 +102,9 @@ export default function EditClientsDetails() {
                 setAddress(client.address)
                 setPhone(client.contact)
                 setDob(client.DOB)
+                setPassword(client.password)
             })
-            .catch((error) => alert("error", error));
+            .catch((error) => console.log(error));
     };
 
 
@@ -121,10 +123,14 @@ export default function EditClientsDetails() {
         setPhone(newValue)
         setClientPhoneValid(validatePhone(newValue));
     }
-
+    const onPasswordChange = (event) =>{
+        const newValue = event.target.value;
+        setPassword(newValue)
+        setClientPasswordValid(validatePassword(newValue));
+      }
     const handleSubmit = (event) => {
         event.preventDefault();
-        if (clientEmailValid || clientAddressValid || clientPhoneValid || dobValid) {
+        if (clientEmailValid || clientAddressValid || clientPhoneValid || dobValid || clientPasswordValid) {
 
             var formdata = new FormData();
             formdata.append("contact", phone);
@@ -132,6 +138,7 @@ export default function EditClientsDetails() {
             formdata.append("status", expertStatus);
             formdata.append("address", address);
             formdata.append("dob", dob);
+            formdata.append("password", password);
 
             var requestOptions = {
                 method: "POST",
@@ -219,6 +226,20 @@ export default function EditClientsDetails() {
                                     />
                                 </Grid>
                             </Grid>
+                            <TextField
+                                margin="normal"
+                                required
+                                fullWidth
+                                name="password"
+                                label="Password"
+                                type="text"
+                                id="password"
+                                autoComplete="current-password"
+                                value={password}
+                                onChange={onPasswordChange}
+                                error={clientPasswordValid == false}
+                                helperText={clientPasswordValid == false && 'Invalid Password. Must be greater than 6 characters.'}
+                            />
                             <TextField
                                 margin="normal"
                                 required
