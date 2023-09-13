@@ -12,9 +12,9 @@ import img from "./img/dashbord img.avif";
 import "./css/Dashbord.css";
 import useAuth from "../hooks/useAuth";
 import { FRONTEND_API } from "./urls";
-import { Button } from "@mui/material";
-import { Flex } from 'reflexbox';
+import { Box, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+
 
 function Dashbord() {
 
@@ -344,7 +344,13 @@ function Dashbord() {
         <h1> #No.1 Academic Writing Services </h1>
       </div>
       {roles != "admin" && roles != "hr" && (
-        <Flex justifyContent="flex-end" sx={{ marginBottom: 4, marginRight: 3 }}>
+         <Box sx={{
+          display:"flex",
+          justifyContent:"center",
+          alignItems:"center",
+          marginBottom: 5,
+          marginTop: 2
+          }}>
           <div>
 
             <h2>Timer: {hours}h {minutes}m {seconds}s</h2>
@@ -363,7 +369,7 @@ function Dashbord() {
 
           </div>
 
-        </Flex>
+        </Box>
       )
       }
 

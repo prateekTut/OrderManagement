@@ -19,7 +19,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { FRONTEND_API } from "./urls";
-import { Flex } from 'reflexbox';
+
 import { useNavigate } from "react-router-dom";
 
 
@@ -131,7 +131,14 @@ function OtmUsersConsole() {
       <div class='one'>
         <h1>Our Otm Users</h1>
       </div>
-      <Flex justifyContent="flex-end" sx={{ marginBottom: 2, marginRight: 3, marginBottom: 2 }}>
+      <Box sx={{
+        display:"flex",
+        justifyContent:"end",
+        alignItems:"end",
+        marginBottom: 2,
+        marginTop: 2,
+        marginRight: 2
+        }}> 
         <TextField
           label="Search"
           variant="outlined"
@@ -139,7 +146,7 @@ function OtmUsersConsole() {
           value={searchQuery}
           onChange={handleSearchChange}
         />
-      </Flex>
+      </Box>
       <Box sx={{
         display: "flex",
         justifyContent: "center",
@@ -147,7 +154,7 @@ function OtmUsersConsole() {
 
       }}>
         <TableContainer component={Paper} sx={{
-          marginTop: 2,
+         
           marginBottom: 6,
           marginRight: 2
         }}

@@ -20,7 +20,6 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Viewbudget from './Viewbudget';
 import { FRONTEND_API } from "./urls";
-import { Flex } from 'reflexbox';
 
 
 function ClientStudentConsole() {
@@ -129,15 +128,22 @@ function ClientStudentConsole() {
          <h1>Student Clients </h1>
         </div>
       
-        <Flex justifyContent="flex-end" sx={{ marginBottom: 2, marginRight: 3, marginBottom: 2 }}>
-          <TextField
-            label="Search"
-            variant="outlined"
-            size="small"
-            value={searchQuery}
-            onChange={handleSearchChange}
+         <Box sx={{
+            display:"flex",
+            justifyContent:"end",
+            alignItems:"end",
+            marginBottom: 2,
+            marginTop: 2,
+            marginRight: 2
+            }}>  
+            <TextField
+              label="Search"
+              variant="outlined"
+              size="small"
+              value={searchQuery}
+              onChange={handleSearchChange}
           />
-        </Flex>
+        </Box>
 
       <Box sx={{
           display:"flex",

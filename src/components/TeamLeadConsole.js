@@ -19,7 +19,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { FRONTEND_API } from "./urls";
-import { Flex } from 'reflexbox';
+
 import { useNavigate } from "react-router-dom";
 
 
@@ -103,15 +103,22 @@ function TeamLeadConsole() {
             <div class='one'>
                 <h1>Our Team Leads</h1>
             </div>
-            <Flex justifyContent="flex-end" sx={{ marginBottom: 2, marginRight: 3, marginBottom: 2 }}>
-                <TextField
+            <Box sx={{
+                   display:"flex",
+                   justifyContent:"end",
+                   alignItems:"end",
+                   marginBottom: 2,
+                   marginTop: 2,
+                   marginRight: 2
+                    }}> 
+                    <TextField
                     label="Search"
                     variant="outlined"
                     size="small"
                     value={searchQuery}
                     onChange={handleSearchChange}
                 />
-            </Flex>
+            </Box>
             <Box sx={{
                 display: "flex",
                 justifyContent: "center",
@@ -119,7 +126,7 @@ function TeamLeadConsole() {
 
             }}>
                 <TableContainer component={Paper} sx={{
-                    marginTop: 2,
+                    
                     marginBottom: 6,
                     marginRight: 2
                 }}

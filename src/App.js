@@ -5,8 +5,6 @@ import NewLogin from "./components/NewLogin"
 import Headerr from "./components/Headerr";
 import Home from "./components/Home";
 import "./components/css/main.css";
-import AddTutors from "./components/Addtutors";
-import Addotm from "./components/Addotm";
 import UpdateOTMdata from "./components/UpdateOTMdata";
 import OTMform from "./components/OTMform";
 import DataTableTuytors from "./components/DataTableTuytors";
@@ -15,7 +13,7 @@ import Tutorform from "./components/Tutorform";
 import Updatetaskdata from "./components/Updatetaskdata";
 import Addtask from "./components/Addtask";
 import OTMdata from "./components/OTMdata";
-import Addclient from "./components/Addclient";
+
 import UpdateClientdata from "./components/UpdateClientdata";
 import Clientform from "./components/Clientform";
 import AddBudget from "./components/AddBudget";
@@ -51,8 +49,6 @@ import ExpertsConsole from "./components/ExpertsConsole";
 import ClientStudentConsole from "./components/ClientStudentConsole";
 import ClientVendorConsole from "./components/ClientVendorConsole";
 import AddExpert from "./components/AddExpert";
-import AddStudent from "./components/AddStudent";
-import AddVendor from "./components/AddVendor";
 import EditClientsDetails from "./components/EditClientsDetails";
 import StudentOrderHistory from "./components/StudentOrderHistory";
 import UpdateExpert from "./components/UpdateExpert";
@@ -84,17 +80,13 @@ function App() {
                 <Route path='/register' element={<Register />} />
                 <Route path='/registerExpert' element={<AddExpert />} />
 
-                <Route path='/tutors' element={<AddTutors />} />
-                <Route path='/otm' element={<Addotm />} />
-               
                 <Route path='/updateotm/:userId' element={<OTMform />} />
                
                 <Route path='/Updatetutors/:userId' element={<Tutorform />} />
                 <Route path='/1' element={<DataTableTuytors />} />
                 <Route path='/new' element={<OTMdata />} />
                 <Route path='/Assingntask/:userId' element={<Taskform />} />
-                <Route path='/addStudent' element={<AddStudent />} />
-                <Route path='/addVendor' element={<AddVendor />} />
+       
                 <Route path='/UpdateClientdata' element={<ClientStudentConsole />} />
                 <Route path='/Updatevonder' element={<ClientVendorConsole />} />
                 <Route path='/UpdateClientdata/:userId' element={<Clientform />} />
