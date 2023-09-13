@@ -24,6 +24,7 @@ import { FRONTEND_API } from "./urls";
 function ExpertsConsole() {
   const [expertUsers, setExpertUsers] = useState([]);
   const token = localStorage.getItem("token")
+  const roles = localStorage.getItem("roles")
   const [open, setOpen] = React.useState(false);
   const [expertUsersId, setExpertUsersId] = useState([]);
   const navigate = useNavigate();
@@ -186,14 +187,17 @@ function ExpertsConsole() {
                             Invoice
                           </Button>
                         </StyledTableCell> */}
-                    <StyledTableCell>
-                      <Button variant="contained" type='submit' color="success"
-                        onClick={() => handleUserUpdate(user.id)}
-                        size="small"
-                        sx={{ marginRight: 2 }}>
-                        Update
-                      </Button>
-                    </StyledTableCell>
+                        {roles != "hr" && (
+                             <StyledTableCell>
+                             <Button variant="contained" type='submit' color="success"
+                               onClick={() => handleUserUpdate(user.id)}
+                               size="small"
+                               sx={{ marginRight: 2 }}>
+                               Update
+                             </Button>
+                           </StyledTableCell>
+                        )}
+                   
                     {/* <StyledTableCell>
                           <Button variant="contained" type='submit' color="error" 
                             onClick={() => deleteUser(user.id)}

@@ -23,6 +23,7 @@ function TeamLeadConsole() {
 
     const [otmUsers, setOtmUsers] = useState([]);
     const token = localStorage.getItem("token")
+    const roles = localStorage.getItem("roles")
     const [searchQuery, setSearchQuery] = useState('');
     const navigate = useNavigate();
 
@@ -150,6 +151,7 @@ function TeamLeadConsole() {
                                         <StyledTableCell>{user.contact}</StyledTableCell>
                                         <StyledTableCell>{user.address}</StyledTableCell>
                                         <StyledTableCell>{user.DOB}</StyledTableCell>
+                                        {roles != "hr" && (
                                         <StyledTableCell>
                                             <Button variant="contained" type='submit' color="success"
                                                 onClick={() => handleUserUpdate(user.id)}
@@ -158,6 +160,7 @@ function TeamLeadConsole() {
                                                 Update
                                             </Button>
                                         </StyledTableCell>
+                                        )}
                                         {/*  <StyledTableCell>
                           <Button variant="contained" type='submit' color="error" 
                             onClick={() => deleteUser(user.id)}

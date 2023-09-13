@@ -26,6 +26,7 @@ import { useNavigate } from "react-router-dom";
 function OtmUsersConsole() {
   const [otmUsers, setOtmUsers] = useState([]);
   const token = localStorage.getItem("token")
+  const roles = localStorage.getItem("roles")
   const [open, setOpen] = React.useState(false);
   const [otmUsersId, setOtmUsersId] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -182,6 +183,7 @@ function OtmUsersConsole() {
                     <StyledTableCell>{user.contact}</StyledTableCell>
                     <StyledTableCell>{user.DOB}</StyledTableCell>
                     <StyledTableCell>{user.address}</StyledTableCell>
+                    {roles != "hr" && (
                     <StyledTableCell>
                       <Button variant="contained" type='submit' color="success"
                         onClick={() => handleUserUpdate(user.id)}
@@ -190,6 +192,7 @@ function OtmUsersConsole() {
                         Update
                       </Button>
                     </StyledTableCell>
+                    )}
                     {/*  <StyledTableCell>
                           <Button variant="contained" type='submit' color="error" 
                             onClick={() => deleteUser(user.id)}
