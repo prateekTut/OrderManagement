@@ -1,9 +1,12 @@
 import React from 'react'
-import { Container, FormControl, TextField, InputLabel, Select, MenuItem, Grid, Button } from '@mui/material'
+import { Container, FormControl, TextField, InputLabel, Select, MenuItem, Grid, Button, FormLabel } from '@mui/material'
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import { FRONTEND_API } from "./urls";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Alert} from '@mui/material';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 function AddTaskNew() {
     const navigate = useNavigate();
@@ -24,6 +27,8 @@ function AddTaskNew() {
     const [Description, setDescription] = useState("");
     const [Word_count, setWord_count] = useState("");
     const [Expert_price, setExpert_price] = useState("");
+    
+    const [userClientType, setUserClientType] = useState('');
 
     const [clientValid, setClientValid] = useState(null);
     const [subjectValid, setSubjectValid] = useState(null);
@@ -100,10 +105,20 @@ function AddTaskNew() {
         setEnd_date(value);
         setEndDateValid(validateEndDate(value));
     };
+
+    const handleRadioChange = (event) => {
+        //setSelectedRadio(event.target.value);
+        console.log(event.target.value);
+        setUserClientType(event.target.value);
+        fetchInitial(event.target.value);
+    };
+    
  
-    useEffect(() => {
-        const fetchInitial = async () =>{
-            fetch(FRONTEND_API + "getclientdata", {
+  
+    const fetchInitial = (type) =>{
+
+        if(type === 'student'){
+            fetch(FRONTEND_API + "getstudentclientdata", {
                 headers: {
                     'Authorization' : 'Bearer ' + token
                 }
@@ -118,10 +133,27 @@ function AddTaskNew() {
                     console.log(rejected);
                 }
             );
-         
-        };
-        fetchInitial();
-    }, []);
+        }else{
+            fetch(FRONTEND_API + "getvendoreclientdata", {
+                headers: {
+                    'Authorization' : 'Bearer ' + token
+                }
+                })
+                .then((res) => res.json())
+                .then((data) => {
+                    // do something with data
+                    console.log(data);
+                    setclient(data);
+                })
+                .catch((rejected) => {
+                    console.log(rejected);
+                }
+            );
+        }
+        
+        
+    };
+ 
     
     const resetValidationFields = () => {
         setSubjectValid(null);
@@ -244,17 +276,40 @@ function AddTaskNew() {
                     <TextField id="outlined-basic"  type='date' 
                         value={End_date}
                         onChange={handleEndDateChange}
-                        inputProps={{ min: today }} 
-                        InputLabelProps={{
+                        inputProps={{
+                            min: Start_date,
+                          }}
+                          InputLabelProps={{
                             shrink: true,
-                        }}
+                          }}
                         label="Task End Date"
                          variant="outlined" />
                 </FormControl>
                 </Grid>
             </Grid>
-        
+              
             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                <Grid item xs={6}>
+
+                    <FormControl fullWidth sx={{m:1, marginTop: 3}}>
+                    <FormLabel id="demo-row-radio-buttons-group-label">Client</FormLabel>
+     
+                        <RadioGroup
+                            row
+                            aria-labelledby="demo-row-radio-buttons-group-label"
+                            name="row-radio-buttons-group"
+                            value={userClientType}
+                            onChange={handleRadioChange}
+                        >
+                            <FormControlLabel value="student" control={<Radio />} label="Student" />
+                            <FormControlLabel value="vendor" control={<Radio />} label="Vendor" />
+                        </RadioGroup>
+                    </FormControl>
+                </Grid>
+            </Grid>
+            {userClientType != '' && (
+
+                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={6}>
                     <FormControl fullWidth sx={{
                         marginTop: 3,
@@ -273,13 +328,15 @@ function AddTaskNew() {
                     >
                     {client.map((data) => ( 
                         
-                        <MenuItem value={data.id}>{data.Client_name}</MenuItem>
+                        <MenuItem value={data.id}>{data.name}</MenuItem>
                         
                     ))}
                     </Select>
                     </FormControl>
                 </Grid>
-            </Grid>
+                </Grid>
+            )}
+           
             <FormControl fullWidth sx={{m:1, marginTop: 3}}>
                 <TextField id="outlined-basic" 
                     value={Description}

@@ -128,7 +128,12 @@ function Headerr() {
             
             <a class='sidemenu'>
                 <Link to='/teamLead'> Team Leads</Link>
-              </a>
+            </a>
+            
+            <a class='sidemenu'>
+              <Link to='/attendanceOverview'>Employee's Attendace</Link>
+            </a>
+
           </>
           ) : (
             null

@@ -55,6 +55,7 @@ import UpdateExpert from "./components/UpdateExpert";
 import TeamLeadConsole from "./components/TeamLeadConsole";
 import ClientInvoice from "./components/ClientInvoice";
 import VendorOrderHistory from "./components/VendorOrderHistory";
+import AttendanceOverview from "./components/AttendanceOverview";
 
 
 function App() {
@@ -122,7 +123,7 @@ function App() {
               </Route>
 
               <Route element={<RequireAuth allowedRoles={["admin", "hr" ]} />}>
-                
+                <Route path="/attendanceOverview" element={< AttendanceOverview/>} />
                 <Route path='/teamLead' element={<TeamLeadConsole />} />
                 <Route path='/updateotm' element={<OtmUsersConsole />} />
                 <Route path='/Updatetutors' element={<ExpertsConsole />} />

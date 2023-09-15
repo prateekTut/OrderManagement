@@ -257,6 +257,7 @@ function Dashbord() {
 
   const startWork = () => {
     var formdata = new FormData();
+    console.log(currentDate + " " + currentTime)
     formdata.append("date", currentDate);
     formdata.append("start_time", currentTime);
     //formdata.append("end_time", Client_email);
@@ -352,8 +353,12 @@ function Dashbord() {
           marginTop: 2
           }}>
           <div>
-
-            <h2>Timer: {hours}h {minutes}m {seconds}s</h2>
+            {isRunning ? (
+              <h2>Timer: {hours}h {minutes}m {seconds}s</h2>
+            ): (
+              <></>
+            )}
+           
 
             {isRunning ? (
               <Button variant="contained" type='submit' color="success" onClick={stopTimer} >

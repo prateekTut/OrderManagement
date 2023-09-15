@@ -31,6 +31,8 @@ function AssignTaskConsole() {
     const [orders, setOrders] = useState([]);
     const [ordersId, setOrdersId] = useState([]);
     const [ordersIdEdit, setOrdersIdEdit] = useState([]);
+    const [Vendor_budget, setVendor_budget] = useState("");
+
 
     const [currentStatus, setCurrentStatus] = useState('New Order');
     const [prevStatus, setPrevStatus] = useState("");
@@ -50,6 +52,7 @@ function AssignTaskConsole() {
     const [otmValid, setOtmValid] = useState(null);
     const [expertStartDateValid, setExpertStartDateValid] = useState(null);
     const [expertEndDateValid, setExpertEndDateValid] = useState(null);
+    const [vendorBudgetValid, setVendorBudgetValid] = useState(null);
 
     const [expertPriceValid, setExpertPriceValid] = useState(null);
     const [wordCountValid, setWordCountValid] = useState(null);
@@ -64,6 +67,7 @@ function AssignTaskConsole() {
     const validateOtm = (value) => value != '';
     const validateExpertStartDate = (value) => value != '';
     const validateExpertEndDate = (value) => value != '';
+    const validateVendorBudget = (value) => /^\d+$/.test(value); 
 
     const validateExpertPrice = (value) => !isNaN(value) && value.length < 5;
     const validateWordCount = (value) => !isNaN(value) && value.length < 5;
@@ -153,6 +157,12 @@ function AssignTaskConsole() {
             });
     };
 
+    const handleVendorBudgetChange = (event) => {
+        const {name, value} = event.target;
+        setVendor_budget(value);
+        setVendorBudgetValid(validateVendorBudget(value));
+    };
+
     const handleChangeQc = (event) => {
         const value = event.target.value
         setQc_Expert_name(value);
@@ -224,6 +234,7 @@ function AssignTaskConsole() {
         setExpert_startDate(dateStartObject.toISOString().split('T')[0]);
         setWordCount(filteredOrders[0].word_count);
         setExpertPrice(filteredOrders[0].expert_price);
+        setVendor_budget(filteredOrders[0].budget);
         setOpenEdit(true);
     };
 
@@ -310,7 +321,7 @@ function AssignTaskConsole() {
             formdata.append("Expert_endDate", Expert_endDate);
             formdata.append("word_count", wordCount);
             formdata.append("expert_price", expertPrice);
-            
+            formdata.append("budget", Vendor_budget)
             var requestOptions = {
                 method: "POST",
                 body: formdata,
@@ -584,6 +595,7 @@ function AssignTaskConsole() {
                                     <StyledTableCell >Order Status</StyledTableCell>
                                     <StyledTableCell >Word Count</StyledTableCell>
                                     <StyledTableCell >Expert Price</StyledTableCell>
+                                    <StyledTableCell >Budget</StyledTableCell>
                                     <StyledTableCell >Description</StyledTableCell>
                                     <StyledTableCell >Operations</StyledTableCell>
                                 </StyledTableRow>
@@ -608,6 +620,8 @@ function AssignTaskConsole() {
                                     <StyledTableCell>{orderData.order_status}</StyledTableCell>
                                     <StyledTableCell>{orderData.word_count}</StyledTableCell>
                                     <StyledTableCell>{orderData.expert_price}</StyledTableCell>
+                                    <StyledTableCell>{orderData.budget}</StyledTableCell>
+                        
                                     <StyledTableCell>{orderData.description}</StyledTableCell>
                                     <StyledTableCell>
                                     {roles == "lead" && orderData.id != null && (
@@ -867,10 +881,12 @@ function AssignTaskConsole() {
                             error={expertEndDateValid == false}
                             helperText={expertEndDateValid == false && 'Select End Date'}
                             onChange={handleExpertEndDateChange}
-                            inputProps={{ min: today }}
-                            InputLabelProps={{
+                            inputProps={{
+                                min: Expert_startDate,
+                              }}
+                              InputLabelProps={{
                                 shrink: true,
-                            }}
+                              }}
                             label="Expert End Date"
                             variant="outlined" />
                     </FormControl>
@@ -940,7 +956,7 @@ function AssignTaskConsole() {
                                 console.log(e.target.value);
                                 setExpert_endDate(e.target.value);
                             }} 
-                            inputProps={{ min: today }}
+                            inputProps={{ min: Expert_startDate }}
                             InputLabelProps={{
                                 shrink: true,
                             }}
@@ -989,6 +1005,22 @@ function AssignTaskConsole() {
                         />
                         </FormControl>
                     </Grid>
+
+                    <Grid item xs={6}>
+                        <FormControl fullWidth sx={{
+                            marginTop: 3,
+                            m:1
+                        }}>
+                       <TextField id="outlined-basic"  
+                            value={Vendor_budget}
+                            onChange={handleVendorBudgetChange}
+                            variant="outlined"
+                            error={vendorBudgetValid == false}
+                            helperText={vendorBudgetValid == false && 'Invalid budget'}
+                            label="Budget" />
+                        </FormControl>
+                    </Grid>
+
                 </Grid>
                 
             </DialogContent>
