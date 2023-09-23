@@ -1,8 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./css/Resister.css";
-import "./css/main.css";
+
 import { FRONTEND_API } from "./urls";
 
 function AddBudget() {

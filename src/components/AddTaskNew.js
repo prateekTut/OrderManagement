@@ -7,8 +7,24 @@ import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, A
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import { Subject } from '@mui/icons-material';
+import { FormText } from 'react-bootstrap';
 
 function AddTaskNew() {
+    const currencies = [
+        {
+          value: 'USD',
+          label: '$',
+        },
+        {
+          value: 'INR',
+          label: '₹',
+        },
+        {
+          value: 'GBP',
+          label: '£',
+        },
+    ];
     const navigate = useNavigate();
     const token = localStorage.getItem("token")
     const location = useLocation();
@@ -18,10 +34,12 @@ function AddTaskNew() {
     const [status, setStatus] = useState('');
     const [alertContent, setAlertContent] = useState('');
 
+    const [currencyValue, setCurrencyValue] = React.useState('');
     const [userClient, setUserClient] = React.useState('');
     const [client, setclient] = useState([]);
     const [Vendor_budget, setVendor_budget] = useState("");
     const [subject, setSubject] = useState("");
+    const [newSubject, setNewSubject] = useState("");
     const [Start_date, setStart_date] = useState("");
     const [End_date, setEnd_date] = useState("");
     const [Description, setDescription] = useState("");
@@ -59,11 +77,31 @@ function AddTaskNew() {
 
     const validateVendorBudget = (value) => /^\d+$/.test(value); // Example validation for a numeric value
     const vaildateWordCount = (value) => /^\d+$/.test(value);
-    const validateExpertPrice = (value) => /^\d+$/.test(value);
+    const validateExpertPrice = (value) => {
+        console.log(parseInt(Vendor_budget,10));
+        if (value < parseInt(Vendor_budget,10)){
+            console.log(value);
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    const handleCurrencyChange = (event) => {
+        setCurrencyValue(event.target.value);
+    };
 
     const handleChangeSubject = (event) => {
         const {name, value} = event.target;
         setSubject(value); 
+        setSubjectValid(validateSubject(value));
+        console.log(event.target);
+        
+    };
+    
+    const handleNewSubject = (event) => {
+        const {name, value} = event.target;
+        setNewSubject(value); 
         setSubjectValid(validateSubject(value));
         console.log(event.target);
         
@@ -167,12 +205,17 @@ function AddTaskNew() {
     const uploadData = (event) => {
         event.preventDefault();
         console.log(subjectValid);
-        if (subjectValid && vendorBudgetValid && wordCountValid && expertPriceValid && startDateValid && endDateValid) {
+        if (subjectValid && vendorBudgetValid && wordCountValid && expertPriceValid && startDateValid && endDateValid && currencyValue !== '') {
             // Proceed with form submission
             
             console.log('Form submitted');
             var formdata = new FormData();
-            formdata.append("Task_Subject", subject);
+            if(subject !== 'other'){
+                formdata.append("Task_Subject", subject);
+            }else{
+                formdata.append("Task_Subject", newSubject);
+            }
+            formdata.append("currency", currencyValue);
             formdata.append("Vendor_budget", Vendor_budget);
             formdata.append("client_id", userClient);
             formdata.append("Status", "new order");
@@ -236,26 +279,59 @@ function AddTaskNew() {
                     label="Subject"
                     name='Subject'
                     onChange={handleChangeSubject}
-                    error={subjectValid == false}
-                    helperText={subjectValid == false && 'Cannot be left blank'}>
-
+                   >
                     <MenuItem value={'mathematics'}>Mathematics</MenuItem>
                     <MenuItem value={'science'}>Science</MenuItem>
                     <MenuItem value={'english'}>English</MenuItem>
                     <MenuItem value={'data science'}>Data Science</MenuItem>
+                    <MenuItem value={'other'}>Add Subject</MenuItem>
                 </Select>
-
+               
             </FormControl>
-            <FormControl fullWidth sx={{m:1, marginTop: 3}}>
-                <TextField id="outlined-basic"  
-                    value={Vendor_budget}
-                    onChange={handleVendorBudgetChange}
+            <FormControl fullWidth sx={{m:1}}>
+                {subject == 'other' && (
+                    <TextField id="outlined-basic"  
+                    value={newSubject}
+                    onChange={handleNewSubject}
                     variant="outlined"
-                    error={vendorBudgetValid == false}
-                    helperText={vendorBudgetValid == false && 'Invalid budget'}
-                    label="Budget" />
+                    error={subjectValid == false}
+                    helperText={subjectValid == false && 'Cannot be left blank'}
+                    label="Subject" />
+                )}
             </FormControl>
-            
+            <Grid container rowSpacing={1} columnSpacing={1}>
+                <Grid item xs={4}>
+                    <FormControl fullWidth sx={{m:1, marginTop: 3}}>
+                        <InputLabel id="demo-simple-select-label">Currency</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={currencyValue}
+                            label="currency"
+                            onChange={handleCurrencyChange}
+                            error={currencyValue === ''}
+                            helperText={currencyValue === '' && 'Select Currency'}
+                        >
+                        {currencies.map((data) => ( 
+                            
+                            <MenuItem value={data.value}>{data.label}</MenuItem>
+                            
+                        ))}
+                        </Select>
+                    </FormControl>
+                </Grid>
+                <Grid item xs={8}>
+                    <FormControl fullWidth sx={{m:1, marginTop: 3}}>
+                        <TextField id="outlined-basic"  
+                            value={Vendor_budget}
+                            onChange={handleVendorBudgetChange}
+                            variant="outlined"
+                            error={vendorBudgetValid == false}
+                            helperText={vendorBudgetValid == false && 'Invalid budget'}
+                            label="Budget" />
+                    </FormControl>
+                </Grid>
+            </Grid>
             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={6}>
                 <FormControl fullWidth sx={{m:1, marginTop: 3}}>
@@ -345,32 +421,53 @@ function AddTaskNew() {
                     }}
                     label="Description" variant="outlined" />
             </FormControl>
-
-            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={6}>
-                <FormControl fullWidth sx={{m:1, marginTop: 3}}>
-                    <TextField id="outlined-basic" 
-                        value={Word_count}
-                        error={wordCountValid  == false}
-                        onChange={handleWordCountChange}
-                        helperText={wordCountValid == false && 'Invalid Word Count'}
-                        label="Word Count" 
-                        variant="outlined" />
-                </FormControl>
+            <FormControl fullWidth sx={{m:1, marginTop: 3}}>
+                <TextField id="outlined-basic" 
+                    value={Word_count}
+                    error={wordCountValid  == false}
+                    onChange={handleWordCountChange}
+                    helperText={wordCountValid == false && 'Invalid Word Count'}
+                    label="Word Count" 
+                    variant="outlined" />
+            </FormControl>
+                
+                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                    <Grid item xs = {4}>
+                        <FormControl fullWidth sx={{m:1, marginTop: 3}}>
+                        
+                        <InputLabel id="demo-simple-select-label">Currency</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={currencyValue}
+                            disabled
+                            label="currency"
+                            onChange={handleCurrencyChange}
+                          
+                        >
+                        {currencies.map((data) => ( 
+                            
+                            <MenuItem value={data.value}>{data.label}</MenuItem>
+                            
+                        ))}
+                        </Select>
+                    
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={8}>
+                    <FormControl fullWidth sx={{m:1, marginTop: 3}}>
+                        <TextField id="outlined-basic"  
+                            value={Expert_price}
+                            label="Expert Price" 
+                            variant="outlined"
+                            error={expertPriceValid == false}
+                            onChange={handleExpertPriceChange}
+                            helperText={expertPriceValid == false && 'Invalid Price'}
+                            />
+                    </FormControl>
+                    </Grid>
                 </Grid>
-                <Grid item xs={6}>
-                <FormControl fullWidth sx={{m:1, marginTop: 3}}>
-                    <TextField id="outlined-basic"  
-                        value={Expert_price}
-                        label="Expert Price" 
-                        variant="outlined"
-                        error={expertPriceValid == false}
-                        onChange={handleExpertPriceChange}
-                        helperText={expertPriceValid == false && 'Invalid Price'}
-                        />
-                </FormControl>
-                </Grid>
-            </Grid>
+            
             <Button variant="outlined" type='submit' sx={{marginTop:3}}>Submit</Button>
         </form>
         {alert && status=="200" ? <Alert severity='success'>{alertContent}</Alert> : <></> }

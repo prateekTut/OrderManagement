@@ -1,5 +1,5 @@
 import React from 'react'
-import { FormControl, MenuItem, InputLabel, BottomNavigation, BottomNavigationAction, TextField, Grid } from '@mui/material';
+import {Typography, TextField, Grid, Container } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useState, useEffect } from "react";
 import Box from '@mui/material/Box';
@@ -13,7 +13,7 @@ import Paper from '@mui/material/Paper';
 import { Button } from '@mui/material';
 import { Link } from "react-router-dom";
 import { styled } from '@mui/material/styles';
-import './css/style.css'
+
 import { FRONTEND_API } from "./urls";
 
 import { useNavigate } from "react-router-dom";
@@ -96,10 +96,16 @@ function TeamLeadConsole() {
     );
 
     return (
-        <div>
-            <div class='one'>
-                <h1>Our Team Leads</h1>
-            </div>
+        <Container>
+            <Typography variant='h1' sx={{
+                marginLeft: 2,
+                paddingTop: 2,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                }}>
+            Team Leads
+          </Typography>
             <Box sx={{
                    display:"flex",
                    justifyContent:"end",
@@ -177,7 +183,7 @@ function TeamLeadConsole() {
             </Box>
 
 
-        </div>
+        </Container>
     )
 }
 

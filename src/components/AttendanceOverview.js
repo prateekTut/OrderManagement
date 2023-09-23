@@ -13,7 +13,7 @@ import Paper from '@mui/material/Paper';
 import { Button } from '@mui/material';
 import { Link } from "react-router-dom";
 import { styled } from '@mui/material/styles';
-import './css/style.css'
+
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';

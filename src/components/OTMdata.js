@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import "./css/table.css";
-import "./css/Heading.css";
+
 
 import { FRONTEND_API } from "./urls";
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { FormControl, MenuItem, InputLabel, BottomNavigation, BottomNavigationAction, TextField, Grid } from '@mui/material';
+import { Typography, TextField, Grid, Container } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useState, useEffect } from "react";
 import Box from '@mui/material/Box';
@@ -13,7 +13,7 @@ import Paper from '@mui/material/Paper';
 import { Button } from '@mui/material';
 import { Link, useNavigate } from "react-router-dom";
 import { styled } from '@mui/material/styles';
-import './css/style.css'
+
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -106,10 +106,16 @@ function ClientVendorConsole() {
       };
 
     return (
-      <div>
-      <div class='one'>
-         <h1>Vendor Clients </h1>
-      </div>
+      <Container>
+        <Typography variant='h1' sx={{
+          marginLeft: 2,
+          paddingTop: 2,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          }}>
+            Vendors
+          </Typography>
       
       <Box sx={{
        display:"flex",
@@ -194,7 +200,8 @@ function ClientVendorConsole() {
               </Table>
           </TableContainer>
       </Box>
-        </div>
+        </Container>
+        
     )
 }
 

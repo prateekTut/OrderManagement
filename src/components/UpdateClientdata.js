@@ -2,13 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./css/Resister.css";
-import "./css/main.css";
+
 import { cloneDeep } from "lodash";
 import DataTable from "react-data-table-component";
 import { Modal, Button } from "react-bootstrap";
-import "./css/table.css";
-import "./css/Heading.css";
+
 import { useRef } from "react";
 import { FRONTEND_API } from "./urls";
 

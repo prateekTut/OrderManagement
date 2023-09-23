@@ -1,5 +1,5 @@
 import React from 'react'
-import { FormControl, DialogContentText, TextField, Grid, Autocomplete, TablePagination } from '@mui/material';
+import { Typography, TextField, Grid, Autocomplete, TablePagination } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useState, useEffect } from "react";
 import Box from '@mui/material/Box';
@@ -13,7 +13,7 @@ import Paper from '@mui/material/Paper';
 import { Button } from '@mui/material';
 import { Link, useNavigate } from "react-router-dom";
 import { styled } from '@mui/material/styles';
-import './css/style.css'
+
 
 import { FRONTEND_API } from "./urls";
 import { useParams } from "react-router-dom";
@@ -21,6 +21,7 @@ import { DateRange } from 'react-date-range';
 
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
+import { Container } from 'react-bootstrap';
 
 function VendorOrderHistory() {
  
@@ -71,6 +72,19 @@ function VendorOrderHistory() {
     const handleDateRangeChange = (ranges) => {
         setDateRange([ranges.selection]);
     };
+
+    const handleBudget = (budget, currency) => {
+      if(budget == null){
+        budget = 0;
+      }
+      if (currency == 'GBP') {
+        return "£" + budget
+      } else if (currency == 'USD') {
+        return "$" + budget
+      } else {
+        return "₹" + budget
+      }
+    }
 
     // Extract the start date and end date from the state
   
@@ -127,14 +141,20 @@ function VendorOrderHistory() {
     };
    
     return (
-      <div>
-        <div class='one'>
-         <h1>Vendor Order History </h1>
-        </div>
+      <Container>
+         <Typography variant='h1' sx={{
+          marginLeft: 2,
+          paddingTop: 2,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          }}>
+            Vendor Order History
+          </Typography>
+         
 
-        <div>
-            <Button variant='contained' 
-                onClick={handleButtonClick}>Select Date</Button>
+         <Button variant='contained' 
+            onClick={handleButtonClick}>Select Date</Button>
             <br></br>
             {showDateRangePicker && (
                 <DateRange
@@ -144,7 +164,7 @@ function VendorOrderHistory() {
                 ranges={dateRange}
                 />
             )}
-        </div>
+     
 
       <Box sx={{
           display:"flex",
@@ -152,8 +172,7 @@ function VendorOrderHistory() {
           alignItems:"center",
           
           }}>
-          
-         
+
           <TableContainer component={Paper} sx={{
               marginBottom: 6,
               marginRight: 2
@@ -182,9 +201,9 @@ function VendorOrderHistory() {
 
                       <StyledTableRow key={user.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                         <StyledTableCell component="th" scope="row">{user.id}</StyledTableCell>
-                        <StyledTableCell>{user.order_budget} </StyledTableCell>
+                        <StyledTableCell>{handleBudget(user.order_budget, user.currency)} </StyledTableCell>
                         <StyledTableCell>{user.task}</StyledTableCell>
-                        <StyledTableCell>{user.amount_paid}</StyledTableCell>
+                        <StyledTableCell>{handleBudget (user.amount_paid, user.currency)}</StyledTableCell>
                         <StyledTableCell>
                           <Button variant="contained" type='submit' color="success" 
                           
@@ -210,7 +229,7 @@ function VendorOrderHistory() {
               
           </TableContainer>
       </Box>
-    </div>
+    </Container>
     )
 }
 

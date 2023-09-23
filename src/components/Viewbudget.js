@@ -4,8 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { cloneDeep } from "lodash";
 import { useReactToPrint } from "react-to-print";
-import "./css/Resister.css";
-import "./css/main.css";
+
 import { FRONTEND_API } from "./urls";
 
 function Viewbudget() {

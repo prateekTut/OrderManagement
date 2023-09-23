@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "./css/Heading.css";
-import "./css/main.css";
+
 
 function Allbutton() {
   return (

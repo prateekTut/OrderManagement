@@ -1,7 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./css/Sidebar.css";
-import "./css/Header.css";
+
 
 import Logo from "./img/logo.jpg";
 import useAuth from "../hooks/useAuth";
@@ -94,7 +93,16 @@ function Headerr() {
                 <Link to='/Assingntask'>Tasks</Link>
               </a>
               <a class='sidemenu'>
-                <Link to='/register'>Register</Link>
+                <Link to='/register'>Register User</Link>
+              </a>
+              <a class='sidemenu'>
+                <Link to='/register-clients'>Add Clients</Link>
+              </a>
+               <a class='dropdown'>
+                <a class='dropbtn'>Accounting</a>
+                <div class='dropdown-content'>
+                  <Link to='/client-invoice'>Client Invoice</Link>
+                </div>
               </a>
               {/* <a class='dropdown'>
                 <a class='dropbtn'>Invoice</a>

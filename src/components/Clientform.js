@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { cloneDeep } from "lodash";
-import "./css/Resister.css";
-import "./css/main.css";
+
 import { FRONTEND_API } from "./urls";
 
 function Clientform() {

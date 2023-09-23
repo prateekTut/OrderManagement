@@ -17,6 +17,7 @@ import { useState, useEffect } from 'react';
 import { FRONTEND_API } from "./urls";
 import { event } from 'jquery';
 import { useParams } from "react-router-dom";
+import { Container } from 'react-bootstrap';
 
 const defaultTheme = createTheme();
 
@@ -183,8 +184,8 @@ export default function EditClientsDetails() {
 
 
     return (
-        <ThemeProvider theme={defaultTheme}>
-            <Grid >
+        <Container>
+            <Grid paddingLeft="100px" paddingRight="100px" paddingBottom='20px'>
                 <CssBaseline />
                 <Grid sx={{ marginTop: 10 }}>
                     <Box
@@ -317,6 +318,6 @@ export default function EditClientsDetails() {
                     </Box>
                 </Grid>
             </Grid>
-        </ThemeProvider>
+        </Container>
     );
 }

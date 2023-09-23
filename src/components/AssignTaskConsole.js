@@ -1,5 +1,5 @@
 import React from 'react'
-import { FormControl, MenuItem, InputLabel, BottomNavigation, BottomNavigationAction, TextField, Grid } from '@mui/material';
+import { FormControl, MenuItem, InputLabel, BottomNavigation, BottomNavigationAction, TextField, Grid, Container } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useState, useEffect } from "react";
 import Box from '@mui/material/Box';
@@ -13,7 +13,6 @@ import Paper from '@mui/material/Paper';
 import { Button } from '@mui/material';
 import { Link } from "react-router-dom";
 import { styled } from '@mui/material/styles';
-import './css/style.css'
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -360,6 +359,18 @@ function AssignTaskConsole() {
         return formattedDate;
     }
 
+    const handleBudget = (budget, currency) => {
+       
+        if(currency == 'GBP'){
+            return "£"+ budget
+        }else if (currency == 'USD'){
+            return "$"+ budget
+        }else{
+            return "₹"+ budget
+        }
+        
+    }
+
     const fetchDataForSubject = (subject, status) => {
         console.log(subject);
         console.log(status);
@@ -500,10 +511,10 @@ function AssignTaskConsole() {
       
 
   return (
-    <div className='header'>
+    <Container>
         <Box>
             {/* Render your order data here based on your API response */console.log(roles)}
-            {roles != "expert" && (
+            {roles != "expert" && roles != 'lead' && roles != 'otm' ? (
                 <Box sx={{ marginTop: 10, marginBottom: 3}}>
                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                     <Grid item xs={6}>
@@ -533,25 +544,30 @@ function AssignTaskConsole() {
                 </FormControl>
     
                 </Box>
+            ) : (
+                <Box sx={{marginTop: 10}}>
+                </Box>
             )
             }
-            { roles != "admin" && roles != "lead" && roles != "otm" && (
-                <FormControl sx={{width: 250, marginTop: 10}} >
-                        <InputLabel id="demo-simple-select-label">Subject</InputLabel>
-                        <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            value={subjectValue}
-                            label="subjects"
-                            onChange={handleChange}
-                        >
-                        {subjects.map((data) => ( 
-                            
-                            <MenuItem value={data}>{data}</MenuItem>
-                            
-                        ))}
-                        </Select>
+            { roles == "lead" || roles == "otm" || roles == "expert" ? (
+                <FormControl sx={{width: 250}} >
+                    <InputLabel id="demo-simple-select-label">Subject</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={subjectValue}
+                        label="subjects"
+                        onChange={handleChange}
+                    >
+                    {subjects.map((data) => ( 
+                        
+                        <MenuItem value={data}>{data}</MenuItem>
+                        
+                    ))}
+                    </Select>
                 </FormControl>
+            ) : (
+                <Box sx={{marginTop: 1}}></Box>
             )
 
             }
@@ -616,11 +632,11 @@ function AssignTaskConsole() {
                                     <StyledTableCell>{handleDate(orderData.order_end_date)}</StyledTableCell>
                                     <StyledTableCell>{handleDate(orderData.expert_start_date)}</StyledTableCell>
                                     <StyledTableCell>{handleDate(orderData.expert_end_date)}</StyledTableCell>
-                                
                                     <StyledTableCell>{orderData.order_status}</StyledTableCell>
                                     <StyledTableCell>{orderData.word_count}</StyledTableCell>
-                                    <StyledTableCell>{orderData.expert_price}</StyledTableCell>
-                                    <StyledTableCell>{orderData.budget}</StyledTableCell>
+                                    <StyledTableCell>{handleBudget(orderData.expert_price, orderData.currency)}</StyledTableCell>
+                                    
+                                    <StyledTableCell>{handleBudget(orderData.budget, orderData.currency)}</StyledTableCell>
                         
                                     <StyledTableCell>{orderData.description}</StyledTableCell>
                                     <StyledTableCell>
@@ -1032,7 +1048,7 @@ function AssignTaskConsole() {
             </DialogActions>
         </Dialog>
 
-    </div>
+    </Container>
   )
 }
 

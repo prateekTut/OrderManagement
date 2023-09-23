@@ -1,5 +1,5 @@
 import React from 'react'
-import { FormControl, DialogContentText, TextField, Grid, Autocomplete, TablePagination } from '@mui/material';
+import { Typography, TextField, Container } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useState, useEffect } from "react";
 import Box from '@mui/material/Box';
@@ -13,7 +13,7 @@ import Paper from '@mui/material/Paper';
 import { Button } from '@mui/material';
 import { Link, useNavigate } from "react-router-dom";
 import { styled } from '@mui/material/styles';
-import './css/style.css'
+
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -123,11 +123,16 @@ function ClientStudentConsole() {
     );
 
     return (
-      <div>
-      <div class='one'>
-         <h1>Student Clients </h1>
-        </div>
-      
+      <Container>
+      <Typography variant='h1' sx={{
+          marginLeft: 2,
+          paddingTop: 2,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          }}>
+            Students
+          </Typography>
          <Box sx={{
             display:"flex",
             justifyContent:"end",
@@ -208,7 +213,7 @@ function ClientStudentConsole() {
               
           </TableContainer>
       </Box>
-    </div>
+    </Container>
     )
 }
 

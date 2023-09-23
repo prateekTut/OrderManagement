@@ -1,8 +1,7 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import Headerr from "./Headerr";
-import "./css/main.css";
-import "./css/Heading.css";
+
 import { FRONTEND_API } from "./urls";
 function Home() {
   const [users, setUsers] = useState([]);

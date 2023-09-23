@@ -5,9 +5,7 @@ import { useParams } from "react-router-dom";
 import { cloneDeep } from "lodash";
 import { useReactToPrint } from "react-to-print";
 import Logo from "./img/logo.jpg";
-import "./css/Resister.css";
-import "./css/main.css";
-import "./css/Invoice.css";
+
 import { FRONTEND_API } from "./urls";
 
 function Vendorsinvoice() {

@@ -5,17 +5,30 @@ import { useParams } from "react-router-dom";
 import { cloneDeep } from "lodash";
 import { useReactToPrint } from "react-to-print";
 import Logo from "./img/logo.jpg";
-import "./css/Resister.css";
-import "./css/main.css";
-import "./css/Invoice.css";
+
 import { FRONTEND_API } from "./urls";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, TextField } from "@mui/material";
+import { Button, Typography, Container, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 
 
 function ClientInvoice() {
   const navigate = useNavigate();
   let params = useParams();
   //console.log(params, params.userId);
+
+  const currencies = [
+    {
+      value: 'USD',
+      label: '$',
+    },
+    {
+      value: 'INR',
+      label: '₹',
+    },
+    {
+      value: 'GBP',
+      label: '£',
+    },
+  ];
   const [userToEdit, setUserToEdit] = useState([]);
   const [userToinvoice, setUserToinvoice] = useState([]);
   const componentRef = useRef();
@@ -25,28 +38,30 @@ function ClientInvoice() {
   const [amount, setAmount] = useState("");
 
   const [amountValid, setAmountValid] = useState(null);
+  const [currencyValue, setCurrencyValue] = React.useState('');
 
-  
 
   // ======================= calculation of discount , tex , total ======================
 
   var subtotalePrice = 0;
   var total = userToEdit.map((user) => (subtotalePrice += user.amount_paid));
   var totalAmount = userToEdit.map((user) => (user.order_budget));
+
   var discountformula = subtotalePrice * (1 - 0.1);
   var discount = subtotalePrice - discountformula;
+
   var GSTtaxformula = subtotalePrice * (1 + 0.18);
   var GSTtax = GSTtaxformula - subtotalePrice;
-  
+
   //var amountPaid = userToEdit.map((user) => (user.amount_paid === 0 ? 0 : user.amount_paid));
   var amountPaid = userToEdit.reduce((total, user) => total + user.amount_paid, 0);
   amountPaid = amountPaid === 0 ? 0 : amountPaid;
-    
+
   var totalprice = subtotalePrice + GSTtax;
 
 
   var totalGstOnAmount = totalAmount * (0.18);
-  var totalCalculatedGst =  parseFloat(totalAmount) + totalGstOnAmount;
+  var totalCalculatedGst = parseFloat(totalAmount) + totalGstOnAmount;
 
   var remainingAmount = totalAmount - amountPaid;
   // ===========================end=========================================
@@ -63,20 +78,23 @@ function ClientInvoice() {
   // ===================end===============================
 
   const validateAmount = (value) => {
-    if(value > parseFloat(amountPaid) && value <= remainingAmount){
+    if (value > parseFloat(amountPaid) && value <= remainingAmount) {
       console.log(remainingAmount);
       return true;
     }
-    else if(value == remainingAmount){
+    else if (value == remainingAmount) {
       console.log(value);
       return true;
     }
-    else{
+    else {
       return false;
     }
   }
 
   // ===============================Edit invoice=====================
+  const handleCurrencyChange = (event) => {
+    setCurrencyValue(event.target.value);
+  };
 
   const onAmountChange = (event) => {
     //console.log("Task ID", orderId);
@@ -138,72 +156,79 @@ function ClientInvoice() {
 
   // =======================end====================================
 
-    const handleClose = () => {
-      setOpenEdit(false);
-      resetFormFields();
-    };
+  const handleClose = () => {
+    setOpenEdit(false);
+    resetFormFields();
+  };
 
-    const handleOrderUpdate = () => {
-      if(amountValid){
-        var formdata = new FormData();
-        console.log(amount)
-        console.log(amountPaid)
-        formdata.append("paid_amount", parseFloat(amount) + parseFloat(amountPaid));
-        formdata.append("order_id", params.userId)
-        var requestOptions = {
-            method: "POST",
-            body: formdata,
-            headers: {
-            'Authorization' : 'Bearer ' + token
-            }
-        
-        };
-
-        fetch(FRONTEND_API + "updateOrderAmount", requestOptions)
-          .then((response) =>  { 
-              if(response.status == 200){
-                return response.json();
-              }
-          })
-          .then((result) => {
-            console.log(result);
-              resetFormFields();
-              resetValidationFields();
-              setOpenEdit(false);
-              fetchClientForInvoice(params.userId);
-              fetchOrderData(params.userId);
-          })
-          .catch((error) => {
-            console.log(error)
-          });
+  const handleOrderUpdate = () => {
+    if (amountValid) {
+      var formdata = new FormData();
+      console.log(amount)
+      console.log(amountPaid)
+      formdata.append("paid_amount", parseFloat(amount) + parseFloat(amountPaid));
+      formdata.append("order_id", params.userId)
+      var requestOptions = {
+        method: "POST",
+        body: formdata,
+        headers: {
+          'Authorization': 'Bearer ' + token
         }
-    };
 
-    const handleModalEdit = (id) => {
-      
-      setOpenEdit(true);
-     
-    };
+      };
 
-    const resetFormFields = () => { 
-      setAmount("");
+      fetch(FRONTEND_API + "updateOrderAmount", requestOptions)
+        .then((response) => {
+          if (response.status == 200) {
+            return response.json();
+          }
+        })
+        .then((result) => {
+          console.log(result);
+          resetFormFields();
+          resetValidationFields();
+          setOpenEdit(false);
+          fetchClientForInvoice(params.userId);
+          fetchOrderData(params.userId);
+        })
+        .catch((error) => {
+          console.log(error)
+        });
     }
-    const resetValidationFields = () => { 
-      setAmountValid(null);
-    }
+  };
 
-    return (
-    <div>
-      <div class='one'>
-        <h1>Student invoice</h1>
-      </div>
+  const handleModalEdit = (id) => {
+
+    setOpenEdit(true);
+
+  };
+
+  const resetFormFields = () => {
+    setAmount("");
+  }
+  const resetValidationFields = () => {
+    setAmountValid(null);
+  }
+
+  return (
+    <Container>
+      <Typography variant='h1' sx={{
+        marginLeft: 2,
+        paddingTop: 2,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}>
+        Student's Invoice
+      </Typography>
+
       <Button variant="contained" type='submit' color="success" onClick={handlePrint}>
         Print & Save as PDF
       </Button>
       <Button
         sx={{ marginLeft: 2 }}
-        variant="contained" type='submit' color="success" 
-        disabled = {remainingAmount == 0}
+        variant="contained" type='submit' color="success"
+        disabled={remainingAmount == 0}
         onClick={() => handleModalEdit(userToinvoice.order_id)}>
         Edit Invoice
       </Button>
@@ -252,6 +277,23 @@ function ClientInvoice() {
             </div>
 
             <div class='table-responsive-sm'>
+              <InputLabel id="demo-simple-select-label">Currency</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={currencyValue}
+                label="currency"
+                onChange={handleCurrencyChange}
+                error={currencyValue === ''}
+                helperText={currencyValue === '' && 'Select Currency'}
+                sx={{ width: 15 }}
+              >
+                {currencies.map((data) => (
+
+                  <MenuItem value={data.value}>{data.label}</MenuItem>
+
+                ))}
+              </Select>
               <table class='table table-striped'>
                 <thead id='tablehead'>
                   <tr>
@@ -259,7 +301,7 @@ function ClientInvoice() {
                     <th>Item's</th>
                     <th class='right'>Price</th>
                     <th class='right'>Amount Paid</th>
-                    <th class='right'>Remaining Amount</th>
+                    {/* <th class='right'>Remaining Amount</th> */}
                     <th class='center'>Qty</th>
                     {/* <th class='right'>Total</th> */}
                   </tr>
@@ -271,7 +313,7 @@ function ClientInvoice() {
                       <td>{user.task}</td>
                       <td>{user.order_budget}</td>
                       <td>{user.amount_paid}</td>
-                      <td>{remainingAmount}</td>
+                      {/*  <td>{remainingAmount}</td> */}
                       <td>1</td>
                     </tr>
                   ))}
@@ -302,7 +344,7 @@ function ClientInvoice() {
                       </td>
                       <td class='right'>{GSTtax.toFixed(2)}</td>
                     </tr>
-                    
+
                     <tr>
                       <td class='left'>
                         <strong>Total</strong>
@@ -311,7 +353,7 @@ function ClientInvoice() {
                         <strong>{((subtotalePrice - GSTtax) + GSTtax).toFixed(2)}</strong>
                       </td>
                     </tr>
-                   
+
                   </tbody>
                 </table>
               </div>
@@ -364,7 +406,7 @@ function ClientInvoice() {
                 onChange={onAmountChange}
                 error={amountValid == false}
                 helperText={amountValid == false && 'Invalid Amount'}
-                
+
               />
             </FormControl>
           </Grid>
@@ -378,7 +420,7 @@ function ClientInvoice() {
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </Container>
   );
 }
 

@@ -1,276 +1,316 @@
-import React, {  useState, forwardRef } from 'react';
-import AppBar from '@mui/material/AppBar';
+import * as React from 'react';
+import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import MuiDrawer from '@mui/material/Drawer';
+import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
-import Badge from '@mui/material/Badge';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import clsx from 'clsx';
 import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
-import useStyles from './menuBarStyle';
-import menuItems from './SideBarItems';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { NavLink as RouterLink } from 'react-router-dom';
-import Drawer from '@mui/material/Drawer';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import List from '@mui/material/List';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
+import MailIcon from '@mui/icons-material/Mail';
+import { Link, useNavigate } from 'react-router-dom';
 import Collapse from '@mui/material/Collapse';
+import { Badge, Button, Menu, MenuItem, Paper } from '@mui/material';
+import { AccountCircle } from '@mui/icons-material';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import MoreIcon from '@mui/icons-material/MoreVert';
+import { FRONTEND_API } from "./urls";
+import SideItems from './SideItems';
 
-const pages = ['Home'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const drawerWidth = 240;
 
-const NavBarMain = (props) => {
+const openedMixin = (theme) => ({
+  width: drawerWidth,
+  transition: theme.transitions.create('width', {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.enteringScreen,
+  }),
+  overflowX: 'hidden',
+});
 
-    const [anchorElNav, setAnchorElNav] = React.useState(null);
-    const [anchorElUser, setAnchorElUser] = React.useState(null);
+const closedMixin = (theme) => ({
+  transition: theme.transitions.create('width', {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  overflowX: 'hidden',
+  width: `calc(${theme.spacing(7)} + 1px)`,
+  [theme.breakpoints.up('sm')]: {
+    width: `calc(${theme.spacing(8)} + 1px)`,
+  },
+});
 
-    const handleOpenNavMenu = (event) => {
-        setAnchorElNav(event.currentTarget);
-    };
-    const handleOpenUserMenu = (event) => {
-        setAnchorElUser(event.currentTarget);
-    };
+const DrawerHeader = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-end',
+  padding: theme.spacing(0, 1),
+  // necessary for content to be below app bar
+  ...theme.mixins.toolbar,
+}));
 
-    const handleCloseNavMenu = () => {
-        setAnchorElNav(null);
-    };
+const StyledLink = styled(Link)(({ theme }) => ({
+  color: 'black !important', // Change this to your desired link color
+  textDecoration: 'none',
+}));
 
-    const handleCloseUserMenu = () => {
-        setAnchorElUser(null);
-    };
-    //const classes  = useStyles();
-    const [ menu, setMenu ] = useState({});
-   
-    const { className, ...rest } = props;
-    const classes  = useStyles();
-    const handleClick = (item) => {
-        let newData = {...menu, [item] : !menu[item]};
-        setMenu(newData);
-    }
-    const CustomRouterLink = forwardRef((props, ref) => (
-      <div ref={ref} style={{ flexGrow: 1 }}>
-        <RouterLink {...props} />
-      </div>
-    ));
+const AppBar = styled(MuiAppBar, {
+  shouldForwardProp: (prop) => prop !== 'open',
+})(({ theme, open }) => ({
+  zIndex: theme.zIndex.drawer + 1,
+  transition: theme.transitions.create(['width', 'margin'], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  ...(open && {
+    marginLeft: drawerWidth,
+    width: `calc(100% - ${drawerWidth}px)`,
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  }),
+}));
 
-    const handleMenu = ( children, level=0 ) => {
-        return children.map(({children, name, url, links }) => {
-            if ( !children ) {
-              return (
-                <List component="div" disablePadding key={ name }>
-                  <ListItem
-                    className={classes.item}
-                    disableGutters
-                    style={{padding:"0px"}}
-                    key={name}
-                  >
-                    <Button
-                      className={clsx({
-                        [classes.btnRoot] : true,
-                        [classes.button] : true,
-                        [classes.subMenu] : level
-                      })}
-                      component={CustomRouterLink}
-                      to={url}
-                    >
-                      {name}
-                    </Button>
-                  </ListItem>
-                </List>
-              )
-            }
-            return (
-              <div key={ name }>
-              <ListItem
-                className={classes.item}
-                disableGutters
-                key={name}
-                onClick={() => handleClick(name)}
-              >
-                <Button
-                className={clsx({
-                  [classes.btnRoot] : true,
-                  [classes.button] : true,
-                  [classes.subMenu] : level
-                })}>
-                  { name } { menu[ name ] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                  </Button>
-                </ListItem>
-                <Collapse
-                  in={ (menu[name]) ? true : false }
-                  timeout="auto"
-                  unmountOnExit
-                >
-                  { handleMenu( children, 1) }
-                </Collapse>
-              </div>
-            )
-        })
-    }
+const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
+  ({ theme, open }) => ({
+    width: drawerWidth,
+    flexShrink: 0,
+    whiteSpace: 'nowrap',
+    boxSizing: 'border-box',
+    ...(open && {
+      ...openedMixin(theme),
+      '& .MuiDrawer-paper': openedMixin(theme),
+    }),
+    ...(!open && {
+      ...closedMixin(theme),
+      '& .MuiDrawer-paper': closedMixin(theme),
+    }),
+  }),
+);
+
+export default function MiniDrawer() {
+  const theme = useTheme();
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [open, setOpen] = React.useState(false);
+  const [openSubmenu, setOpenSubmenu] = React.useState(false);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+
+  const isMenuOpen = Boolean(anchorEl);
+  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+  const email = localStorage.getItem('email');
+  const roles = localStorage.getItem("roles")
+
+  const navigate = useNavigate();
+
+  const handleSubMenuClick = () => {
+    setOpenSubmenu(!open);
+  };
+
+  const handleDrawerOpen = () => {
+    if (!open)
+      setOpen(true);
+    else
+      setOpen(false);
+  };
+
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
+  const handleMobileMenuOpen = (event) => {
+    setMobileMoreAnchorEl(event.currentTarget);
+  };
+
+  const handleProfileMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMobileMenuClose = () => {
+    setMobileMoreAnchorEl(null);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    handleMobileMenuClose();
+  };
+  const handleLogout = async () => {
+    // if used in more components, this should be in context
+    // axios to /logout endpoint
+    localStorage.removeItem("token")
+    localStorage.removeItem("roles")
+    localStorage.removeItem("userId")
+    localStorage.removeItem("email")
+    fetch(FRONTEND_API + 'logout')
+      .then(() => {
+        window.location.href = '/login'; // Redirect to home page after logout
+      })
+      .catch((error) => {
+        console.error('Error logging out:', error);
+      });
+  };
+
+  const menuId = 'primary-search-account-menu';
+  const renderMenu = (
+    <Menu
+      anchorEl={anchorEl}
+      anchorOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
+      id={menuId}
+      keepMounted
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
+      open={isMenuOpen}
+      onClose={handleMenuClose}
+      sx={{
+        marginTop: '50px'
+      }}
+    >
+      {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+<MenuItem onClick={handleLogout}>logout</MenuItem> */}
+
+      <Box flexGrow={1} sx={{
+        padding: '10px'
+      }}>
+        <p>Logged In as </p>
+        <p>{email}</p>
+        <Button variant='outlined' onClick={handleLogout}>
+          Logout
+        </Button>
+      </Box>
+    </Menu>
+  );
+
+  const mobileMenuId = 'primary-search-account-menu-mobile';
+  const renderMobileMenu = (
+    <Menu
+      anchorEl={mobileMoreAnchorEl}
+      anchorOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
+      id={mobileMenuId}
+      keepMounted
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
+      open={isMobileMenuOpen}
+      onClose={handleMobileMenuClose}
+    >
+      <MenuItem onClick={handleProfileMenuOpen}>
+        {/* <IconButton
+size="large"
+aria-label="account of current user"
+aria-controls="primary-search-account-menu"
+aria-haspopup="true"
+color="inherit"
+>
+</IconButton>
+<p>Profile</p> */}
+        <Paper>
+
+        </Paper>
+        <IconButton
+          size="large"
+          aria-label="account of current user"
+          aria-controls="primary-search-account-menu"
+          aria-haspopup="true"
+          color="inherit"
+          onClick={handleLogout}
+        >
+        </IconButton>
+        <p>Logout</p>
+      </MenuItem>
+    </Menu>
+  );
 
   return (
-    <Box sx={{ display: "flex" }}>
-      
-        <AppBar  
-            position="fixed">
-        <Container maxWidth="xl">
-            <Toolbar disableGutters>
-
-            <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-                <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleOpenNavMenu}
-                color="inherit"
-                >
-                <MenuIcon />
-                </IconButton>
-                <Menu
-                id="menu-appbar"
-                anchorEl={anchorElNav}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                keepMounted
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'left',
-                }}
-                open={Boolean(anchorElNav)}
-                onClose={handleCloseNavMenu}
-                sx={{
-                    display: { xs: 'block', md: 'none' },
-                }}
-                >
-                {pages.map((page) => (
-                    <MenuItem key={page} onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center">{page}</Typography>
-                    </MenuItem>
-                ))}
-                </Menu>
-            </Box>
-            <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-            <Typography
-                variant="h5"
-                noWrap
-                component="a"
-                href=""
-                sx={{
-                mr: 2,
-                display: { xs: 'flex', md: 'none' },
-                flexGrow: 1,
-                fontFamily: 'monospace',
-                fontWeight: 700,
-                letterSpacing: '.3rem',
-                color: 'inherit',
-                textDecoration: 'none',
-                }}
-            >
-                LOGO
-            </Typography>
-            
-            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                {pages.map((page) => (
-                <Button
-                    key={page}
-                    onClick={handleCloseNavMenu}
-                    sx={{ my: 2, color: 'white', display: 'block' }}
-                >
-                    {page}
-                </Button>
-                ))}
-            </Box>
-
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="fixed">
+          <Toolbar>
             <IconButton
-                    size="large"
-                    aria-label="show 17 new notifications"
-                    color="inherit"
-                    sx={{marginRight: 2}}>
-                    <Badge badgeContent={17} color="error">
-                        <NotificationsIcon />
-                    </Badge>
-                </IconButton>
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={{
+                marginRight: 5,
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap component="div">
+              TutorsHive Order Management
+            </Typography>
 
-
-            <Box sx={{ flexGrow: 0 }}>
-                <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-                </IconButton>
-                </Tooltip>
-
-                <Menu
-                sx={{ mt: '45px' }}
-                id="menu-appbar"
-                anchorEl={anchorElUser}
-                anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-                open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
-                >
-                {settings.map((setting) => (
-                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                    <Typography textAlign="center">{setting}</Typography>
-                    </MenuItem>
-                ))}
-                </Menu>
+            <Box sx={{ flexGrow: 1 }} />
+            <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+              <IconButton
+                size="large"
+                edge="end"
+                aria-label="account of current user"
+                aria-controls={menuId}
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="inherit"
+              >
+                <AccountCircle />
+              </IconButton>
             </Box>
-            </Toolbar>
-        </Container>
+            <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+              <IconButton
+                size="large"
+                aria-label="show more"
+                aria-controls={mobileMenuId}
+                aria-haspopup="true"
+                onClick={handleMobileMenuOpen}
+                color="inherit"
+              >
+                <MoreIcon />
+              </IconButton>
+            </Box>
+          </Toolbar>
         </AppBar>
-
-        <Drawer
-        variant="permanent"
-        classes={{ paper: classes.drawer }}
-        >
-        <Toolbar />
-        <Box sx={{ overflow: 'auto' }}>
-        <List {...rest} className={clsx(classes.root, className)} >
-              { handleMenu(menuItems.data) }
-          </List>
-
-          <Divider />
-          {/* <List>
-            {['All mail', 'Trash', 'Spam'].map((text, index) => (
-              <ListItem key={text} disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List> */}
-        </Box>
-      </Drawer>
-     
+        {renderMobileMenu}
+        {renderMenu}
       </Box>
+
+      <Drawer variant="permanent" open={open}>
+          <Toolbar
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              px: [1],
+            }}
+          >
+            <IconButton onClick={handleDrawerOpen}>
+              <ChevronLeftIcon />
+            </IconButton>
+          </Toolbar>
+          <Divider />
+          <List component="nav">
+            <SideItems />
+          </List>
+        </Drawer>
+    </Box>
   );
 }
-export default NavBarMain;

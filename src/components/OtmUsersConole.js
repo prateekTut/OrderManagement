@@ -1,5 +1,5 @@
 import React from 'react'
-import { FormControl, MenuItem, InputLabel, BottomNavigation, BottomNavigationAction, TextField, Grid } from '@mui/material';
+import { Typography, TextField, Grid, Container } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useState, useEffect } from "react";
 import Box from '@mui/material/Box';
@@ -13,7 +13,6 @@ import Paper from '@mui/material/Paper';
 import { Button } from '@mui/material';
 import { Link } from "react-router-dom";
 import { styled } from '@mui/material/styles';
-import './css/style.css'
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -70,7 +69,7 @@ function OtmUsersConsole() {
         }
 
       };
-      const response = await fetch(FRONTEND_API + "getUsers",requestOptions);
+      const response = await fetch(FRONTEND_API + "getUsers", requestOptions);
       const rawData = await response.json();
       console.log(rawData)
       return rawData;
@@ -128,18 +127,24 @@ function OtmUsersConsole() {
   }
 
   return (
-    <div>
-      <div class='one'>
-        <h1>Our Otm Users</h1>
-      </div>
+    <Container>
+      <Typography variant='h1' sx={{
+          marginLeft: 2,
+          paddingTop: 2,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          }}>
+            OTM Members
+          </Typography>
       <Box sx={{
-        display:"flex",
-        justifyContent:"end",
-        alignItems:"end",
+        display: "flex",
+        justifyContent: "end",
+        alignItems: "end",
         marginBottom: 2,
         marginTop: 2,
         marginRight: 2
-        }}> 
+      }}>
         <TextField
           label="Search"
           variant="outlined"
@@ -148,19 +153,13 @@ function OtmUsersConsole() {
           onChange={handleSearchChange}
         />
       </Box>
-      <Box sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-
-      }}>
+      <Box>
         <TableContainer component={Paper} sx={{
-         
           marginBottom: 6,
           marginRight: 2
         }}
           aria-label="customized table" >
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <Table sx={{ minWidth: 650 }}  aria-label="simple table">
             <TableHead>
               <StyledTableRow>
                 <StyledTableCell>Name</StyledTableCell>
@@ -184,14 +183,14 @@ function OtmUsersConsole() {
                     <StyledTableCell>{user.DOB}</StyledTableCell>
                     <StyledTableCell>{user.address}</StyledTableCell>
                     {roles != "hr" && (
-                    <StyledTableCell>
-                      <Button variant="contained" type='submit' color="success"
-                        onClick={() => handleUserUpdate(user.id)}
-                        size="small"
-                        sx={{ marginRight: 2 }}>
-                        Update
-                      </Button>
-                    </StyledTableCell>
+                      <StyledTableCell>
+                        <Button variant="contained" type='submit' color="success"
+                          onClick={() => handleUserUpdate(user.id)}
+                          size="small"
+                          sx={{ marginRight: 2 }}>
+                          Update
+                        </Button>
+                      </StyledTableCell>
                     )}
                     {/*  <StyledTableCell>
                           <Button variant="contained" type='submit' color="error" 
@@ -209,7 +208,7 @@ function OtmUsersConsole() {
       </Box>
 
 
-    </div>
+    </Container>
   )
 }
 
