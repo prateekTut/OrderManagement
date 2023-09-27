@@ -65,6 +65,12 @@ const theme = createTheme({
     secondary: {
       main: '#F34C19',
     },
+    customRedColor: {
+      main: '#FF0000',
+    },
+    customGreenColor :{
+      main: '#228B22',
+    },
     background: {
       backgroundColor: '#E9D8E4'
     }
@@ -96,14 +102,14 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
         <Routes>
-          <Route path='/login' element={<NewLogin />} />
+
+          <Route path='/' element={<NewLogin />} />
           <Route path='/app_select' element={<AppSelection />} />
-          
           <Route path='/' element={<Layout />}>
        
             {/* Public Routes */}
             <Route path='/unauthorized' element={<Unauthorized />} />
-
+      
             <Route element={<RequireAuth allowedRoles={["admin"]} />}>
 
               <Route path='/register' element={<Register />} />

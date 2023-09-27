@@ -154,7 +154,7 @@ export default function MiniDrawer() {
     localStorage.removeItem("email")
     fetch(FRONTEND_API + 'logout')
       .then(() => {
-        window.location.href = '/login'; // Redirect to home page after logout
+        window.location.href = '/'; // Redirect to home page after logout
       })
       .catch((error) => {
         console.error('Error logging out:', error);
@@ -182,7 +182,7 @@ export default function MiniDrawer() {
       }}
     >
       {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-<MenuItem onClick={handleLogout}>logout</MenuItem> */}
+        <MenuItem onClick={handleLogout}>logout</MenuItem> */}
 
       <Box flexGrow={1} sx={{
         padding: '10px'
@@ -215,14 +215,14 @@ export default function MiniDrawer() {
     >
       <MenuItem onClick={handleProfileMenuOpen}>
         {/* <IconButton
-size="large"
-aria-label="account of current user"
-aria-controls="primary-search-account-menu"
-aria-haspopup="true"
-color="inherit"
->
-</IconButton>
-<p>Profile</p> */}
+          size="large"
+          aria-label="account of current user"
+          aria-controls="primary-search-account-menu"
+          aria-haspopup="true"
+          color="inherit"
+          >
+          </IconButton>
+          <p>Profile</p> */}
         <Paper>
 
         </Paper>
@@ -281,7 +281,7 @@ color="inherit"
                 aria-label="show more"
                 aria-controls={mobileMenuId}
                 aria-haspopup="true"
-                onClick={handleMobileMenuOpen}
+                onClick={handleProfileMenuOpen}
                 color="inherit"
               >
                 <MoreIcon />
@@ -289,7 +289,6 @@ color="inherit"
             </Box>
           </Toolbar>
         </AppBar>
-        {renderMobileMenu}
         {renderMenu}
       </Box>
 

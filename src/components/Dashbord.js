@@ -18,78 +18,21 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems, secondaryListItems } from './SideItems';
+import AdminCharts from './AdminCharts';
+import DashboardOrders from './DashboardOrders';
+import PendingOrders from './PendingOrders';
+import ExpertsCharts from './ExpertsCharts';
+import AttendanceTimer from './AttendanceTimer';
+import ExpertTasks from './ExpertTasks';
 
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
-const drawerWidth = 240;
-
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(['width', 'margin'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-}));
-
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-  ({ theme, open }) => ({
-    '& .MuiDrawer-paper': {
-      position: 'relative',
-      whiteSpace: 'nowrap',
-      width: drawerWidth,
-      transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-      boxSizing: 'border-box',
-      ...(!open && {
-        overflowX: 'hidden',
-        transition: theme.transitions.create('width', {
-          easing: theme.transitions.easing.sharp,
-          duration: theme.transitions.duration.leavingScreen,
-        }),
-        width: theme.spacing(7),
-        [theme.breakpoints.up('sm')]: {
-          width: theme.spacing(9),
-        },
-      }),
-    },
-  }),
-);
-
-// TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 export default function Dashboard() {
-  const [open, setOpen] = React.useState(true);
-  const toggleDrawer = () => {
-    setOpen(!open);
-  };
+  
+  const roles = localStorage.getItem("roles");
 
   return (
-    <ThemeProvider theme={defaultTheme}>
-      <Box sx={{ display: 'flex'}}>
+      <Box sx={{ display: 'flex', bgcolor: '#FBF1F7', height: '100vh'}}>
         <CssBaseline />
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
@@ -97,13 +40,20 @@ export default function Dashboard() {
               <Grid item xs={12} md={8} lg={9}>
                 <Paper
                   sx={{
-                    p: 2,
+                    p:2,
                     display: 'flex',
                     flexDirection: 'column',
                     height: 240,
                   }}
                 >
-                  {/* <Chart /> */}
+                  {roles == 'admin' && (
+                    <AdminCharts />
+                  )}
+                  
+                  {roles == 'expert' && (
+                    <ExpertsCharts />
+                  )}
+                  
                 </Paper>
               </Grid>
               {/* Recent Deposits */}
@@ -116,18 +66,33 @@ export default function Dashboard() {
                     height: 240,
                   }}
                 >
-                 {/*  <Deposits /> */}
+                   {roles == 'admin' && (
+                     <PendingOrders />
+                  )}
+                  
+                  {roles == 'expert' && (
+                    <AttendanceTimer />
+                  )}
+                 
                 </Paper>
               </Grid>
               {/* Recent Orders */}
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                 {/*  <Orders /> */}
+                  
+                  {roles == 'admin' && (
+                    <DashboardOrders />
+                  )}
+
+                  {roles == 'expert' && (
+                    <ExpertTasks />
+                  )}
+
                 </Paper>
               </Grid>
             </Grid>
           </Container>
       </Box>
-    </ThemeProvider>
+  
   );
 }

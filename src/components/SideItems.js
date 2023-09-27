@@ -147,6 +147,14 @@ export default function SideItems() {
 
     {role === 'lead' || role === 'otm' || role == 'expert' ? (
       <div>
+      <Link to="/dashboard">
+        <ListItemButton>
+          <ListItemIcon>
+            <DashboardIcon />
+          </ListItemIcon>
+          <ListItemText primary="Dashboard" />
+        </ListItemButton>
+      </Link>
        <Link to="/Assingntask">
        <ListItemButton>
          <ListItemIcon>
@@ -162,6 +170,14 @@ export default function SideItems() {
 
     {role == 'hr' && (
       <div>
+        <Link to="/dashboard">
+        <ListItemButton>
+          <ListItemIcon>
+            <DashboardIcon />
+          </ListItemIcon>
+          <ListItemText primary="Dashboard" />
+        </ListItemButton>
+      </Link>
         <Link to="/Updatetutors">
         <ListItemButton >
           <ListItemIcon>

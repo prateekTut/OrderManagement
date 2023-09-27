@@ -63,14 +63,26 @@ function VendorOrderHistory() {
     const [showDateRangePicker, setShowDateRangePicker] = useState(false);
 
     const handleButtonClick = () => {
-        setShowDateRangePicker(!showDateRangePicker);
-        if(showDateRangePicker){
-            fetchClientsData();
-        }
+      setShowDateRangePicker(!showDateRangePicker);
     };
 
     const handleDateRangeChange = (ranges) => {
-        setDateRange([ranges.selection]);
+      setDateRange([ranges.selection]);
+      // Close the DateRangePicker when a date is selected
+      console.log(ranges.selection);
+      
+      const startDate = ranges.selection.startDate;
+      const endDate = ranges.selection.endDate;
+      const daysDifference = Math.abs(
+        Math.floor((endDate - startDate) / (24 * 60 * 60 * 1000))
+      );
+
+      // Close the DateRangePicker if the difference is greater than 1
+      if (daysDifference > 1) {
+        setShowDateRangePicker(false);
+        fetchClientsData(startDate, endDate)
+      } 
+
     };
 
     const handleBudget = (budget, currency) => {
@@ -88,14 +100,14 @@ function VendorOrderHistory() {
 
     // Extract the start date and end date from the state
   
-    const fetchClientsData =  () => {
+    const fetchClientsData =  (start, end) => {
 
         var formdata = new FormData();
         //const startDate = dateRange[0].startDate;
         //const endDate = dateRange[0].endDate;
-        const startDate = dateRange[0].startDate.toLocaleDateString('en-US');
-        const endDate = dateRange[0].endDate.toLocaleDateString('en-US');
-
+        const startDate = start.toLocaleDateString('en-US');
+        const endDate = end.toLocaleDateString('en-US');
+        console.log(startDate, endDate);
         formdata.append("start_date", startDate);
         formdata.append("end_date", endDate)
         var requestOptions = {
@@ -122,18 +134,6 @@ function VendorOrderHistory() {
             });
         
     };
-
-    // useEffect(() => {
-    //   const fetchData = async () => {
-    //     const rawData = await fetchClientsData();
-    //     if (rawData) {
-    //       console.log("raw ", rawData);
-    //       setClient(rawData);
-    //     }
-    //   };
-    //   fetchData();
-    // }, [setClient]);
-
   
     const viewOrdersInvoice = (userId) => { 
         console.log("Tutor ID", userId);
@@ -141,10 +141,11 @@ function VendorOrderHistory() {
     };
    
     return (
-      <Container>
+      <Container style={{paddingLeft: '50px'}}>
          <Typography variant='h1' sx={{
           marginLeft: 2,
-          paddingTop: 2,
+          paddingTop: 4,
+          paddingBottom: 2,
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -155,7 +156,7 @@ function VendorOrderHistory() {
 
          <Button variant='contained' 
             onClick={handleButtonClick}>Select Date</Button>
-            <br></br>
+            
             {showDateRangePicker && (
                 <DateRange
                 editableDateInputs={true}
@@ -186,11 +187,6 @@ function VendorOrderHistory() {
                           <StyledTableCell >Task</StyledTableCell>
                           <StyledTableCell >Amount Paid</StyledTableCell>
                           <StyledTableCell >Invoice</StyledTableCell>
-                          {/* <StyledTableCell >University</StyledTableCell>
-                          {/* <StyledTableCell >Budget</StyledTableCell> */}
-                          {/* <StyledTableCell >Order History</StyledTableCell>
-                          <StyledTableCell >Update</StyledTableCell> 
-                          <StyledTableCell >Delete</StyledTableCell>  */}
                           
                       </StyledTableRow>
                   </TableHead>
@@ -213,14 +209,7 @@ function VendorOrderHistory() {
                             Invoices
                           </Button>
                         </StyledTableCell>
-                        {/* <StyledTableCell>{user.university}</StyledTableCell>
-                        <StyledTableCell>
-                          
-                        </StyledTableCell>
-
-                        <StyledTableCell>
-                         
-                        </StyledTableCell> */}
+                       
                       </StyledTableRow>
                       )))}
                   </TableBody>

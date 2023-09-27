@@ -25,7 +25,6 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Divider from '@mui/material/Divider';
 import { useReactToPrint } from "react-to-print";
 
-
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: '#343F71',
@@ -94,7 +93,7 @@ function GenerateInvoice() {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const [tableData, setTableData] = useState([
-    {},
+    {id: 0, item: '', taxRate: 0, quantity: 0, rate: 0, amount: 0, igst: 0, sgst: 0, cgst: 0, amount: 0, total: 0},
   ]);
 
   const [dueDate, setDueDate] = useState(null);
@@ -751,7 +750,7 @@ function GenerateInvoice() {
                     </Grid>
                     <Grid item xs={3}>
                       <Typography align="right" variant="subtitle1">
-                        {getTotalAmount() == NaN ? 0 : getTotalAmount().toFixed(2)}
+                        {isNaN(getTotalAmount()) ? 0 : getTotalAmount().toFixed(2)}
                       </Typography>
                     </Grid>
                   
@@ -820,7 +819,7 @@ function GenerateInvoice() {
                     </Grid>
                     <Grid item xs={3}>
                       <Typography align="right" variant="h5" fontWeight="bold">
-                        {getTotal() == NaN ? 0 : getTotal().toFixed(2)}
+                        {isNaN(getTotal()) ? 0 : getTotal().toFixed(2)}
                       </Typography>
                     </Grid>
                   </Grid>
