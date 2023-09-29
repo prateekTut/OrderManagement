@@ -49,6 +49,8 @@ import RegisterClients from "./components/RegisterClients";
 import GenerateInvoice from "./components/GenerateInvoice";
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import { Box, Container, CssBaseline, Paper } from "@mui/material";
+import NewClientInvoice from "./components/NewClientInvoice";
+import AddFreelancers from "./components/AddFreelancers";
 
 
 // Create a styled component for the Paper element
@@ -144,6 +146,7 @@ function App() {
               <Route path='/invoicedata' element={<Invoicedata />} />
               <Route path='/register-clients' element={<RegisterClients />} />
               <Route path='/client-invoice' element={<GenerateInvoice />} />
+              <Route path="/add-freelancers" element={<AddFreelancers />} />
             </Route>
 
             <Route element={<RequireAuth allowedRoles={["admin", "hr", "otm", "lead", "expert"]} />}>

@@ -142,6 +142,14 @@ export default function SideItems() {
           <ListItemText primary="Add Clients" />
         </ListItemButton>
       </Link>
+      <Link to="/add-freelancers">
+        <ListItemButton>
+          <ListItemIcon>
+            <AssignmentIcon />
+          </ListItemIcon>
+          <ListItemText primary="Add Freelancers" />
+        </ListItemButton>
+      </Link>
     </React.Fragment>
     )}
 

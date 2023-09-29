@@ -85,7 +85,7 @@ function DashboardOrders() {
                     <StyledTableRow key={row.id}>
                         <StyledTableCell>{row.task_date}</StyledTableCell>
                         <StyledTableCell>{row.subject}</StyledTableCell>
-                        <StyledTableCell>{row.expert_id == null ? "Unassigned" : row.expert_id.expert_name}</StyledTableCell>                       
+                        <StyledTableCell>{row.expert_id == null ? "Unassigned" : row.expert_id}</StyledTableCell>                       
                         <StyledTableCell>{row.order_status}</StyledTableCell>
                         <StyledTableCell align="right">{`$${row.order_price}`}</StyledTableCell>
                     </StyledTableRow>

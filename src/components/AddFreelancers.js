@@ -24,8 +24,7 @@ import { MuiPhone } from './MuiPhone';
 
 const defaultTheme = createTheme();
 
-export default function RegisterClients() {
-
+export default function AddFreelancers() {
 
     const [user, setUser] = React.useState('');
     const [alert, setAlert] = useState(false);
@@ -37,8 +36,7 @@ export default function RegisterClients() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [phone, setPhone] = useState("");
-    const [University, setUniversity] = useState("");
-    const [Business_name, setBusiness_name] = useState("");
+
     const token = localStorage.getItem("token")
 
 
@@ -52,7 +50,7 @@ export default function RegisterClients() {
     const [dialogOpen, setDialogOpen] = useState(false);
 
     const validateFirstName = (value) => value.length >= 3;
-    const validatePhone = (value) => !isNaN(value) && value.length == 10;
+    const validatePhone = (value) => !isNaN(value) && value.length == 13;
     const validateEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
     const validateLastName = (value) => value.length >= 4;
     const validateUniv = (value) => value.length >= 4;
@@ -74,8 +72,7 @@ export default function RegisterClients() {
         setLastName("");
         setEmail("");
         setPhone("");
-        setUniversity("");
-        setBusiness_name("");
+       
     }
 
     const onFirstNameChange = (event) => {
@@ -101,95 +98,51 @@ export default function RegisterClients() {
         setClientPhoneValid(validatePhone(newValue));
     }
 
-    const handleClientUnivChange = (event) => {
-        const newValue = event.target.value;
-        setUniversity(newValue);
-        setClientUnivValid(validateUniv(newValue));
-    }
-
-    const handleClientBusinessChange = (event) => {
-        const newValue = event.target.value;
-        setBusiness_name(newValue);
-        setClientBusinessValid(validateBusiness(newValue));
-    }
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        if (clientFirstNameValid && clientLastNameValid && clientEmailValid) {
-            if (user == 'student') {
-                var formdata = new FormData();
-                formdata.append("Client_name", firstName + lastName);
-                formdata.append("Client_contact", phone);
-                formdata.append("Client_email", email);
-                formdata.append("Client_status", "student");
-                formdata.append("University", University);
-                formdata.append("Student_login", email);
-                formdata.append("Student_password", password);
+        
+        if (clientFirstNameValid && clientLastNameValid && clientEmailValid ) {
 
-                var requestOptions = {
-                    method: "POST",
-                    body: formdata,
-                    headers: {
-                        'Authorization': 'Bearer ' + token
+            var formdata = new FormData();
+            formdata.append("firstName", firstName)
+            formdata.append("lastName", lastName)
+            formdata.append("email", email);
+            formdata.append("password", password);
+            formdata.append("contact", phone)
+            formdata.append("role", 'expert');
+            formdata.append("user_type", 'freelancer')
+
+            var requestOptions = {
+                method: "POST",
+                body: formdata,
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+
+            };
+
+            fetch(FRONTEND_API + "addUser", requestOptions)
+                .then((response) => {
+                    if (response.status == 200) {
+                        setStatus("200")
+                        return response.json();
+                    } else {
+                        setStatus("400")
+                        return response.json();
                     }
+                })
+                .then((result) => {
+                    /* alert("Data inserted");
+                    console.log(result);
+                    navigate("/UpdateClientdata"); */
+                    setAlertContent(result.message);
+                    setAlert(true);
+                    resetFormFields();
+                    resetValidationFields();
+                })
+                .catch((error) => alert("error", error));
 
-                };
-
-                fetch(FRONTEND_API + "addclient", requestOptions)
-                    .then((response) => {
-                        if (response.status == 200) {
-                            setStatus("200")
-                            return response.json();
-                        } else {
-                            setStatus("400")
-                            return response.json();
-                        }
-                    })
-                    .then((result) => {
-                        /* alert("Data inserted");
-                        console.log(result);
-                        navigate("/UpdateClientdata"); */
-                        setAlertContent(result.message);
-                        setAlert(true);
-                        resetFormFields();
-                        resetValidationFields();
-                    })
-                    .catch((error) => {
-                        setAlert(true);
-                        setAlertContent("Error Occured");
-                    });
-            } else if (user == 'vendor') {
-                var formdata = new FormData();
-                formdata.append("Client_name", firstName + lastName);
-                formdata.append("Client_contact", phone);
-                formdata.append("Client_email", email);
-                formdata.append("Client_status", "vendor");
-                formdata.append("Business_name", Business_name);
-
-                var requestOptions = {
-                    method: "POST",
-                    body: formdata,
-                    headers: {
-                        'Authorization': 'Bearer ' + token
-                    }
-
-                };
-
-                fetch(FRONTEND_API + "addclient", requestOptions)
-                    .then((response) => {
-                        if (response.status == 200) {
-                            setStatus("200")
-                            return response.json();
-                        }
-                    })
-                    .then((result) => {
-                        setAlertContent(result.message);
-                        setAlert(true);
-                        resetFormFields();
-                        resetValidationFields();
-                    })
-                    .catch((error) => alert("error", error));
-            }
         } else {
             setDialogOpen(true);
         }
@@ -221,7 +174,7 @@ export default function RegisterClients() {
                             <LockOutlinedIcon />
                         </Avatar>
                         <Typography component="h1" variant="h5">
-                            Add Clients
+                            Add Freelancers
                         </Typography>
 
                         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
@@ -271,74 +224,33 @@ export default function RegisterClients() {
                                 helperText={clientEmailValid == false && 'Invalid Email'}
 
                             />
-                            <FormControl fullWidth sx={{ marginTop: 2 }}>
-                            <MuiPhone
-                                defaultCountry="ua"
-                                value={phone}
-                                onChange={(phone) => setPhone(phone)}
-                            />
-                            </FormControl>
 
-                            
-                            <FormControl fullWidth sx={{ marginTop: 2 }}>
-                                <InputLabel id="demo-simple-select-label">User</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={user}
-                                    label="user"
+                            <Grid container rowSpacing={1} sx={{ mt: 1 }}>
 
-                                    onChange={handleChange}
-
-                                >
-
-                                    <MenuItem value='student'>Student</MenuItem>
-                                    <MenuItem value='vendor'>Vendor</MenuItem>
-                                </Select>
-                                {user ? (
-                                    <p>Selected user is: {user}</p>
-                                ) : (
-                                    <p>No user is selected</p>
-                                )}
-                            </FormControl>
-                            {user == 'student' &&
-                                <FormControl fullWidth sx={{ marginTop: 1 }}>
-                                    <TextField
-                                        margin="normal"
-
-                                        fullWidth
-                                        value={University}
-                                        onChange={handleClientUnivChange}
-                                        variant="outlined"
-                                        error={clientUnivValid == false}
-                                        helperText={clientUnivValid == false && 'Invalid University Name'}
-                                        id="university"
-                                        label="University"
-                                        name="text"
-
-
+                                <FormControl fullWidth>
+                                    <MuiPhone
+                                        defaultCountry="ua"
+                                        value={phone}
+                                        onChange={(phone) => setPhone(phone)}
                                     />
-                                </FormControl>
-                            }
-                            {user == 'vendor' &&
-                                <FormControl fullWidth sx={{ marginTop: 1 }}>
-                                    <TextField
+                                    {/* <TextField
                                         margin="normal"
-
+                                        required
                                         fullWidth
-                                        value={Business_name}
-                                        onChange={handleClientBusinessChange}
-                                        variant="outlined"
-                                        error={clientBusinessValid == false}
-                                        helperText={clientBusinessValid == false && 'Invalid Business Name'}
-                                        id="business"
-                                        label="Business"
-                                        name="text"
+                                        name="contact"
+                                        label="contact"
+                                        type="number"
+                                        id="contact"
+                                        value={phone}
+                                        onChange={onPhoneChange}
+                                        error={clientPhoneValid == false}
+                                        helperText={clientPhoneValid == false && 'Invalid Number. Must be 10 digit number'}
 
-
-                                    />
+                                    /> */}
                                 </FormControl>
-                            }
+
+                            </Grid>
+                           
                             <Button
                                 type="submit"
                                 variant="contained"
@@ -362,19 +274,6 @@ export default function RegisterClients() {
                                     </Button>
                                 </DialogActions>
                             </Dialog>
-                            {/* <Grid container>
-                <Grid item xs>
-                  <Link href="#" className='LinkColor'>
-                    Forgot password?
-                  </Link>
-                </Grid>
-                <Grid item>
-                  <Link href="#" className='LinkColor'>
-                    {"Don't have an account? Sign Up"}
-                  </Link>
-                </Grid>
-              </Grid>
-              <Copyright sx={{ mt: 5 }} /> */}
                         </Box>
                     </Box>
                 </Grid>

@@ -20,6 +20,7 @@ import { Alert } from '@mui/material';
 import { useState } from 'react';
 import { FRONTEND_API } from "./urls";
 import { event } from 'jquery';
+import { MuiPhone } from './MuiPhone';
 
 const defaultTheme = createTheme();
 
@@ -130,9 +131,9 @@ export default function Register() {
         formdata.append("email", email);
         formdata.append("password", password);
         formdata.append("contact", phone)
-        formdata.append("type", user)
+        formdata.append("role", user)
 
-        formdata.append("University", University);
+        formdata.append("user_type", 'permanent');
 
 
         var requestOptions = {
@@ -201,7 +202,7 @@ export default function Register() {
             <Typography component="h1" variant="h5">
               Register User
             </Typography>
-            
+
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 <Grid item xs={6}>
@@ -264,20 +265,13 @@ export default function Register() {
                 error={clientPasswordValid == false}
                 helperText={clientPasswordValid == false && 'Invalid Password. Must be greater than 6 characters.'}
               />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="contact"
-                label="contact"
-                type="number"
-                id="contact"
+              <FormControl fullWidth sx={{ marginTop: 2 }}>
+              <MuiPhone
+                defaultCountry="ua"
                 value={phone}
-                onChange={onPhoneChange}
-                error={clientPhoneValid == false}
-                helperText={clientPhoneValid == false && 'Invalid Number. Must be 10 digit number'}
-
+                onChange={(phone) => setPhone(phone)}
               />
+              </FormControl>
               <FormControl fullWidth sx={{ marginTop: 2 }}>
                 <InputLabel id="demo-simple-select-label">User</InputLabel>
                 <Select
