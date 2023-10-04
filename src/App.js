@@ -116,7 +116,6 @@ function App() {
 
               <Route path='/register' element={<Register />} />
               <Route path='/registerExpert' element={<AddExpert />} />
-              <Route path='/updateotm/:userId' element={<OTMform />} />
               <Route path='/Updatetutors/:userId' element={<Tutorform />} />
               <Route path='/1' element={<DataTableTuytors />} />
               <Route path='/new' element={<OTMdata />} />
