@@ -142,8 +142,9 @@ function TeamLeadConsole() {
                                 <StyledTableCell >Contact</StyledTableCell>
                                 <StyledTableCell >DOB</StyledTableCell>
                                 <StyledTableCell >Address</StyledTableCell>
+                                <StyledTableCell >Designation</StyledTableCell>
                                 <StyledTableCell >Update</StyledTableCell>
-                                {/* <StyledTableCell >Delete</StyledTableCell> */}
+                                
                             </StyledTableRow>
                         </TableHead>
 
@@ -155,8 +156,10 @@ function TeamLeadConsole() {
                                         <StyledTableCell component="th" scope="row">{user.firstname + " " + user.lastname}</StyledTableCell>
                                         <StyledTableCell>{user.email} </StyledTableCell>
                                         <StyledTableCell>{user.contact}</StyledTableCell>
-                                        <StyledTableCell>{user.address}</StyledTableCell>
                                         <StyledTableCell>{user.DOB}</StyledTableCell>
+                                        <StyledTableCell>{user.address}</StyledTableCell>
+                                        <StyledTableCell>{user.designation}</StyledTableCell>
+                                       
                                         {roles != "hr" && (
                                         <StyledTableCell>
                                             <Button variant="contained" type='submit' color="success"

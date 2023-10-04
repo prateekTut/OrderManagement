@@ -18,7 +18,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { FRONTEND_API } from "./urls";
-
+import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from "react-router-dom";
 
 
@@ -141,10 +141,16 @@ function OtmUsersConsole() {
         display: "flex",
         justifyContent: "end",
         alignItems: "end",
+        flexDirection: "column",
         marginBottom: 2,
         marginTop: 2,
         marginRight: 2
       }}>
+        <Button
+           startIcon={<AddIcon />}
+           variant='contained' sx={{mb: 2}}>
+            Add Expert
+          </Button>
         <TextField
           label="Search"
           variant="outlined"
@@ -167,6 +173,7 @@ function OtmUsersConsole() {
                 <StyledTableCell >Contact</StyledTableCell>
                 <StyledTableCell >DOB</StyledTableCell>
                 <StyledTableCell >Address</StyledTableCell>
+                <StyledTableCell >Designation</StyledTableCell>
                 <StyledTableCell >Update</StyledTableCell>
                 {/* <StyledTableCell >Delete</StyledTableCell> */}
               </StyledTableRow>
@@ -182,6 +189,7 @@ function OtmUsersConsole() {
                     <StyledTableCell>{user.contact}</StyledTableCell>
                     <StyledTableCell>{user.DOB}</StyledTableCell>
                     <StyledTableCell>{user.address}</StyledTableCell>
+                    <StyledTableCell>{user.designation}</StyledTableCell>
                     {roles != "hr" && (
                       <StyledTableCell>
                         <Button variant="contained" type='submit' color="success"

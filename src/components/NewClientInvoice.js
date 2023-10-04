@@ -254,22 +254,45 @@ function NewClientInvoice() {
         .then((res) => res.json())
         .then((data) => {
             // do something with data
-            console.log("Tutors data", data);
+            console.log("Orders data", data);
             setOrders(data);
-            tableData.map((data)=>{
-                orders.map((order)=>{
-                    if(data.id == 0){
-                        data.item = order.task;
-                        data.total = order.amount_paid;
-                    }
-                })
-            })
-            console.log(tableData)
+            
             // navigate("/OTMform");
+            mergeOrdersWithTableData();
         })
         .catch((rejected) => {
             console.log(rejected);
         });
+    };
+
+    const mergeOrdersWithTableData = () => {
+      // Find the index of the first item in `tableData` where `id` is equal to 0
+      const index = tableData.findIndex((item) => item.id === 0);
+    
+      if (index === 0) {
+        // If an item with id 0 exists, create a copy of the existing tableData
+        const newTableData = [...tableData];
+        /*   const [tableData, setTableData] = useState([
+          {id: 0, item: '', taxRate: 0, quantity: 0, rate: 0, amount: 0, igst: 0, sgst: 0, cgst: 0, amount: 0, total: 0},
+        ]); */
+        // Filter the `orders` data to find orders where `id` is 0
+        const newOrders = orders;
+        newTableData.map((item) => {
+          const order = newOrders[0];
+          console.log(order);
+          if (order) {
+            item.item = order.task;
+            
+            item.amount = order.order_budget;
+         
+          }
+          return item; // Return the updated item to the array of items in the state
+        });
+
+        // Update the state with the merged data
+        setTableData(newTableData);
+        console.log(tableData)
+      }
     };
 
   /* const fetchInitial = (type) => {

@@ -40,13 +40,14 @@ export default function EditClientsDetails() {
     const [password, setPassword] = useState("");
     const [dob, setDob] = useState("");
     const token = localStorage.getItem("token")
-
+    const [designation, setDesignation] = useState("");
 
     const [clientAddressValid, setClientAddressValid] = useState(null);
     const [clientPhoneValid, setClientPhoneValid] = useState(null);
     const [clientEmailValid, setClientEmailValid] = useState(null);
     const [dobValid, setDobValid] = useState(null);
     const [clientPasswordValid, setClientPasswordValid] = useState(null);
+    const [designationValid, setDesignationValid] = useState(null);
 
     const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -56,6 +57,7 @@ export default function EditClientsDetails() {
     const validateEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
     const validateDob = (value) => value.length > 0;
     const validatePassword = (value) => value.length >= 6;
+    const validateDesignation = (value) => value.length >= 3
 
     const resetValidationFields = () => {
 
@@ -105,6 +107,7 @@ export default function EditClientsDetails() {
                 setPhone(client.contact)
                 setDob(client.DOB)
                 setPassword(client.password)
+                setDesignation(client.designation)
             })
             .catch((error) => console.log(error));
     };
@@ -120,6 +123,12 @@ export default function EditClientsDetails() {
         setAddress(newValue)
         setClientAddressValid(validateAddress(newValue));
     }
+    const onDesignationChange = (event) => {
+        const newValue = event.target.value;
+        setDesignation(newValue)
+        setDesignationValid(validateDesignation(newValue));
+    }
+    
     const onPhoneChange = (event) => {
         const newValue = event.target.value;
         setPhone(newValue)
@@ -132,7 +141,7 @@ export default function EditClientsDetails() {
       }
     const handleSubmit = (event) => {
         event.preventDefault();
-        if (clientEmailValid || clientAddressValid || clientPhoneValid || dobValid || clientPasswordValid) {
+        if (clientEmailValid || clientAddressValid || clientPhoneValid || dobValid || clientPasswordValid || designationValid) {
 
             var formdata = new FormData();
             formdata.append("contact", phone);
@@ -141,6 +150,7 @@ export default function EditClientsDetails() {
             formdata.append("address", address);
             formdata.append("dob", dob);
             formdata.append("password", password);
+            formdata.append("designation", designation);
 
             var requestOptions = {
                 method: "POST",
@@ -283,6 +293,20 @@ export default function EditClientsDetails() {
                                 onChange={onAddressChange}
                                 error={clientAddressValid == false}
                                 helperText={clientAddressValid == false && 'Invalid Address.'}
+                            />
+
+                            <TextField
+                                margin="normal"
+                                required
+                                fullWidth
+                                name="designation"
+                                label="Designation"
+                                type="text"
+                                id="designation"
+                                value={designation}
+                                onChange={onDesignationChange}
+                                error={designationValid == false}
+                                helperText={designationValid == false && 'Invalid Designation.'}
                             />
                             <TextField id="outlined-basic"
                                 type='date'
