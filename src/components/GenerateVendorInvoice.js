@@ -25,7 +25,10 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Divider from '@mui/material/Divider';
 import { useReactToPrint } from "react-to-print";
 import { useParams } from "react-router-dom";
+import { DateRange } from 'react-date-range';
 
+import 'react-date-range/dist/styles.css'; // main css file
+import 'react-date-range/dist/theme/default.css'; // theme css file
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -63,7 +66,7 @@ function generateInvoiceNumber() {
   return invoiceNumber;
 }
 
-function NewClientInvoice() {
+function GenerateVendorInvoice() {
 
   const currencies = [
     /* {
@@ -102,7 +105,83 @@ function NewClientInvoice() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [discountDialog, setDiscountDialogOpen] = useState(false);
 
-  const [dialogValidationOpen, setDialogValidationOpen] = useState(false);
+  const [dateRange, setDateRange] = useState([
+    {
+      startDate: new Date(),
+      endDate: new Date(),
+      key: 'selection',
+    },
+  ]);
+
+  const [showDateRangePicker, setShowDateRangePicker] = useState(false);
+
+  const handleButtonClick = () => {
+    setShowDateRangePicker(!showDateRangePicker);
+  };
+
+  const handleDateRangeChange = (ranges) => {
+    setDateRange([ranges.selection]);
+    // Close the DateRangePicker when a date is selected
+    console.log(ranges.selection);
+
+    const startDate = ranges.selection.startDate;
+    const endDate = ranges.selection.endDate;
+    const daysDifference = Math.abs(
+      Math.floor((endDate - startDate) / (24 * 60 * 60 * 1000))
+    );
+
+    // Close the DateRangePicker if the difference is greater than 1
+    if (daysDifference > 1) {
+      setShowDateRangePicker(false);
+      fetchClientsData(startDate, endDate)
+    }
+
+  };
+
+  const getDates = () => {
+    const startDate = dateRange[0].startDate.toLocaleDateString('en-US');
+    const endDate = dateRange[0].endDate.toLocaleDateString('en-US');
+    console.log(startDate, endDate);
+    return "Date Ranges: " + startDate + " - " +  endDate;
+  };
+
+  const fetchClientsData = (start, end) => {
+
+    var formdata = new FormData();
+    //const startDate = dateRange[0].startDate;
+    //const endDate = dateRange[0].endDate;
+    const startDate = start.toLocaleDateString('en-US');
+    const endDate = end.toLocaleDateString('en-US');
+    console.log(startDate, endDate);
+    formdata.append("start_date", startDate);
+    formdata.append("end_date", endDate)
+    var requestOptions = {
+      method: "POST",
+      body: formdata,
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
+
+    };
+
+    fetch(FRONTEND_API + "getVendorOrderHistory/".concat(params.userId), requestOptions)
+      .then((response) => {
+        if (response.status == 200) {
+          return response.json();
+        }
+      })
+      .then((result) => {
+        console.log(result);
+        setOrders(result);
+
+        // navigate("/OTMform");
+        updateTableDataWithReceivedData(tableData, result);
+      })
+      .catch((error) => {
+        console.log(error)
+      });
+
+  };
 
   const [tableData, setTableData] = useState([
     { id: 0, order_id: 0, item: '', taxRate: 0, quantity: 0, rate: 0, amount: 0, igst: 0, sgst: 0, cgst: 0, amount: 0, total: 0 },
@@ -116,10 +195,6 @@ function NewClientInvoice() {
 
   const [discount, setDiscount] = useState(0);
   //const [dis, setTotal] = useState(0);
-  
-  const [alert, setAlert] = useState(false);
-  const [status, setStatus] = useState('');
-  const [alertContent, setAlertContent] = useState('');
 
   const componentRef = useRef();
 
@@ -133,9 +208,6 @@ function NewClientInvoice() {
   };
 
 
-  const handleCloseDialog = () => {
-    setDialogValidationOpen(false);
-};
 
   const handleRemoveRow = (index) => {
     console.log(index);
@@ -250,12 +322,12 @@ function NewClientInvoice() {
 
 
   const insertInvoice = () => {
-    console.log(clientId);
-    
+    console.log(params.userId);
+
     const data = tableData;
-    
-    if(invoiceDate != null && dueDate != null){
-      
+
+    if (invoiceDate != null && dueDate != null) {
+
       const jsonData = {
         data: data,            // Your JSON data
         invoiceNumber: invoiceNumber,
@@ -267,10 +339,10 @@ function NewClientInvoice() {
         currency: currencyValue,
         total: getTotal(),
         totalAmount: getTotalAmount(),
-        subTax:saveSubTax
+        subTax: saveSubTax
       };
       const jsonPayload = JSON.stringify(jsonData);
-     
+
       var requestOptions = {
         method: "POST",
         headers: {
@@ -280,30 +352,17 @@ function NewClientInvoice() {
         body: jsonPayload,
       };
 
-      fetch(FRONTEND_API + 'saveInvoice/'.concat(clientId), requestOptions)
-        .then((response) =>{
-          if (response.status == 200) {
-            setStatus("200")
-            return response.json();
-          }else{
-            setStatus(response.status)
-            return response.json();
-          }
-        })
+      fetch(FRONTEND_API + 'saveInvoice/'.concat(params.userId), requestOptions)
+        .then((response) => response.json())
         .then((data) => {
-          console.log(data);
-          setAlertContent(data.message);
-          setAlert(true);
-          // Log the response from the server
+          console.log(data); // Log the response from the server
           // You can perform additional actions here if needed
         })
         .catch((error) => {
           console.error('Error:', error);
         });
-    }else{
-      setDialogValidationOpen(true);
     }
-    
+
   };
 
   const generateAndSetInvoiceNumber = () => {
@@ -312,7 +371,7 @@ function NewClientInvoice() {
   };
 
   useEffect(() => {
-    fetchOrderData(params.userId);
+    fetchClientForInvoice(params.userId);
     generateAndSetInvoiceNumber();
   }, []);
 
@@ -329,7 +388,7 @@ function NewClientInvoice() {
         console.log("Clients data", data);
         data.map((user) => {
           setclient(user);
-         
+
         })
         // navigate("/OTMform");
       })
@@ -349,7 +408,7 @@ function NewClientInvoice() {
       .then((data) => {
         // do something with data
         console.log("Orders data", data);
-        
+
         setClientId(data[0].client_id)
         fetchClientForInvoice(data[0].client_id);
         setOrders(data);
@@ -442,7 +501,7 @@ function NewClientInvoice() {
     tableData.forEach((row) => {
       total += row.total;
     })
-    return total-getDiscount();
+    return total - getDiscount();
   }
 
   const getDiscount = () => {
@@ -518,7 +577,7 @@ function NewClientInvoice() {
                       </Grid>
                       <Grid item xs={6}>
                         <div>
-                            <p>{invoiceNumber}</p>
+                          <p>{invoiceNumber}</p>
                         </div>
                       </Grid>
                       <Grid item xs={6}>
@@ -554,6 +613,30 @@ function NewClientInvoice() {
                           </LocalizationProvider>
                         </div>
                       </Grid>
+                      <Grid item xs={6}>
+                        <div>
+                          <strong>Select Date Range:</strong>
+                        </div>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Button variant='contained'
+                          onClick={handleButtonClick}>Select Date</Button>
+
+                        {showDateRangePicker && (
+                          <DateRange
+                            editableDateInputs={true}
+                            onChange={handleDateRangeChange}
+                            moveRangeOnFirstSelection={false}
+                            ranges={dateRange}
+                          />
+                        )}
+                        {dateRange != null && (
+                        <div>
+                          <p>{getDates()}</p>
+                        </div>
+                      )}  
+                      </Grid>
+                      
                     </Grid>
                   </Grid>
                   <Grid item xs={6} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -633,7 +716,7 @@ function NewClientInvoice() {
                           <StyledTableCell>Quantity</StyledTableCell>
                           <StyledTableCell >Rate</StyledTableCell>
                           {/* */}
-                         
+
                           {savedTax == 'gst' && saveSubTax == 'gst' && (
 
                             <StyledTableCell >Amount</StyledTableCell>
@@ -645,8 +728,8 @@ function NewClientInvoice() {
                             <StyledTableCell >Amount</StyledTableCell>
 
 
-                            )}
-                           {savedTax == 'gst' && saveSubTax == 'igst' && (
+                          )}
+                          {savedTax == 'gst' && saveSubTax == 'igst' && (
                             <StyledTableCell >IGST</StyledTableCell>
                           )}
                           {savedTax == 'gst' && saveSubTax == 'gst' && (
@@ -963,13 +1046,9 @@ function NewClientInvoice() {
                     Print & Save as PDF
                   </Button>
                 )}
-                  <Button variant="outlined" type='submit' sx={{ mt: 3, width: '200px' }} onClick={() => insertInvoice()}>
-                    Save Invoice
-                  </Button>
-
-                  {alert && status == "400" ? <Alert severity='error'>{alertContent}</Alert> : <></>}
-                  {alert && status == "200" ? <Alert severity='success'>{alertContent}</Alert> : <></>}
-
+                <Button variant="outlined" type='submit' sx={{ mt: 3, width: '200px' }} onClick={() => insertInvoice()}>
+                  Save Invoice
+                </Button>
               </Paper>
             </Grid>
           </Grid>
@@ -1082,20 +1161,9 @@ function NewClientInvoice() {
           </Button>
         </DialogActions>
       </BootstrapDialog>
-      
-      <Dialog open={dialogValidationOpen} onClose={handleCloseDialog}>
-                <DialogTitle>Form Validation Failed</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>Please fill in all required fields correctly.</DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseDialog} color="primary">
-                        OK
-                    </Button>
-                </DialogActions>
-            </Dialog>
+
     </Container>
   )
 }
 
-export default NewClientInvoice
+export default GenerateVendorInvoice

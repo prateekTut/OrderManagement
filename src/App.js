@@ -51,6 +51,9 @@ import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import { Box, Container, CssBaseline, Paper } from "@mui/material";
 import NewClientInvoice from "./components/NewClientInvoice";
 import AddFreelancers from "./components/AddFreelancers";
+import StudentGeneratedInvoice from "./components/StudentInvoices";
+import StudentInvoices from "./components/StudentInvoices";
+import GenerateVendorInvoice from "./components/GenerateVendorInvoice";
 
 
 // Create a styled component for the Paper element
@@ -130,8 +133,9 @@ function App() {
               <Route path='/Updatebudget/:userId' element={<Budgetform />} />
               <Route path='/allbutton' element={<Allbutton />} />
               <Route path='/viewbudget/:userId' element={<Viewbudget />} />
-              <Route path='/client-invoice/:userId' element={<ClientInvoice />} />
-              <Route path='/vendor-invoice/:userId' element={<Vendorsinvoice />} />
+              <Route path='/client-invoice/:userId' element={<NewClientInvoice />} />
+              <Route path='/vendor-invoice/:userId' element={<GenerateVendorInvoice />} />
+             {/*  <Route path='/vendor-invoice/:userId' element={<Vendorsinvoice />} /> */}
               <Route path='/Edit-vendor-invoice/:userId' element={<Editvendoreinvoice />} />
               <Route path='/update-vendor-invoice/:userId' element={<Updateinvoiceform />} />
               <Route path='/try' element={<Tryform />} />
@@ -140,12 +144,16 @@ function App() {
               <Route path='/Edit-tutors-invoice/:userId' element={<Edittutorsinvoice />} />
               <Route path='/update-tutors-invoice/:userId' element={<Updatetoturinvoceform />} />
               <Route path="/editClients/:clientId" element={<EditClientsDetails />} />
-              <Route path="/order-history/:clientId" element={<StudentOrderHistory />} />
-              <Route path="/vendor-order-history/:clientId" element={<VendorOrderHistory />} />
+              {/* <Route path="/order-history/:clientId" element={<StudentOrderHistory />} /> */}
+              <Route path="/order-history" element={<StudentOrderHistory />} />
+              <Route path="/vendor-order-history" element={<VendorOrderHistory />} />
               <Route path='/invoicedata' element={<Invoicedata />} />
               <Route path='/register-clients' element={<RegisterClients />} />
-              <Route path='/client-invoice' element={<GenerateInvoice />} />
+              {/* <Route path='/client-invoice' element={<GenerateInvoice />} /> */}
               <Route path="/add-freelancers" element={<AddFreelancers />} />
+              <Route path="/generated-invoice/:invoiceId" element={<StudentInvoices />} />
+              {/* <Route path='/vendor-invoice' element={<GenerateInvoice />} /> */}
+
             </Route>
 
             <Route element={<RequireAuth allowedRoles={["admin", "hr", "otm", "lead", "expert"]} />}>

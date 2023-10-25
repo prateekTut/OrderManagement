@@ -92,14 +92,33 @@ export default function SideItems() {
             {openCollapseAccount ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={openCollapseAccount} timeout="auto" unmountOnExit>
-            <Link to="/client-invoice">
+          {/*   <Link to="/client-invoice">
               <ListItemButton>
                 <ListItemIcon>
                   <AssignmentIcon style={{ color: '#343F71' }}/>
                 </ListItemIcon>
                 <ListItemText primary="Invoice" />
               </ListItemButton>
+            </Link> */}
+
+            <Link to="/order-history">
+              <ListItemButton>
+                <ListItemIcon>
+                  <AssignmentIcon style={{ color: '#343F71' }}/>
+                </ListItemIcon>
+                <ListItemText primary="Student Invoice" />
+              </ListItemButton>
             </Link>
+
+            <Link to="/vendor-order-history">
+              <ListItemButton>
+                <ListItemIcon>
+                  <AssignmentIcon style={{ color: '#343F71' }}/>
+                </ListItemIcon>
+                <ListItemText primary="Vendor Invoice" />
+              </ListItemButton>
+            </Link>
+            
             <ListItemButton onClick={toggleTeamSubmenu}>
 
               <ListItemIcon>

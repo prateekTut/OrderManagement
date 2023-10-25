@@ -51,11 +51,15 @@ function StudentOrderHistory() {
 
   const fetchClientsData = async () => {
     try {
-      const response = await fetch(FRONTEND_API + "getStudentOrderHistory/".concat(params.clientId), {
-        headers: {
-          'Authorization': 'Bearer ' + token
-        }
-      });
+      var formdata = new FormData();
+      formdata.append("user", "student");
+        const response = await fetch(FRONTEND_API + "getAllInvoices", {
+          method: "POST",
+          headers: {
+            'Authorization': 'Bearer ' + token
+          },
+          body: formdata
+        });
       const rawData = await response.json();
       console.log(rawData)
       return rawData;
@@ -78,9 +82,9 @@ function StudentOrderHistory() {
   }, [setClient]);
 
 
-  const viewOrdersInvoice = (userId) => {
-    console.log("Tutor ID", userId);
-    navigate(`/client-invoice/${userId}`);
+  const viewOrdersInvoice = (invoiceId) => {
+    console.log("Invoice ID", invoiceId);
+    navigate(`/generated-invoice/${invoiceId}`);
   };
 
   const handleBudget = (budget, currency) => {
@@ -105,7 +109,7 @@ function StudentOrderHistory() {
           justifyContent: "center",
           alignItems: "center",
           }}>
-            Student's Order History
+            Student's Invoices
           </Typography>
 
 
@@ -125,16 +129,11 @@ function StudentOrderHistory() {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <StyledTableRow>
-                <StyledTableCell>Order ID</StyledTableCell>
-                <StyledTableCell>Order Budget</StyledTableCell>
-                <StyledTableCell >Task</StyledTableCell>
-                <StyledTableCell >Amount Paid</StyledTableCell>
-                <StyledTableCell >Invoice</StyledTableCell>
-                {/* <StyledTableCell >University</StyledTableCell>
-                          {/* <StyledTableCell >Budget</StyledTableCell> */}
-                {/* <StyledTableCell >Order History</StyledTableCell>
-                          <StyledTableCell >Update</StyledTableCell> 
-                          <StyledTableCell >Delete</StyledTableCell>  */}
+                <StyledTableCell>Invoice ID</StyledTableCell>
+                <StyledTableCell>Invoice Number</StyledTableCell>
+                <StyledTableCell >Invoice Date</StyledTableCell>
+                <StyledTableCell >Due Date</StyledTableCell>
+                <StyledTableCell >View Invoice</StyledTableCell>
 
               </StyledTableRow>
             </TableHead>
@@ -145,16 +144,16 @@ function StudentOrderHistory() {
 
                   <StyledTableRow key={user.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                     <StyledTableCell component="th" scope="row">{user.id}</StyledTableCell>
-                    <StyledTableCell>{handleBudget(user.order_budget, user.currency)} </StyledTableCell>
-                    <StyledTableCell>{user.task}</StyledTableCell>
-                    <StyledTableCell>{handleBudget(user.amount_paid, user.currency)}</StyledTableCell>
-                    <StyledTableCell>
+                    <StyledTableCell>{user.invoice_number} </StyledTableCell>
+                    <StyledTableCell>{user.invoice_date}</StyledTableCell>
+                    <StyledTableCell>{user.due_date}</StyledTableCell>
+                      <StyledTableCell>
                       <Button variant="contained" type='submit' color="success"
 
-                        onClick={() => viewOrdersInvoice(user.id)}
+                        onClick={() => viewOrdersInvoice(user.invoice_number)}
                         size="small"
                         sx={{ marginRight: 2 }}>
-                        Invoices
+                        View Invoices
                       </Button>
                     </StyledTableCell>
                     {/* <StyledTableCell>{user.university}</StyledTableCell>

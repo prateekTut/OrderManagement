@@ -75,7 +75,7 @@ function ClientStudentConsole() {
 
     const viewOrdersHistory = (clientId) => {
       console.log("student ID", clientId);
-      navigate(`/order-history/${clientId}`);
+      navigate(`/client-invoice/${clientId}`);
     };
     
     
@@ -171,7 +171,7 @@ function ClientStudentConsole() {
                           <StyledTableCell >Contact</StyledTableCell>
                           <StyledTableCell >University</StyledTableCell>
                           {/* <StyledTableCell >Budget</StyledTableCell> */}
-                          <StyledTableCell >Order History</StyledTableCell>
+                          <StyledTableCell >Invoices</StyledTableCell>
                           <StyledTableCell >Update</StyledTableCell>
                           {/* <StyledTableCell >Delete</StyledTableCell> */}
                       </StyledTableRow>
@@ -192,7 +192,7 @@ function ClientStudentConsole() {
                             onClick={() => viewOrdersHistory(user.id)}
                             size="small" 
                             sx={{marginRight: 2}}>
-                            Orders
+                            Invoices
                           </Button>
                         </StyledTableCell>
 

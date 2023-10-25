@@ -96,7 +96,7 @@ function ClientVendorConsole() {
 
       const VendorOrderHistory = (clientId) =>{
         console.log("student ID", clientId);
-        navigate(`/vendor-order-history/${clientId}`);
+        navigate(`/vendor-invoice/${clientId}`);
       }
 
 
@@ -174,7 +174,7 @@ function ClientVendorConsole() {
                           disabled={!user.invoice}
                           size="small" 
                           sx={{marginRight: 2}}>
-                          Orders
+                          Invoices
                         </Button>
                         </StyledTableCell>
                         {/* <StyledTableCell>
