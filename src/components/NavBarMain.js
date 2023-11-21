@@ -160,6 +160,17 @@ export default function MiniDrawer() {
         console.error('Error logging out:', error);
       });
   };
+  
+  
+  //const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = () => {
+    setOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    setOpen(false);
+  };
 
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
@@ -292,7 +303,15 @@ export default function MiniDrawer() {
         {renderMenu}
       </Box>
 
-      <Drawer variant="permanent" open={open}>
+      <Drawer variant="permanent"
+        open={open}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        style={{
+          width: open ? 200 : 64,
+          transition: 'width 0.3s ease-in-out',
+        }}
+        >
           <Toolbar
             sx={{
               display: 'flex',
