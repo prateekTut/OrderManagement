@@ -23,7 +23,7 @@ import { event } from 'jquery';
 import { DialogContentText, Alert } from '@mui/material';
 
 
-function AssignTaskConsole() {
+function FailedTaskConsole() {
 
     const [subjectValue, setSubjectValue] = React.useState('');
     const [bottomNavSub, setBottomNavSub] = useState('New Order');
@@ -413,7 +413,7 @@ function AssignTaskConsole() {
 
         var formdata = new FormData();
         formdata.append("subject", subject);
-        formdata.append("status", "assigned"); //status
+        formdata.append("status", 'fail'); //status
 
         var requestOptions = {
             method: "POST",
@@ -738,7 +738,7 @@ function AssignTaskConsole() {
             </Box>
 
 
-            {/* <BottomNavigation
+           {/*  <BottomNavigation
                 showLabels={true}
                 value={bottomNavSub} //subject
                 onChange={(event, newValue) => {
@@ -1121,4 +1121,4 @@ function AssignTaskConsole() {
     )
 }
 
-export default AssignTaskConsole
+export default FailedTaskConsole

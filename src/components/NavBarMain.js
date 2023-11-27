@@ -27,7 +27,7 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import { FRONTEND_API } from "./urls";
 import SideItems from './SideItems';
 
-const drawerWidth = 240;
+const drawerWidth = 280;
 
 const openedMixin = (theme) => ({
   width: drawerWidth,

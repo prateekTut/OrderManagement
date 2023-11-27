@@ -20,12 +20,21 @@ import BusinessIcon from '@mui/icons-material/Business';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import StarIcon from '@mui/icons-material/Star';
 import CrownIcon from '@mui/icons-material/EmojiEvents';
+import { styled } from '@mui/material/styles';
+
+const CustomListItemButton = styled(ListItemButton)(({ theme }) => ({
+  paddingLeft: theme.spacing(4), // Adjust the padding as needed
+}));
+const CustomListItemExpButton = styled(ListItemButton)(({ theme }) => ({
+  paddingLeft: theme.spacing(8), // Adjust the padding as needed
+}));
 
 export default function SideItems() {
   const [openCollapse, setOpenCollapse] = React.useState(false);
   const [openCollapseAccount, setOpenCollapseAccount] = React.useState(false);
   const [openCollapseTeam, setOpenCollapseTeam] = React.useState(false);
-
+  const [openCollapseTask, setOpenCollapseTask] = React.useState(false);
+  
   const role = localStorage.getItem('roles');
 
   const toggleClientSubmenu = () => {
@@ -39,6 +48,10 @@ export default function SideItems() {
   const toggleTeamSubmenu = () => {
     setOpenCollapseTeam(!openCollapseTeam);
   };
+
+  const toggleTaskSubmenu = () => {
+    setOpenCollapseTask(!openCollapseTask);
+  }
 
   return (
     <div>
@@ -54,7 +67,65 @@ export default function SideItems() {
             </ListItemButton>
           </Link>
 
+          <ListItemButton onClick={toggleTaskSubmenu}>
+            <ListItemIcon>
+              <ShoppingCartIcon style={{ color: '#F34C19' }}/>
+            </ListItemIcon>
+            <ListItemText primary="Order Management" />
+            {openCollapseTask ? <ExpandLess /> : <ExpandMore />}
+          </ListItemButton>
+          
+          <Collapse in={openCollapseTask} timeout="auto" unmountOnExit>
+            <Link to="/unassigned-task">
+              <CustomListItemButton>
+                <ListItemIcon>
+                  <SchoolIcon style={{ color: '#343F71' }}/>
+                </ListItemIcon>
+                <ListItemText primary="Unassigned Tasks" />
+              </CustomListItemButton>
+            </Link>
 
+            <Link to="/assign-task">
+              <CustomListItemButton>
+                <ListItemIcon>
+                  <SchoolIcon style={{ color: '#343F71' }} />
+                </ListItemIcon>
+                <ListItemText primary="Assigned Tasks" />
+              </CustomListItemButton>
+            </Link>
+            <Link to="/failed-task">
+              <CustomListItemButton>
+                <ListItemIcon>
+                  <SchoolIcon style={{ color: '#343F71' }} />
+                </ListItemIcon>
+                <ListItemText primary="Failed Tasks" />
+              </CustomListItemButton>
+            </Link>
+            <Link to="/rework-task">
+              <CustomListItemButton>
+                <ListItemIcon>
+                  <SchoolIcon style={{ color: '#343F71' }} />
+                </ListItemIcon>
+                <ListItemText primary="Rework Tasks" />
+              </CustomListItemButton>
+            </Link>
+            <Link to="/qc-task">
+              <CustomListItemButton>
+                <ListItemIcon>
+                  <SchoolIcon style={{ color: '#343F71' }} />
+                </ListItemIcon>
+                <ListItemText primary="QC Tasks" />
+              </CustomListItemButton>
+            </Link>
+            <Link to="/passed-task">
+              <CustomListItemButton>
+                <ListItemIcon>
+                  <SchoolIcon style={{ color: '#343F71' }} />
+                </ListItemIcon>
+                <ListItemText primary="Passed Tasks" />
+              </CustomListItemButton>
+            </Link>
+          </Collapse>
 
           <ListItemButton onClick={toggleClientSubmenu}>
             <ListItemIcon>
@@ -63,23 +134,24 @@ export default function SideItems() {
             <ListItemText primary="Clients" />
             {openCollapse ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
+
           <Collapse in={openCollapse} timeout="auto" unmountOnExit>
             <Link to="/UpdateClientdata">
-              <ListItemButton>
+              <CustomListItemButton>
                 <ListItemIcon>
                   <SchoolIcon style={{ color: '#343F71' }}/>
                 </ListItemIcon>
                 <ListItemText primary="Students" />
-              </ListItemButton>
+              </CustomListItemButton>
             </Link>
 
             <Link to="/Updatevonder">
-              <ListItemButton>
+              <CustomListItemButton>
                 <ListItemIcon>
-                  <BusinessIcon style={{ color: '#343F71' }} />
+                  <SchoolIcon style={{ color: '#343F71' }} />
                 </ListItemIcon>
                 <ListItemText primary="Vendors" />
-              </ListItemButton>
+              </CustomListItemButton>
             </Link>
           </Collapse>
 
@@ -91,6 +163,7 @@ export default function SideItems() {
             <ListItemText primary="Account" />
             {openCollapseAccount ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
+          
           <Collapse in={openCollapseAccount} timeout="auto" unmountOnExit>
           {/*   <Link to="/client-invoice">
               <ListItemButton>
@@ -102,61 +175,61 @@ export default function SideItems() {
             </Link> */}
 
             <Link to="/order-history">
-              <ListItemButton>
+              <CustomListItemButton>
                 <ListItemIcon>
                   <AssignmentIcon style={{ color: '#343F71' }}/>
                 </ListItemIcon>
                 <ListItemText primary="Student Invoice" />
-              </ListItemButton>
+              </CustomListItemButton>
             </Link>
 
             <Link to="/vendor-order-history">
-              <ListItemButton>
+              <CustomListItemButton>
                 <ListItemIcon>
                   <AssignmentIcon style={{ color: '#343F71' }}/>
                 </ListItemIcon>
                 <ListItemText primary="Vendor Invoice" />
-              </ListItemButton>
+              </CustomListItemButton>
             </Link>
             
-            <ListItemButton onClick={toggleTeamSubmenu}>
+            <CustomListItemButton onClick={toggleTeamSubmenu}>
 
               <ListItemIcon>
                 <ManageAccountsIcon style={{ color: '#343F71' }}/>
               </ListItemIcon>
               <ListItemText primary="Manage Team" />
               {openCollapseTeam ? <ExpandLess /> : <ExpandMore />}
-            </ListItemButton>
+            </CustomListItemButton>
 
           </Collapse>
 
 
           <Collapse in={openCollapseTeam} timeout="auto" unmountOnExit>
             <Link to="/Updatetutors">
-              <ListItemButton >
+              <CustomListItemExpButton >
                 <ListItemIcon>
                   <StarIcon style={{ color: '#F34C19' }}/>
                 </ListItemIcon>
                 <ListItemText primary={
                   "Experts"
                 } sx={{ opacity: 1 }} />
-              </ListItemButton>
+              </CustomListItemExpButton>
             </Link>
             <Link to="/updateotm">
-              <ListItemButton>
+              <CustomListItemExpButton>
                 <ListItemIcon>
                   <PeopleIcon style={{ color: '#F34C19' }}/>
                 </ListItemIcon>
                 <ListItemText primary="OTMs" />
-              </ListItemButton>
+              </CustomListItemExpButton>
             </Link>
             <Link to="/teamLead">
-              <ListItemButton>
+              <CustomListItemExpButton>
                 <ListItemIcon>
                   <CrownIcon style={{ color: '#F34C19' }} />
                 </ListItemIcon>
                 <ListItemText primary="Team Leads" />
-              </ListItemButton>
+              </CustomListItemExpButton>
             </Link>
 
           </Collapse>
@@ -164,14 +237,20 @@ export default function SideItems() {
           <ListSubheader component="div" inset>
             Admin Tasks
           </ListSubheader>
-          <Link to="/Assingntask">
+
+          {/* <Link to="/Assingntask">
             <ListItemButton>
               <ListItemIcon>
                 <ShoppingCartIcon style={{ color: '#F34C19' }}/>
               </ListItemIcon>
               <ListItemText primary="Tasks" />
             </ListItemButton>
-          </Link>
+          </Link> */}
+
+          
+
+         
+
 
           <Link to="/register">
             <ListItemButton>

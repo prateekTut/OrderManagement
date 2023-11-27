@@ -126,7 +126,9 @@ function ExpertsConsole() {
     client.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-
+  const moveToRegister = () =>{
+    navigate('/register');
+  }
 
   return (
 
@@ -153,7 +155,8 @@ function ExpertsConsole() {
         >
           <Button
            startIcon={<AddIcon />}
-           variant='contained'>
+           variant='contained'
+           onClick={moveToRegister}>
             Add Expert
           </Button>
         </Box>
@@ -168,7 +171,7 @@ function ExpertsConsole() {
             value={userType}
             onChange={handleUserTypeChange}
           >
-            <FormControlLabel value="permanent" control={<Radio />} label="Permanent" />
+            <FormControlLabel value="permanent" control={<Radio />} label="Full Time" />
             <FormControlLabel value="freelancer" control={<Radio />} label="Freelancer" />
           </RadioGroup>
         </FormControl>

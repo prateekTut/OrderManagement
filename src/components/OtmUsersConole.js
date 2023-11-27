@@ -126,6 +126,10 @@ function OtmUsersConsole() {
 
   }
 
+  const moveToRegister = () =>{
+    navigate('/register');
+  }
+
   return (
     <Container>
       <Typography variant='h1' sx={{
@@ -148,6 +152,7 @@ function OtmUsersConsole() {
       }}>
         <Button
            startIcon={<AddIcon />}
+           onClick={moveToRegister}
            variant='contained' sx={{mb: 2}}>
             Add Expert
           </Button>
