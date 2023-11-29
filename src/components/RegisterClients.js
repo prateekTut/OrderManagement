@@ -54,7 +54,7 @@ export default function RegisterClients() {
     const validateFirstName = (value) => value.length >= 3;
     const validatePhone = (value) => !isNaN(value) && value.length == 10;
     const validateEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-    const validateLastName = (value) => value.length >= 4;
+    const validateLastName = (value) => value.length >= 3;
     const validateUniv = (value) => value.length >= 4;
     const validateBusiness = (value) => value.length >= 4;
 
