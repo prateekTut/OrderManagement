@@ -23,60 +23,60 @@ import { FRONTEND_API } from "./urls";
 const defaultTheme = createTheme();
 
 export default function AddExpert() {
-    const [user, setUser] = React.useState('');
-    const [alert, setAlert] = useState(false);
-    const [status, setStatus] = useState('');
-    const [alertContent, setAlertContent] = useState('');
+  const [user, setUser] = React.useState('');
+  const [alert, setAlert] = useState(false);
+  const [status, setStatus] = useState('');
+  const [alertContent, setAlertContent] = useState('');
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        event.target.reset();
-        var formdata = new FormData();
-        formdata.append("firstName", data.get('firstName'))
-        formdata.append("lastName", data.get('lastName'))
-        formdata.append("email", data.get('email'));
-        formdata.append("password", data.get('password'));
-        formdata.append("address", data.get('address'));
-        formdata.append("contact", data.get('contact'))
-        formdata.append("status", data.get('status'))
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    event.target.reset();
+    var formdata = new FormData();
+    formdata.append("firstName", data.get('firstName'))
+    formdata.append("lastName", data.get('lastName'))
+    formdata.append("email", data.get('email'));
+    formdata.append("password", data.get('password'));
+    formdata.append("address", data.get('address'));
+    formdata.append("contact", data.get('contact'))
+    formdata.append("status", data.get('status'))
 
 
-        var requestOptions = {
-          method: "POST",
-          body: formdata,
-        };
-    
-        fetch(FRONTEND_API + "register_expert", requestOptions)
-          .then((response) => {
-            if(response.status == 400){
-              setStatus("400")
-              return response.json();
-            }else if(response.status == 200){
-              setStatus("200")
-              return response.json();
-            }
-
-          })
-          
-          .then(result => {
-            //JSON.parse(response._bodyText)
-            console.log("response data", result); 
-            setAlertContent(result.message);
-            setAlert(true);
-          })
-          .catch((error) => {
-            console.log("error", error)
-            setAlertContent(error);
-            setAlert(true);
-            }
-          );
-          
+    var requestOptions = {
+      method: "POST",
+      body: formdata,
     };
-    
-    const handleChange = (event) => {
-        setUser(event.target.value);
-    };
+
+    fetch(FRONTEND_API + "register_expert", requestOptions)
+      .then((response) => {
+        if (response.status == 400) {
+          setStatus("400")
+          return response.json();
+        } else if (response.status == 200) {
+          setStatus("200")
+          return response.json();
+        }
+
+      })
+
+      .then(result => {
+        //JSON.parse(response._bodyText)
+        console.log("response data", result);
+        setAlertContent(result.message);
+        setAlert(true);
+      })
+      .catch((error) => {
+        console.log("error", error)
+        setAlertContent(error);
+        setAlert(true);
+      }
+      );
+
+  };
+
+  const handleChange = (event) => {
+    setUser(event.target.value);
+  };
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -96,7 +96,7 @@ export default function AddExpert() {
             backgroundPosition: 'center',
           }}
         /> */}
-        <Grid sx={{marginTop: 15}}>
+        <Grid sx={{ marginTop: 15 }}>
           <Box
             sx={{
               my: 8,
@@ -113,32 +113,32 @@ export default function AddExpert() {
               Register Expert
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
-                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    <Grid item xs={6}>
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="firstName"
-                            label="First Name"
-                            name="firstName"
-                           
-                            autoFocus
-                        />
-                    </Grid>
-                    <Grid item xs={6}>
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="lastName"
-                            label="Last Name"
-                            name="lastName"
-                            
-                            autoFocus
-                        />
-                    </Grid>
+              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                <Grid item xs={6}>
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="firstName"
+                    label="First Name"
+                    name="firstName"
+
+                    autoFocus
+                  />
                 </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="lastName"
+                    label="Last Name"
+                    name="lastName"
+
+                    autoFocus
+                  />
+                </Grid>
+              </Grid>
               <TextField
                 margin="normal"
                 required
@@ -167,7 +167,7 @@ export default function AddExpert() {
                 label="Address"
                 type="text"
                 id="address"
-                
+
               />
               <TextField
                 margin="normal"
@@ -177,7 +177,7 @@ export default function AddExpert() {
                 label="contact"
                 type="number"
                 id="contact"
-                
+
               />
               <TextField
                 margin="normal"
@@ -187,9 +187,9 @@ export default function AddExpert() {
                 label="Status"
                 type="text"
                 id="status"
-                
+
               />
-               {/*  <FormControl fullWidth>
+              {/*  <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">User</InputLabel>
                 <Select
                     labelId="demo-simple-select-label"
@@ -216,8 +216,8 @@ export default function AddExpert() {
               >
                 Register
               </Button>
-              {alert && status=="400" ? <Alert severity='error'>{alertContent}</Alert> : <></> }
-              {alert && status=="200" ? <Alert severity='info'>{alertContent}</Alert> : <></> }
+              {alert && status == "400" ? <Alert severity='error'>{alertContent}</Alert> : <></>}
+              {alert && status == "200" ? <Alert severity='info'>{alertContent}</Alert> : <></>}
               {/* <Grid container>
                 <Grid item xs>
                   <Link href="#" className='LinkColor'>

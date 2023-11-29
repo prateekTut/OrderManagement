@@ -39,6 +39,9 @@ function AddTaskNew() {
     const [client, setclient] = useState([]);
     const [Vendor_budget, setVendor_budget] = useState("");
     const [subject, setSubject] = useState("");
+
+    const [orderId, setOrderId] = useState("");
+
     const [newSubject, setNewSubject] = useState("");
     const [Start_date, setStart_date] = useState("");
     const [End_date, setEnd_date] = useState("");
@@ -49,6 +52,7 @@ function AddTaskNew() {
     const [userClientType, setUserClientType] = useState('');
     const [userType, setUserType] = useState('');
 
+    const [orderIdValid, setOrderIdValid] = useState(null);
     const [clientValid, setClientValid] = useState(null);
     const [subjectValid, setSubjectValid] = useState(null);
     const [startDateValid, setStartDateValid] = useState(null);
@@ -62,6 +66,7 @@ function AddTaskNew() {
     const resetFormFields = () => {
         setVendor_budget("");
         setSubject("");
+        setOrderId("")
         setStart_date("");
         setEnd_date("");
         //setclient([]);
@@ -75,6 +80,8 @@ function AddTaskNew() {
     const validateClient = (value) => value != '';
     const validateStartDate = (value) => value != '';
     const validateEndDate = (value) => value != '';
+    const validateOrderId = (value) => value != '';
+    
 
     const validateVendorBudget = (value) => /^\d+$/.test(value); // Example validation for a numeric value
     const vaildateWordCount = (value) => /^\d+$/.test(value);
@@ -98,6 +105,11 @@ function AddTaskNew() {
         setSubjectValid(validateSubject(value));
         console.log(event.target);
 
+    };
+
+    const handleOrderIdChange = (event) => {
+        setOrderId(event.target.value);
+        setOrderIdValid(validateOrderId(event.target.value));
     };
 
     const handleNewSubject = (event) => {
@@ -212,16 +224,18 @@ function AddTaskNew() {
     const uploadData = (event) => {
         event.preventDefault();
         console.log(subjectValid);
-        if (subjectValid && vendorBudgetValid && wordCountValid && startDateValid && endDateValid && currencyValue !== '') {
+        if (orderIdValid && subjectValid && wordCountValid && startDateValid && endDateValid && currencyValue !== '') {
             // Proceed with form submission
 
             console.log('Form submitted');
             var formdata = new FormData();
-            if (subject !== 'other') {
-                formdata.append("Task_Subject", subject);
-            } else {
-                formdata.append("Task_Subject", newSubject);
-            }
+            // if (subject !== 'other') {
+            //     formdata.append("Task_Subject", subject);
+            // } else {
+                
+            // }
+            formdata.append("order_id", orderId);
+            formdata.append("Task_Subject", newSubject);
             formdata.append("currency", currencyValue);
             formdata.append("Vendor_budget", Vendor_budget);
             formdata.append("client_id", userClient);
@@ -281,7 +295,7 @@ function AddTaskNew() {
         }}>
             <h1>Add Task </h1>
             <form autoComplete="off" onSubmit={uploadData}>
-                <FormControl fullWidth sx={{ m: 1 }}>
+                {/* <FormControl fullWidth sx={{ m: 1 }}>
 
                     <InputLabel id="demo-simple-select-label">Subject</InputLabel>
                     <Select
@@ -299,17 +313,28 @@ function AddTaskNew() {
                         <MenuItem value={'other'}>Add Subject</MenuItem>
                     </Select>
 
-                </FormControl>
+                </FormControl> */}
                 <FormControl fullWidth sx={{ m: 1 }}>
-                    {subject == 'other' && (
-                        <TextField id="outlined-basic"
-                            value={newSubject}
-                            onChange={handleNewSubject}
-                            variant="outlined"
-                            error={subjectValid == false}
-                            helperText={subjectValid == false && 'Cannot be left blank'}
-                            label="Subject" />
-                    )}
+                   
+                   <TextField id="outlined-basic"
+                       value={orderId}
+                       onChange={handleOrderIdChange}
+                       variant="outlined"
+                       error={orderIdValid == false}
+                       helperText={orderIdValid == false && 'Cannot be left blank'}
+                       label="Order ID" />
+               
+               </FormControl>
+                <FormControl fullWidth sx={{ m: 1 }}>
+                   
+                    <TextField id="outlined-basic"
+                        value={newSubject}
+                        onChange={handleNewSubject}
+                        variant="outlined"
+                        error={subjectValid == false}
+                        helperText={subjectValid == false && 'Cannot be left blank'}
+                        label="Subject" />
+                
                 </FormControl>
                 <Grid container rowSpacing={1} columnSpacing={1}>
                     <Grid item xs={4}>

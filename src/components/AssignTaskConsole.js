@@ -406,13 +406,19 @@ function AssignTaskConsole() {
             console.log(rejected);
         });
     }
+    
+    const compareOrderEndDateDesc = (order1, order2) => {
+        const endDate1 = new Date(order1.order_end_date);
+        const endDate2 = new Date(order2.order_end_date);
+      
+        // Compare order_end_dates in descending order
+        return endDate2 - endDate1;
+    };
 
-    const fetchDataForSubject = (subject, status) => {
-        console.log(subject);
-        console.log(status);
-
+    const fetchDataForSubject = () => {
+        
         var formdata = new FormData();
-        formdata.append("subject", subject);
+        //formdata.append("subject", subject);
         formdata.append("status", "assigned"); //status
 
         var requestOptions = {
@@ -430,7 +436,9 @@ function AssignTaskConsole() {
                 console.log(currentStatus);
                 if (roles == "admin") {
                     console.log("admin")
-                    setOrders(rawData);
+                    const sortedOrdersDesc = rawData.slice().sort(compareOrderEndDateDesc);
+                    console.log(sortedOrdersDesc)
+                    setOrders(sortedOrdersDesc); 
                 } else if (roles == "expert") {
                     console.log("expert", userId)
                     /* rawData.map((order) => {
@@ -455,7 +463,8 @@ function AssignTaskConsole() {
 
 
     useEffect(() => {
-        fetchData();
+        fetchDataForSubject();
+        //fetchData();
     }, [currentStatus]);
 
     const fetchData = async () => {
@@ -485,36 +494,36 @@ function AssignTaskConsole() {
 
 
 
-    useEffect(() => {
-        const fetchInitial = async () => {
-            fetch(FRONTEND_API + "getordersdata", {
-                headers: {
-                    'Authorization': 'Bearer ' + token
-                }
-            })
-                .then((res) => res.json())
-                .then((rawData) => {
-                    console.log(rawData)
-                    var dataSet = rawData;
-                    const distinctSubjectsSet = new Set();
-                    //setSubjects(rawData);
-                    // Loop through the subjects array to add distinct subject names to the Set
-                    dataSet.forEach((data) => {
-                        distinctSubjectsSet.add(data.subject);
-                    });
+    // useEffect(() => {
+    //     const fetchInitial = async () => {
+    //         fetch(FRONTEND_API + "getordersdata", {
+    //             headers: {
+    //                 'Authorization': 'Bearer ' + token
+    //             }
+    //         })
+    //             .then((res) => res.json())
+    //             .then((rawData) => {
+    //                 console.log(rawData)
+    //                 var dataSet = rawData;
+    //                 const distinctSubjectsSet = new Set();
+    //                 //setSubjects(rawData);
+    //                 // Loop through the subjects array to add distinct subject names to the Set
+    //                 dataSet.forEach((data) => {
+    //                     distinctSubjectsSet.add(data.subject);
+    //                 });
 
-                    // Convert the Set back to an array to get the distinct subject names
-                    const distinctSubjects = Array.from(distinctSubjectsSet);
-                    setSubjects(distinctSubjects)
-                    console.log(distinctSubjects)
-                })
-                .catch((rejected) => {
-                    console.log(rejected);
-                });
-        };
+    //                 // Convert the Set back to an array to get the distinct subject names
+    //                 const distinctSubjects = Array.from(distinctSubjectsSet);
+    //                 setSubjects(distinctSubjects)
+    //                 console.log(distinctSubjects)
+    //             })
+    //             .catch((rejected) => {
+    //                 console.log(rejected);
+    //             });
+    //     };
        
-        fetchInitial();
-    }, []);
+    //     fetchInitial();
+    // }, []);
 
     /* const GMTtoIST = (gmtDate) => {
         // Create a new Date object from the provided GMT date string
@@ -549,7 +558,7 @@ function AssignTaskConsole() {
 
                         </Grid>
 
-                        <FormControl sx={{ width: 250, marginTop: 2 }} >
+                        {/* <FormControl sx={{ width: 250, marginTop: 2 }} >
                             <InputLabel id="demo-simple-select-label">Subject</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
@@ -564,7 +573,7 @@ function AssignTaskConsole() {
 
                                 ))}
                             </Select>
-                        </FormControl>
+                        </FormControl> */}
 
                     </Box>
                 ) : (
@@ -572,7 +581,7 @@ function AssignTaskConsole() {
                     </Box>
                 )
                 }
-                {roles == "lead" || roles == "otm" || roles == "expert" ? (
+                {/* {roles == "lead" || roles == "otm" || roles == "expert" ? (
                     <FormControl sx={{ width: 250 }} >
                         <InputLabel id="demo-simple-select-label">Subject</InputLabel>
                         <Select
@@ -593,7 +602,7 @@ function AssignTaskConsole() {
                     <Box sx={{ marginTop: 1 }}></Box>
                 )
 
-                }
+                } */}
                 {orders && orders.Error ? (
                     <Box sx={{
                         width: 700,
@@ -628,9 +637,9 @@ function AssignTaskConsole() {
                                             <StyledTableCell >Expert</StyledTableCell>
                                             <StyledTableCell >Start Date</StyledTableCell>
                                             <StyledTableCell >End Date</StyledTableCell>
-                                            <StyledTableCell >Expert Start Date</StyledTableCell>
+                                          {/*   <StyledTableCell >Expert Start Date</StyledTableCell>
                                             <StyledTableCell >Expert End Date</StyledTableCell>
-
+ */}
                                             <StyledTableCell >Order Status</StyledTableCell>
                                             <StyledTableCell >Word Count</StyledTableCell>
                                             {roles != 'expert' && (
@@ -662,9 +671,9 @@ function AssignTaskConsole() {
                                                     <StyledTableCell>{orderData.expert_id}</StyledTableCell>
                                                     <StyledTableCell>{handleDate(orderData.order_start_date)}</StyledTableCell>
                                                     <StyledTableCell>{handleDate(orderData.order_end_date)}</StyledTableCell>
-                                                    <StyledTableCell>{handleDate(orderData.expert_start_date)}</StyledTableCell>
+                                                    {/* <StyledTableCell>{handleDate(orderData.expert_start_date)}</StyledTableCell>
                                                     <StyledTableCell>{handleDate(orderData.expert_end_date)}</StyledTableCell>
-                                                    <StyledTableCell>{orderData.order_status}</StyledTableCell>
+                                                    */} <StyledTableCell>{orderData.order_status}</StyledTableCell>
                                                     <StyledTableCell>{orderData.word_count}</StyledTableCell>
                                                     {roles != 'expert' && (
                                                         <StyledTableCell>{handleBudget(orderData.expert_price, orderData.currency)}</StyledTableCell>
@@ -863,7 +872,7 @@ function AssignTaskConsole() {
                                 >
                                     {expert.map((data) => (
 
-                                        <MenuItem value={data.id}>{data.Expert_firstname}</MenuItem>
+                                        <MenuItem value={data.id}>{data.firstname}</MenuItem>
 
                                     ))}
                                 </Select>
@@ -936,7 +945,7 @@ function AssignTaskConsole() {
                                         >
                                             {expert.map((data) => (
 
-                                                <MenuItem value={data.id}>{data.Expert_firstname}</MenuItem>
+                                                <MenuItem value={data.id}>{data.firstname}</MenuItem>
 
                                             ))}
                                         </Select>

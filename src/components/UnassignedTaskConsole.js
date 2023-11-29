@@ -294,6 +294,7 @@ function UnassignedTaskConsole() {
                 'Authorization': 'Bearer ' + token
             }
         };
+
         fetch(FRONTEND_API + "updateStatusWithId/".concat(ordersId), requestOptions)
             .then((res) => res.json())
             .then((data) => {
@@ -407,12 +408,11 @@ function UnassignedTaskConsole() {
         });
     }
 
-    const fetchDataForSubject = (subject, status) => {
-        console.log(subject);
-        console.log(status);
+    const fetchDataForSubject = () => {
+        
 
         var formdata = new FormData();
-        formdata.append("subject", subject);
+        //formdata.append("subject", subject);
         formdata.append("status", 'new order'); //status
 
         var requestOptions = {
@@ -455,8 +455,9 @@ function UnassignedTaskConsole() {
 
 
     useEffect(() => {
-        fetchData();
-    }, [currentStatus]);
+        //fetchData();
+        fetchDataForSubject();
+    }, []);
 
     const fetchData = async () => {
         console.log(currentStatus);
@@ -485,36 +486,36 @@ function UnassignedTaskConsole() {
 
 
 
-    useEffect(() => {
-        const fetchInitial = async () => {
-            fetch(FRONTEND_API + "getordersdata", {
-                headers: {
-                    'Authorization': 'Bearer ' + token
-                }
-            })
-                .then((res) => res.json())
-                .then((rawData) => {
-                    console.log(rawData)
-                    var dataSet = rawData;
-                    const distinctSubjectsSet = new Set();
-                    //setSubjects(rawData);
-                    // Loop through the subjects array to add distinct subject names to the Set
-                    dataSet.forEach((data) => {
-                        distinctSubjectsSet.add(data.subject);
-                    });
+    // useEffect(() => {
+    //     const fetchInitial = async () => {
+    //         fetch(FRONTEND_API + "getordersdata", {
+    //             headers: {
+    //                 'Authorization': 'Bearer ' + token
+    //             }
+    //         })
+    //             .then((res) => res.json())
+    //             .then((rawData) => {
+    //                 console.log(rawData)
+    //                 var dataSet = rawData;
+    //                 const distinctSubjectsSet = new Set();
+    //                 //setSubjects(rawData);
+    //                 // Loop through the subjects array to add distinct subject names to the Set
+    //                 dataSet.forEach((data) => {
+    //                     distinctSubjectsSet.add(data.subject);
+    //                 });
 
-                    // Convert the Set back to an array to get the distinct subject names
-                    const distinctSubjects = Array.from(distinctSubjectsSet);
-                    setSubjects(distinctSubjects)
-                    console.log(distinctSubjects)
-                })
-                .catch((rejected) => {
-                    console.log(rejected);
-                });
-        };
+    //                 // Convert the Set back to an array to get the distinct subject names
+    //                 const distinctSubjects = Array.from(distinctSubjectsSet);
+    //                 setSubjects(distinctSubjects)
+    //                 console.log(distinctSubjects)
+    //             })
+    //             .catch((rejected) => {
+    //                 console.log(rejected);
+    //             });
+    //     };
        
-        fetchInitial();
-    }, []);
+    //     fetchInitial();
+    // }, []);
 
     /* const GMTtoIST = (gmtDate) => {
         // Create a new Date object from the provided GMT date string
@@ -549,7 +550,7 @@ function UnassignedTaskConsole() {
 
                         </Grid>
 
-                        <FormControl sx={{ width: 250, marginTop: 2 }} >
+                        {/* <FormControl sx={{ width: 250, marginTop: 2 }} >
                             <InputLabel id="demo-simple-select-label">Subject</InputLabel>
                             <Select
                                 labelId="demo-simple-select-label"
@@ -564,7 +565,7 @@ function UnassignedTaskConsole() {
 
                                 ))}
                             </Select>
-                        </FormControl>
+                        </FormControl> */}
 
                     </Box>
                 ) : (
@@ -572,7 +573,7 @@ function UnassignedTaskConsole() {
                     </Box>
                 )
                 }
-                {roles == "lead" || roles == "otm" || roles == "expert" ? (
+                {/* {roles == "lead" || roles == "otm" || roles == "expert" ? (
                     <FormControl sx={{ width: 250 }} >
                         <InputLabel id="demo-simple-select-label">Subject</InputLabel>
                         <Select
@@ -593,7 +594,7 @@ function UnassignedTaskConsole() {
                     <Box sx={{ marginTop: 1 }}></Box>
                 )
 
-                }
+                } */}
                 {orders && orders.Error ? (
                     <Box sx={{
                         width: 700,
@@ -628,9 +629,9 @@ function UnassignedTaskConsole() {
                                             <StyledTableCell >Expert</StyledTableCell>
                                             <StyledTableCell >Start Date</StyledTableCell>
                                             <StyledTableCell >End Date</StyledTableCell>
-                                            <StyledTableCell >Expert Start Date</StyledTableCell>
+                                           {/*  <StyledTableCell >Expert Start Date</StyledTableCell>
                                             <StyledTableCell >Expert End Date</StyledTableCell>
-
+ */}
                                             <StyledTableCell >Order Status</StyledTableCell>
                                             <StyledTableCell >Word Count</StyledTableCell>
                                             {roles != 'expert' && (
@@ -662,9 +663,9 @@ function UnassignedTaskConsole() {
                                                     <StyledTableCell>{orderData.expert_id}</StyledTableCell>
                                                     <StyledTableCell>{handleDate(orderData.order_start_date)}</StyledTableCell>
                                                     <StyledTableCell>{handleDate(orderData.order_end_date)}</StyledTableCell>
-                                                    <StyledTableCell>{handleDate(orderData.expert_start_date)}</StyledTableCell>
+                                                    {/* <StyledTableCell>{handleDate(orderData.expert_start_date)}</StyledTableCell>
                                                     <StyledTableCell>{handleDate(orderData.expert_end_date)}</StyledTableCell>
-                                                    <StyledTableCell>{orderData.order_status}</StyledTableCell>
+                                                     */}<StyledTableCell>{orderData.order_status}</StyledTableCell>
                                                     <StyledTableCell>{orderData.word_count}</StyledTableCell>
                                                     {roles != 'expert' && (
                                                         <StyledTableCell>{handleBudget(orderData.expert_price, orderData.currency)}</StyledTableCell>
@@ -863,7 +864,7 @@ function UnassignedTaskConsole() {
                                 >
                                     {expert.map((data) => (
 
-                                        <MenuItem value={data.id}>{data.Expert_firstname}</MenuItem>
+                                        <MenuItem value={data.id}>{data.firstname}</MenuItem>
 
                                     ))}
                                 </Select>
@@ -936,7 +937,7 @@ function UnassignedTaskConsole() {
                                         >
                                             {expert.map((data) => (
 
-                                                <MenuItem value={data.id}>{data.Expert_firstname}</MenuItem>
+                                                <MenuItem value={data.id}>{data.firstname}</MenuItem>
 
                                             ))}
                                         </Select>
