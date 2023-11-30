@@ -54,7 +54,7 @@ export default function Register() {
   const validatePassword = (value) => value.length >= 6;
   const validatePhone = (value) => !isNaN(value) && value.length == 10;
   const validateEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-  const validateLastName = (value) => value.length >= 4;
+  const validateLastName = (value) => value.length >= 1;
   const validateUniv = (value) => value.length >= 4;
   const validateBusiness = (value) => value.length >= 4;
 
@@ -88,7 +88,7 @@ export default function Register() {
   const onLastNameChange = (event) => {
     const newValue = event.target.value;
     setLastName(newValue)
-    setClientLastNameValid(validateLastName(newValue));
+    //setClientLastNameValid(validateLastName(newValue));
   }
   const onEmailChange = (event) => {
     const newValue = event.target.value;

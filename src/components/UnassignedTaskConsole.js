@@ -262,7 +262,7 @@ function UnassignedTaskConsole() {
                 setDialogOpen(true);
             }
         } else if (Status == "assigned") {
-            if (orderStatusValid && expertValid && expertStartDateValid && expertEndDateValid) {
+            if (orderStatusValid && expertValid ) {
                 updateStatusData();
             } else {
                 setDialogOpen(true);
@@ -408,6 +408,14 @@ function UnassignedTaskConsole() {
         });
     }
 
+    const compareOrderEndDateDesc = (order1, order2) => {
+        const endDate1 = new Date(order1.order_end_date);
+        const endDate2 = new Date(order2.order_end_date);
+      
+        // Compare order_end_dates in descending order
+        return endDate2 - endDate1;
+    };
+
     const fetchDataForSubject = () => {
         
 
@@ -430,7 +438,9 @@ function UnassignedTaskConsole() {
                 console.log(currentStatus);
                 if (roles == "admin") {
                     console.log("admin")
-                    setOrders(rawData);
+                    const sortedOrdersDesc = rawData.slice().sort(compareOrderEndDateDesc);
+                    console.log(sortedOrdersDesc)
+                    setOrders(sortedOrdersDesc); 
                 } else if (roles == "expert") {
                     console.log("expert", userId)
                     /* rawData.map((order) => {
@@ -626,7 +636,7 @@ function UnassignedTaskConsole() {
                                         <StyledTableRow>
                                             <StyledTableCell>Order ID</StyledTableCell>
                                             <StyledTableCell>Client</StyledTableCell>
-                                            <StyledTableCell >Expert</StyledTableCell>
+                                            {/* <StyledTableCell >Expert</StyledTableCell> */}
                                             <StyledTableCell >Start Date</StyledTableCell>
                                             <StyledTableCell >End Date</StyledTableCell>
                                            {/*  <StyledTableCell >Expert Start Date</StyledTableCell>
@@ -660,7 +670,7 @@ function UnassignedTaskConsole() {
 
                                                     <StyledTableCell component="th" scope="row">{orderData.id}</StyledTableCell>
                                                     <StyledTableCell>{orderData.client_id} </StyledTableCell>
-                                                    <StyledTableCell>{orderData.expert_id}</StyledTableCell>
+                                                   {/*  <StyledTableCell>{orderData.expert_id}</StyledTableCell> */}
                                                     <StyledTableCell>{handleDate(orderData.order_start_date)}</StyledTableCell>
                                                     <StyledTableCell>{handleDate(orderData.order_end_date)}</StyledTableCell>
                                                     {/* <StyledTableCell>{handleDate(orderData.expert_start_date)}</StyledTableCell>
@@ -1018,7 +1028,7 @@ function UnassignedTaskConsole() {
                 <DialogContent sx={{
                     marginTop: 2
                 }}>
-                    <Grid item xs={6}>
+                    {/* <Grid item xs={6}>
                         <FormControl fullWidth sx={{ m: 1, marginTop: 3 }}>
                             <TextField id="outlined-basic" type='date'
                                 value={Expert_startDate}
@@ -1049,7 +1059,7 @@ function UnassignedTaskConsole() {
                                 label="Expert End Date"
                                 variant="outlined" />
                         </FormControl>
-                    </Grid>
+                    </Grid> */}
 
                     <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                         <Grid item xs={6}>
