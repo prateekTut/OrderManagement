@@ -120,7 +120,7 @@ export default function Register() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (clientFirstNameValid && clientLastNameValid && clientEmailValid && clientPasswordValid && clientPhoneValid) {
+    if (clientFirstNameValid && clientEmailValid && clientPasswordValid && clientPhoneValid) {
       if (user) {
         console.log(user)
         const data = new FormData(event.currentTarget);

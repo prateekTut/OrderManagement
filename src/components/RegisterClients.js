@@ -115,7 +115,7 @@ export default function RegisterClients() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        if (clientFirstNameValid && clientLastNameValid && clientEmailValid) {
+        if (clientFirstNameValid && clientEmailValid) {
             if (user == 'student') {
                 var formdata = new FormData();
                 formdata.append("Client_name", firstName + lastName);

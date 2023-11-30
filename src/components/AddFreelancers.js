@@ -102,7 +102,7 @@ export default function AddFreelancers() {
     const handleSubmit = (event) => {
         event.preventDefault();
         
-        if (clientFirstNameValid && clientLastNameValid && clientEmailValid ) {
+        if (clientFirstNameValid && clientEmailValid ) {
 
             var formdata = new FormData();
             formdata.append("firstName", firstName)
