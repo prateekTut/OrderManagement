@@ -45,27 +45,22 @@ export default function Register() {
   const [clientLastNameValid, setClientLastNameValid] = useState(null);
   const [clientPhoneValid, setClientPhoneValid] = useState(null);
   const [clientEmailValid, setClientEmailValid] = useState(null);
-  const [clientUnivValid, setClientUnivValid] = useState(null);
-  const [clientBusinessValid, setClientBusinessValid] = useState(null);
-
+ 
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const validateFirstName = (value) => value.length >= 3;
   const validatePassword = (value) => value.length >= 6;
-  const validatePhone = (value) => !isNaN(value) && value.length == 10;
+  const validatePhone = (value) => !isNaN(value) && value.length == 13;
   const validateEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
   const validateLastName = (value) => value.length >= 1;
-  const validateUniv = (value) => value.length >= 4;
-  const validateBusiness = (value) => value.length >= 4;
-
+ 
   const resetValidationFields = () => {
     setClientFirstNameValid(null);
     setClientLastNameValid(null)
     setClientPhoneValid(null);
     setClientEmailValid(null);
     setClientPasswordValid(null);
-    setClientUnivValid(null);
-    setClientBusinessValid(null);
+   
   };
 
 
@@ -75,8 +70,7 @@ export default function Register() {
     setEmail("");
     setPassword("");
     setPhone("");
-    setUniversity("");
-    setBusiness_name("");
+    
   }
 
   const onFirstNameChange = (event) => {
@@ -106,21 +100,10 @@ export default function Register() {
     setClientPhoneValid(validatePhone(newValue));
   }
 
-  const handleClientUnivChange = (event) => {
-    const newValue = event.target.value;
-    setUniversity(newValue);
-    setClientUnivValid(validateUniv(newValue));
-  }
-
-  const handleClientBusinessChange = (event) => {
-    const newValue = event.target.value;
-    setBusiness_name(newValue);
-    setClientBusinessValid(validateBusiness(newValue));
-  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (clientFirstNameValid && clientEmailValid && clientPasswordValid && clientPhoneValid) {
+    if (clientFirstNameValid && clientEmailValid && clientPasswordValid) {
       if (user) {
         console.log(user)
         const data = new FormData(event.currentTarget);
@@ -230,8 +213,7 @@ export default function Register() {
                     name="lastName"
                     value={lastName}
                     onChange={onLastNameChange}
-                    error={clientLastNameValid == false}
-                    helperText={clientLastNameValid == false && 'Invalid Last Name'}
+                    
 
                   />
                 </Grid>
