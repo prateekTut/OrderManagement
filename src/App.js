@@ -1,33 +1,14 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NewLogin from "./components/NewLogin"
-import Home from "./components/Home";
-import UpdateOTMdata from "./components/UpdateOTMdata";
-import OTMform from "./components/OTMform";
-import DataTableTuytors from "./components/DataTableTuytors";
-import Tutorform from "./components/Tutorform";
-import OTMdata from "./components/OTMdata";
-import Clientform from "./components/Clientform";
 import AddBudget from "./components/AddBudget";
 import UpdateBudgetdata from "./components/UpdateBudgetdata";
-import Budgetform from "./components/Budgetform";
-import Taskform from "./components/Taskform";
+
 import Allbutton from "./components/Allbutton";
-import Vonderform from "./components/Vonderform";
-import Viewbudget from "./components/Viewbudget";
 import Unauthorized from "./components/Unauthorized";
 import RequireAuth from "./components/RequireAuth";
 import Layout from "./components/Layout";
-import Vendorsinvoice from "./components/Vendorsinvoice";
-import Editvendoreinvoice from "./components/Editvendoreinvoice";
-import Updateinvoiceform from "./components/Updateinvoiceform";
-import Tryform from "./components/tryform";
 import Dashbord from "./components/Dashbord";
-import Invoicedata from "./components/Invoicedata";
-import TutorsInvoice from "./components/TutorsInvoice";
-import Edittutorsinvoice from "./components/Edittutorsinvoice";
-import Updatetoturinvoceform from "./components/Updatetoturinvoceform";
-import TutorsInvoicetabledata from "./components/TutorsInvoicetabledata";
 import AppSelection from "./components/AppSelection";
 import { useLocation } from 'react-router-dom';
 import Register from "./components/Register";
@@ -39,19 +20,16 @@ import ClientStudentConsole from "./components/ClientStudentConsole";
 import ClientVendorConsole from "./components/ClientVendorConsole";
 import AddExpert from "./components/AddExpert";
 import EditClientsDetails from "./components/EditClientsDetails";
-import StudentOrderHistory from "./components/StudentOrderHistory";
+
 import UpdateExpert from "./components/UpdateExpert";
 import TeamLeadConsole from "./components/TeamLeadConsole";
-import ClientInvoice from "./components/ClientInvoice";
 import VendorOrderHistory from "./components/VendorOrderHistory";
 import AttendanceOverview from "./components/AttendanceOverview";
 import RegisterClients from "./components/RegisterClients";
-import GenerateInvoice from "./components/GenerateInvoice";
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import { Box, Container, CssBaseline, Paper } from "@mui/material";
 import NewClientInvoice from "./components/NewClientInvoice";
 import AddFreelancers from "./components/AddFreelancers";
-import StudentGeneratedInvoice from "./components/StudentInvoices";
 import StudentInvoices from "./components/StudentInvoices";
 import GenerateVendorInvoice from "./components/GenerateVendorInvoice";
 
@@ -61,6 +39,9 @@ import ReworkTaskConsole from "./components/ReworkTaskConsole";
 import PassedTaskConsole from "./components/PassedTaskConsole";
 import FailedTaskConsole from "./components/FailedTaskConsole";
 import QcTaskConsole from "./components/QcTaskConsole";
+import AllInvoices from "./components/AllInvoices";
+import GenerateInvoice from "./components/GenerateInvoice";
+import EditInvoices from "./components/EditInvoices";
 
 
 // Create a styled component for the Paper element
@@ -80,7 +61,7 @@ const theme = createTheme({
     customRedColor: {
       main: '#FF0000',
     },
-    customGreenColor :{
+    customGreenColor: {
       main: '#228B22',
     },
     background: {
@@ -113,74 +94,67 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-        <Routes>
+      <Routes>
 
-          <Route path='/' element={<NewLogin />} />
-          <Route path='/app_select' element={<AppSelection />} />
-          <Route path='/' element={<Layout />}>
-       
-            {/* Public Routes */}
-            <Route path='/unauthorized' element={<Unauthorized />} />
-      
-            <Route element={<RequireAuth allowedRoles={["admin"]} />}>
+        <Route path='/' element={<NewLogin />} />
+        <Route path='/app_select' element={<AppSelection />} />
+        <Route path='/' element={<Layout />}>
 
-              <Route path='/register' element={<Register />} />
-              <Route path='/registerExpert' element={<AddExpert />} />
-              <Route path='/Updatetutors/:userId' element={<Tutorform />} />
-              
-              <Route path='/UpdateClientdata' element={<ClientStudentConsole />} />
-              <Route path='/Updatevonder' element={<ClientVendorConsole />} />
-              <Route path='/UpdateClientdata/:userId' element={<Clientform />} />
-              <Route path="/updateExpert/:expertId" element={<UpdateExpert />} />
-              <Route path='/Updatevonder/:userId' element={<Vonderform />} />
-              <Route path='/Budget' element={<AddBudget />} />
-              <Route path='/Updatebudget' element={<UpdateBudgetdata />} />
-              <Route path='/Updatebudget/:userId' element={<Budgetform />} />
-              <Route path='/allbutton' element={<Allbutton />} />
-              <Route path='/viewbudget/:userId' element={<Viewbudget />} />
-              <Route path='/client-invoice/:userId' element={<NewClientInvoice />} />
-              <Route path='/vendor-invoice/:userId' element={<GenerateVendorInvoice />} />
-            
-              <Route path='/Edit-vendor-invoice/:userId' element={<Editvendoreinvoice />} />
-              <Route path='/update-vendor-invoice/:userId' element={<Updateinvoiceform />} />
-              <Route path='/try' element={<Tryform />} />
-              <Route path='tutors-invoice' element={<TutorsInvoicetabledata />} />
-              <Route path='/tutors-invoice/:userId' element={<TutorsInvoice />} />
-              <Route path='/Edit-tutors-invoice/:userId' element={<Edittutorsinvoice />} />
-              <Route path='/update-tutors-invoice/:userId' element={<Updatetoturinvoceform />} />
-              <Route path="/editClients/:clientId" element={<EditClientsDetails />} />
-             
-              <Route path="/order-history" element={<StudentOrderHistory />} />
-              <Route path="/vendor-order-history" element={<VendorOrderHistory />} />
-              <Route path='/invoicedata' element={<Invoicedata />} />
-              <Route path='/register-clients' element={<RegisterClients />} />
-        
-              <Route path="/add-freelancers" element={<AddFreelancers />} />
-              <Route path="/generated-invoice/:invoiceId" element={<StudentInvoices />} />
-             
-            </Route>
+          {/* Public Routes */}
+          <Route path='/unauthorized' element={<Unauthorized />} />
 
-            <Route element={<RequireAuth allowedRoles={["admin", "hr", "otm", "lead", "expert"]} />}>
-              <Route path='/home' element={<Home />} />
-              <Route path='/dashboard' element={<Dashbord />} />
-              <Route path='/unassigned-task' element={<UnassignedTaskConsole />} />
-              <Route path='/assign-task' element={<AssignTaskConsole />} />
-              <Route path='/rework-task' element={<ReworkTaskConsole />} />
-              <Route path='/passed-task' element={<PassedTaskConsole />} />
-              <Route path='/failed-task' element={<FailedTaskConsole />} />
-              <Route path='/qc-task' element={<QcTaskConsole />} />
-              <Route path='/addtask/*' element={<AddTaskNew />} />
-            </Route>
+          <Route element={<RequireAuth allowedRoles={["admin"]} />}>
 
-            <Route element={<RequireAuth allowedRoles={["admin", "hr"]} />}>
-              <Route path="/attendanceOverview" element={< AttendanceOverview />} />
-              <Route path='/teamLead' element={<TeamLeadConsole />} />
-              <Route path='/updateotm' element={<OtmUsersConsole />} />
-              <Route path='/Updatetutors' element={<ExpertsConsole />} />
-            </Route>
+            <Route path='/register' element={<Register />} />
+            <Route path='/registerExpert' element={<AddExpert />} />
 
+            <Route path='/UpdateClientdata' element={<ClientStudentConsole />} />
+            <Route path='/Updatevonder' element={<ClientVendorConsole />} />
+
+            <Route path="/updateExpert/:expertId" element={<UpdateExpert />} />
+
+            <Route path='/Budget' element={<AddBudget />} />
+            <Route path='/Updatebudget' element={<UpdateBudgetdata />} />
+
+            <Route path='/allbutton' element={<Allbutton />} />
+
+            <Route path='/client-invoice/:userId' element={<NewClientInvoice />} />
+            <Route path='/vendor-invoice/:userId' element={<GenerateVendorInvoice />} />
+
+            <Route path="/editClients/:clientId" element={<EditClientsDetails />} />
+
+            {/* <Route path="/vendor-order-history" element={<VendorOrderHistory />} /> */}
+            <Route path="/order-history" element={<AllInvoices />} />
+
+            <Route path='/register-clients' element={<RegisterClients />} />
+
+            <Route path="/add-freelancers" element={<AddFreelancers />} />
+            <Route path="/generated-invoice/:invoiceId" element={<StudentInvoices />} />
+
+            <Route path='/edit-invoices/:id' element={<EditInvoices />} />
           </Route>
-        </Routes>
+
+          <Route element={<RequireAuth allowedRoles={["admin", "hr", "otm", "lead", "expert"]} />}>
+
+            <Route path='/dashboard' element={<Dashbord />} />
+            <Route path='/unassigned-task' element={<UnassignedTaskConsole />} />
+            <Route path='/assign-task' element={<AssignTaskConsole />} />
+            <Route path='/rework-task' element={<ReworkTaskConsole />} />
+            <Route path='/passed-task' element={<PassedTaskConsole />} />
+            <Route path='/failed-task' element={<FailedTaskConsole />} />
+            <Route path='/qc-task' element={<QcTaskConsole />} />
+            <Route path='/addtask/*' element={<AddTaskNew />} />
+          </Route>
+
+          <Route element={<RequireAuth allowedRoles={["admin", "hr"]} />}>
+            <Route path="/attendanceOverview" element={< AttendanceOverview />} />
+            <Route path='/teamLead' element={<TeamLeadConsole />} />
+            <Route path='/updateotm' element={<OtmUsersConsole />} />
+            <Route path='/Updatetutors' element={<ExpertsConsole />} />
+          </Route>
+
+        </Route>
+      </Routes>
     </ThemeProvider>
   );
 }

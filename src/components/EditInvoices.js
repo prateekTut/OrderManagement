@@ -63,7 +63,7 @@ function generateInvoiceNumber() {
   return invoiceNumber;
 }
 
-function NewClientInvoice() {
+function EditInvoices() {
 
   const currencies = [
     /* {
@@ -79,13 +79,12 @@ function NewClientInvoice() {
        label: 'British Pound Sterling(GBP, £)',
      }, */
   ];
+  
   let params = useParams();
 
-  const [userClientType, setUserClientType] = useState('');
   const [client, setclient] = useState([]);
   const [clientId, setClientId] = useState(0);
   const token = localStorage.getItem("token")
-  const [userClient, setUserClient] = React.useState('');
   const [currencyValue, setCurrencyValue] = React.useState(currencies.at(0).value)
 
   const [taxType, setTaxType] = React.useState('');
@@ -108,14 +107,13 @@ function NewClientInvoice() {
     { id: 0, order_id: '', item: '', taxRate: 0, quantity: 0, rate: 0, amount: 0, igst: 0, sgst: 0, cgst: 0, amount: 0, total: 0 },
   ]);
 
-  const today = dayjs();
+ /*  const today = dayjs();
   const nextDate = today.add(1, 'day');
+ */
+  const [dueDate, setDueDate] = useState(null);
 
-  const [dueDate, setDueDate] = useState(nextDate);
-
-  const [invoiceDate, setInvoiceDate] = useState(today);
-  const [subtotal, setSubtotal] = useState(0);
-  const [total, setTotal] = useState(0);
+  const [invoiceDate, setInvoiceDate] = useState(null);
+ 
   const [invoiceNumber, setInvoiceNumber] = useState(null);
 
   const [discount, setDiscount] = useState(0);
@@ -147,24 +145,10 @@ function NewClientInvoice() {
     setTableData(updatedTableData);
   }
 
-  const handleRadioChange = (event) => {
-    //setSelectedRadio(event.target.value);
-    console.log(event.target.value);
-    setUserClientType(event.target.value);
-    //fetchInitial(event.target.value);
-  };
-
   const handleTaxRadioChange = (event) => {
     //setSelectedRadio(event.target.value);
     console.log(event.target.value);
     setSelectedTax(event.target.value);
-  };
-
-  const handleChangeClient = (event) => {
-    const newValue = event.target.value;
-    setUserClient(newValue);
-    console.log(event.target.value);
-    //getOrdersOfClient(newValue);
   };
 
   const handleCurrencyChange = (event) => {
@@ -248,13 +232,10 @@ function NewClientInvoice() {
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
-  /*  const handlePrint = () => {
-     window.print();
-   }; */
 
 
-  const insertInvoice = () => {
-    console.log(clientId);
+  const updateInvoice = () => {
+    //console.log(clientId);
 
     const data = tableData;
 
@@ -271,7 +252,8 @@ function NewClientInvoice() {
         currency: currencyValue,
         total: getTotal(),
         totalAmount: getTotalAmount(),
-        subTax: saveSubTax
+        subTax: saveSubTax,
+        clientId: clientId
       };
       const jsonPayload = JSON.stringify(jsonData);
 
@@ -284,7 +266,7 @@ function NewClientInvoice() {
         body: jsonPayload,
       };
 
-      fetch(FRONTEND_API + 'saveInvoice/'.concat(clientId), requestOptions)
+      fetch(FRONTEND_API + 'updateInvoice', requestOptions)
         .then((response) => {
           if (response.status == 200) {
             setStatus("200")
@@ -310,14 +292,9 @@ function NewClientInvoice() {
 
   };
 
-  const generateAndSetInvoiceNumber = () => {
-    const newInvoiceNumber = generateInvoiceNumber();
-    setInvoiceNumber(newInvoiceNumber);
-  };
-
   useEffect(() => {
-    fetchOrderData(params.userId);
-    generateAndSetInvoiceNumber();
+    fetchInvocieById(params.id);
+    //generateAndSetInvoiceNumber();
   }, []);
 
   const fetchClientForInvoice = (userId) => {
@@ -342,9 +319,9 @@ function NewClientInvoice() {
       });
   };
 
-  const fetchOrderData = (userId) => {
-    console.log("Tutor ID", userId);
-    fetch(FRONTEND_API + "/getStudentOrderHistory/".concat(userId), {
+  const fetchInvocieById = (id) => {
+    console.log("Invoce ID", id);
+    fetch(FRONTEND_API + "/getInvoice/".concat(id), {
       headers: {
         'Authorization': 'Bearer ' + token
       }
@@ -352,12 +329,16 @@ function NewClientInvoice() {
       .then((res) => res.json())
       .then((data) => {
         // do something with data
-        console.log("Orders data", data);
-
-        setClientId(data[0].client_id)
-        fetchClientForInvoice(data[0].client_id);
-        setOrders(data);
-
+        console.log("Invoice data", data);
+        console.log("ClientId", data.data.client_id)
+        setClientId(data.data.client_id)
+        fetchClientForInvoice(data.data.client_id);
+        setOrders(data.data);
+        setSavedTax(data.data.tax_type);
+        setSaveSubTax(data.data.sub_tax);
+        setInvoiceNumber(data.data.invoice_number);
+        setInvoiceDate(dayjs(data.data.invoice_date));
+        setDueDate(dayjs(data.data.due_date));
         // navigate("/OTMform");
         updateTableDataWithReceivedData(tableData, data);
       })
@@ -368,21 +349,26 @@ function NewClientInvoice() {
 
   const updateTableDataWithReceivedData = (tableData, receivedData) => {
     // Assuming the receivedData array contains an object with the data you want to add
-
+    console.log(receivedData);
     // Make a copy of the existing tableData array
     const updatedTableData = [...tableData];
-
-    for (let i = 0; i < receivedData.length; i++) {
-      const receivedItem = receivedData[i];
+    
+    for (let i = 0; i < receivedData.invoices.length; i++) {
+      const receivedItem = receivedData.invoices[i];
+     
       updatedTableData[i] = {
         ...updatedTableData[i],
         id: i,
-        order_id: receivedItem.id,
-        amount: receivedItem.order_budget,
-        item: receivedItem.task,
-        total: receivedItem.order_budget,
-        quantity: 1,
-        rate: receivedItem.order_budget,
+        order_id: receivedItem.order_id,
+        amount: receivedItem.amount,
+        item: receivedItem.item,
+        total: receivedItem.item_total,
+        quantity: receivedItem.quantity,
+        rate: receivedItem.rate,
+        taxRate:receivedItem.tax_rate,
+        sgst:receivedItem.sgst,
+        cgst:receivedItem.cgst,
+        vat: receivedItem.vat,  
       };
     }
     console.log(updatedTableData);
@@ -970,8 +956,8 @@ function NewClientInvoice() {
                     Print & Save as PDF
                   </Button>
                 )}
-                <Button variant="outlined" type='submit' sx={{ mt: 3, width: '200px' }} onClick={() => insertInvoice()}>
-                  Save Invoice
+                <Button variant="outlined" type='submit' sx={{ mt: 3, width: '200px' }} onClick={updateInvoice}>
+                  Update Invoice
                 </Button>
 
                 {alert && status == "400" ? <Alert severity='error'>{alertContent}</Alert> : <></>}
@@ -1105,4 +1091,4 @@ function NewClientInvoice() {
   )
 }
 
-export default NewClientInvoice
+export default EditInvoices

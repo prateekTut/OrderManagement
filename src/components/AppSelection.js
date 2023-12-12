@@ -1,5 +1,4 @@
 import { Button, Container } from "react-bootstrap";
-import Headerr from "./Headerr";
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from "react";
 import { Paper, Box, Grid, Typography } from "@mui/material";

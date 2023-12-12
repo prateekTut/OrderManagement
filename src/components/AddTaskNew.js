@@ -9,6 +9,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { Subject } from '@mui/icons-material';
 import { FormText } from 'react-bootstrap';
+import dayjs from 'dayjs';
 
 function AddTaskNew() {
     const currencies = [
@@ -28,7 +29,7 @@ function AddTaskNew() {
     const navigate = useNavigate();
     const token = localStorage.getItem("token")
     const location = useLocation();
-    const today = new Date().toISOString().split('T')[0];
+    //const today = new Date().toISOString().split('T')[0];
 
     const [alert, setAlert] = useState(false);
     const [status, setStatus] = useState('');
@@ -42,8 +43,11 @@ function AddTaskNew() {
 
     const [orderId, setOrderId] = useState("");
 
+    const today = dayjs();
+    const nextDate = today.add(1, 'day'); 
+    
     const [newSubject, setNewSubject] = useState("");
-    const [Start_date, setStart_date] = useState("");
+    const [Start_date, setStart_date] = useState(today);
     const [End_date, setEnd_date] = useState("");
     const [Description, setDescription] = useState("");
     const [Word_count, setWord_count] = useState("");

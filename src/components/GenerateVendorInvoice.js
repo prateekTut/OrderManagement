@@ -26,7 +26,7 @@ import Divider from '@mui/material/Divider';
 import { useReactToPrint } from "react-to-print";
 import { useParams } from "react-router-dom";
 import { DateRange } from 'react-date-range';
-
+import dayjs from 'dayjs';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 
@@ -84,6 +84,8 @@ function GenerateVendorInvoice() {
   ];
   let params = useParams();
 
+  
+
   const [userClientType, setUserClientType] = useState('');
   const [client, setclient] = useState([]);
   const [clientId, setClientId] = useState(0);
@@ -101,6 +103,11 @@ function GenerateVendorInvoice() {
   const [saveSubTax, setSaveSubTax] = useState('');
 
   const [orders, setOrders] = useState([]);
+
+  const [alert, setAlert] = useState(false);
+  const [status, setStatus] = useState('');
+  const [alertContent, setAlertContent] = useState('');
+
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [discountDialog, setDiscountDialogOpen] = useState(false);
@@ -187,8 +194,11 @@ function GenerateVendorInvoice() {
     { id: 0, order_id: 0, item: '', taxRate: 0, quantity: 0, rate: 0, amount: 0, igst: 0, sgst: 0, cgst: 0, amount: 0, total: 0 },
   ]);
 
-  const [dueDate, setDueDate] = useState(null);
-  const [invoiceDate, setInvoiceDate] = useState(null);
+  const today = dayjs();
+  const nextDate = today.add(1, 'day'); 
+  
+  const [dueDate, setDueDate] = useState(nextDate);
+  const [invoiceDate, setInvoiceDate] = useState(today);
   const [subtotal, setSubtotal] = useState(0);
   const [total, setTotal] = useState(0);
   const [invoiceNumber, setInvoiceNumber] = useState(null);
@@ -353,9 +363,20 @@ function GenerateVendorInvoice() {
       };
 
       fetch(FRONTEND_API + 'saveInvoice/'.concat(params.userId), requestOptions)
-        .then((response) => response.json())
+        .then((response) =>{
+          if (response.status == 200) {
+            setStatus("200")
+            return response.json();
+          }else{
+            setStatus(response.status)
+            return response.json();
+          }
+        })
         .then((data) => {
-          console.log(data); // Log the response from the server
+          console.log(data);
+          setAlertContent(data.message);
+          setAlert(true);
+          // Log the response from the server
           // You can perform additional actions here if needed
         })
         .catch((error) => {
@@ -1049,6 +1070,10 @@ function GenerateVendorInvoice() {
                 <Button variant="outlined" type='submit' sx={{ mt: 3, width: '200px' }} onClick={() => insertInvoice()}>
                   Save Invoice
                 </Button>
+
+                {alert && status == "400" ? <Alert severity='error'>{alertContent}</Alert> : <></>}
+                {alert && status == "200" ? <Alert severity='success'>{alertContent}</Alert> : <></>}
+
               </Paper>
             </Grid>
           </Grid>

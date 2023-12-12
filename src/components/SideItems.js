@@ -26,7 +26,7 @@ const CustomListItemButton = styled(ListItemButton)(({ theme }) => ({
   paddingLeft: theme.spacing(4), // Adjust the padding as needed
 }));
 const CustomListItemExpButton = styled(ListItemButton)(({ theme }) => ({
-  paddingLeft: theme.spacing(8), // Adjust the padding as needed
+  paddingLeft: theme.spacing(4), // Adjust the padding as needed
 }));
 
 export default function SideItems() {
@@ -160,49 +160,49 @@ export default function SideItems() {
             <ListItemIcon>
               <AccountBoxIcon style={{ color: '#F34C19' }}/>
             </ListItemIcon>
-            <ListItemText primary="Account" />
+            <ListItemText primary="Accounting" />
             {openCollapseAccount ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           
           <Collapse in={openCollapseAccount} timeout="auto" unmountOnExit>
-          {/*   <Link to="/client-invoice">
-              <ListItemButton>
-                <ListItemIcon>
-                  <AssignmentIcon style={{ color: '#343F71' }}/>
-                </ListItemIcon>
-                <ListItemText primary="Invoice" />
-              </ListItemButton>
-            </Link> */}
-
+           
             <Link to="/order-history">
               <CustomListItemButton>
                 <ListItemIcon>
                   <AssignmentIcon style={{ color: '#343F71' }}/>
                 </ListItemIcon>
-                <ListItemText primary="Student Invoice" />
+                <ListItemText primary="Invoices" />
               </CustomListItemButton>
             </Link>
 
-            <Link to="/vendor-order-history">
+            <Link to="">
               <CustomListItemButton>
                 <ListItemIcon>
                   <AssignmentIcon style={{ color: '#343F71' }}/>
                 </ListItemIcon>
-                <ListItemText primary="Vendor Invoice" />
+                <ListItemText primary="Expense Management" />
               </CustomListItemButton>
             </Link>
             
-            <CustomListItemButton onClick={toggleTeamSubmenu}>
+            {/* <CustomListItemButton onClick={toggleTeamSubmenu}>
 
               <ListItemIcon>
                 <ManageAccountsIcon style={{ color: '#343F71' }}/>
               </ListItemIcon>
               <ListItemText primary="Manage Team" />
               {openCollapseTeam ? <ExpandLess /> : <ExpandMore />}
-            </CustomListItemButton>
+            </CustomListItemButton> */}
 
           </Collapse>
 
+          <ListItemButton onClick={toggleTeamSubmenu}>
+            <ListItemIcon>
+              <ManageAccountsIcon style={{ color: '#F34C19' }}/>
+            </ListItemIcon>
+            <ListItemText primary="Manage Team" />
+            {openCollapseTeam ? <ExpandLess /> : <ExpandMore />}
+          </ListItemButton>
+          
 
           <Collapse in={openCollapseTeam} timeout="auto" unmountOnExit>
             <Link to="/Updatetutors">

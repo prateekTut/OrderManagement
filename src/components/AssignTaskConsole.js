@@ -624,8 +624,6 @@ function AssignTaskConsole() {
                         }}>
 
                             <TableContainer component={Paper} sx={{
-
-
                                 marginRight: 2
                             }}
                                 aria-label="customized table" >

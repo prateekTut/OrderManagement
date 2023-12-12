@@ -1,0 +1,82 @@
+.toggle-container {
+    width: 100%;
+    border-radius: 4px;
+    background-color: #FBF1F7;
+}
+
+.filters-data {
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.toggle-data {
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    cursor: pointer;
+}
+
+.text-container {
+    display: flex;
+    align-items: center;
+}
+
+.arrow-button {
+    margin-left: auto;
+}
+
+.container-in {
+    display: flex;
+}
+
+.container-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 16px;
+
+    /* Adjust the margin as needed */
+    &:hover {
+        transform: translateY(-2px);
+        /* Adjust the translateY value as needed */
+    }
+}
+
+.text {
+    margin-top: 8px;
+    /* Adjust the margin as needed */
+}
+
+.circle {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+/* Payment status colors */
+.part-paid {
+    background-color: blue;
+}
+
+.overdue {
+    background-color: red;
+}
+
+/* Due status and date colors */
+.due-status {
+    color: red;
+    margin-top: 5px;
+}
+
+.date {
+    color: black;
+    margin-top: 5px;
+}
+/* .table-page{
+    display: flex;
+    justify-content: flex-start;
+} */
