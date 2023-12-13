@@ -302,7 +302,7 @@ function FailedTaskConsole() {
 
                 resetFormFields();
                 resetValidationFields();
-                setOrders(data);
+                fetchDataForSubject();
                 setOpen(false);
 
             })
@@ -825,7 +825,7 @@ function FailedTaskConsole() {
                                     helperText={orderStatusValid == false && 'Select Status'}
                                     onChange={handleChangeStatus}>
                                     <MenuItem value={'qc'}>QC</MenuItem>
-                                    <MenuItem value={'pass'}>Pass</MenuItem>
+                                    <MenuItem value={'pass'}>Compleated</MenuItem>
                                     <MenuItem value={'fail'}>Failed</MenuItem>
                                     <MenuItem value={'rework'}>Rework</MenuItem>
                                 </Select>

@@ -81,7 +81,7 @@ export default function SideItems() {
                 <ListItemIcon>
                   <SchoolIcon style={{ color: '#343F71' }}/>
                 </ListItemIcon>
-                <ListItemText primary="Unassigned Tasks" />
+                <ListItemText primary="Unassigned" />
               </CustomListItemButton>
             </Link>
 
@@ -90,23 +90,7 @@ export default function SideItems() {
                 <ListItemIcon>
                   <SchoolIcon style={{ color: '#343F71' }} />
                 </ListItemIcon>
-                <ListItemText primary="Assigned Tasks" />
-              </CustomListItemButton>
-            </Link>
-            <Link to="/failed-task">
-              <CustomListItemButton>
-                <ListItemIcon>
-                  <SchoolIcon style={{ color: '#343F71' }} />
-                </ListItemIcon>
-                <ListItemText primary="Failed Tasks" />
-              </CustomListItemButton>
-            </Link>
-            <Link to="/rework-task">
-              <CustomListItemButton>
-                <ListItemIcon>
-                  <SchoolIcon style={{ color: '#343F71' }} />
-                </ListItemIcon>
-                <ListItemText primary="Rework Tasks" />
+                <ListItemText primary="Assigned" />
               </CustomListItemButton>
             </Link>
             <Link to="/qc-task">
@@ -114,15 +98,33 @@ export default function SideItems() {
                 <ListItemIcon>
                   <SchoolIcon style={{ color: '#343F71' }} />
                 </ListItemIcon>
-                <ListItemText primary="QC Tasks" />
+                <ListItemText primary="QC" />
               </CustomListItemButton>
             </Link>
+           
+            <Link to="/rework-task">
+              <CustomListItemButton>
+                <ListItemIcon>
+                  <SchoolIcon style={{ color: '#343F71' }} />
+                </ListItemIcon>
+                <ListItemText primary="Rework" />
+              </CustomListItemButton>
+            </Link>
+            
             <Link to="/passed-task">
               <CustomListItemButton>
                 <ListItemIcon>
                   <SchoolIcon style={{ color: '#343F71' }} />
                 </ListItemIcon>
-                <ListItemText primary="Passed Tasks" />
+                <ListItemText primary="Compleated" />
+              </CustomListItemButton>
+            </Link>
+            <Link to="/failed-task">
+              <CustomListItemButton>
+                <ListItemIcon>
+                  <SchoolIcon style={{ color: '#343F71' }} />
+                </ListItemIcon>
+                <ListItemText primary="Failed" />
               </CustomListItemButton>
             </Link>
           </Collapse>

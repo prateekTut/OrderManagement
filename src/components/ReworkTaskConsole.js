@@ -51,8 +51,6 @@ function ReworkTaskConsole() {
     const [orderStatusValid, setOrderStatusValid] = useState(null);
     const [expertValid, setExpertValid] = useState(null);
     const [otmValid, setOtmValid] = useState(null);
-    const [expertStartDateValid, setExpertStartDateValid] = useState(null);
-    const [expertEndDateValid, setExpertEndDateValid] = useState(null);
     const [vendorBudgetValid, setVendorBudgetValid] = useState(null);
 
     const [expertPriceValid, setExpertPriceValid] = useState(null);
@@ -66,25 +64,19 @@ function ReworkTaskConsole() {
     const validateStatus = (value) => value != '';
     const validateExpert = (value) => value != '';
     const validateOtm = (value) => value != '';
-    const validateExpertStartDate = (value) => value != '';
-    const validateExpertEndDate = (value) => value != '';
     const validateVendorBudget = (value) => /^\d+$/.test(value);
 
     const validateExpertPrice = (value) => !isNaN(value) && value.length < 5;
     const validateWordCount = (value) => !isNaN(value) && value.length < 5;
 
     const [expert, setexpert] = useState([]);
-    const [Expert_startDate, setExpert_startDate] = useState("");
-    const [Expert_endDate, setExpert_endDate] = useState("");
-    const [Qc_Expert_name, setQc_Expert_name] = useState("");
+     const [Qc_Expert_name, setQc_Expert_name] = useState("");
     const [otmMember, setOtmMember] = useState([]);
 
     const [otmUser, setOtmUser] = React.useState('');
 
     const resetFormFields = () => {
         setStatus("");
-        setExpert_startDate("");
-        setExpert_endDate("");
         setQc_Expert_name("");
         setOtmUser("");
         // Reset other form fields if needed
@@ -94,8 +86,7 @@ function ReworkTaskConsole() {
         setOrderStatusValid(null);
         setExpertValid(null);
         setOtmValid(null);
-        setExpertEndDateValid(null);
-        setExpertStartDateValid(null);
+       
     };
 
 
@@ -202,18 +193,6 @@ function ReworkTaskConsole() {
 
     };
 
-    const handleExpertStartDateChange = (event) => {
-        const value = event.target.value
-        setExpert_startDate(value);
-        setExpertStartDateValid(validateExpertStartDate(value))
-    };
-
-    const handleExpertEndDateChange = (event) => {
-        const value = event.target.value
-        setExpert_endDate(value);
-        setExpertEndDateValid(validateExpertEndDate(value))
-    };
-
     const handleModalUpdate = (id, prevStat) => {
         setOpen(true);
         setOrdersId(id);
@@ -225,14 +204,7 @@ function ReworkTaskConsole() {
 
         setOrdersIdEdit(id);
         const filteredOrders = orders.filter(order => order.id == id);
-        console.log("in modal edit", filteredOrders);
-        console.log("in modal edit", filteredOrders[0].expert_price);
-        //const formattedDate = dateObject;
-        const dateEndObject = new Date(filteredOrders[0].expert_end_date);
-        const dateStartObject = new Date(filteredOrders[0].expert_start_date);
-
-        setExpert_endDate(dateEndObject.toISOString().split('T')[0]);
-        setExpert_startDate(dateStartObject.toISOString().split('T')[0]);
+       
         setWordCount(filteredOrders[0].word_count);
         setExpertPrice(filteredOrders[0].expert_price);
         setVendor_budget(filteredOrders[0].budget);
@@ -262,7 +234,7 @@ function ReworkTaskConsole() {
                 setDialogOpen(true);
             }
         } else if (Status == "assigned") {
-            if (orderStatusValid && expertValid && expertStartDateValid && expertEndDateValid) {
+            if (orderStatusValid && expertValid) {
                 updateStatusData();
             } else {
                 setDialogOpen(true);
@@ -284,8 +256,6 @@ function ReworkTaskConsole() {
         var formdata = new FormData();
         formdata.append("status", Status)
         formdata.append("expert_id", Qc_Expert_name)
-        formdata.append("expert_start_date", Expert_startDate)
-        formdata.append("expert_end_date", Expert_endDate)
 
         var requestOptions = {
             method: "POST",
@@ -302,7 +272,7 @@ function ReworkTaskConsole() {
 
                 resetFormFields();
                 resetValidationFields();
-                setOrders(data);
+                fetchDataForSubject();
                 setOpen(false);
 
             })
@@ -316,11 +286,9 @@ function ReworkTaskConsole() {
     };
 
     const handleOrderUpdate = () => {
-        if (wordCountValid || expertPriceValid || Expert_startDate != null) {
+        if (wordCountValid || expertPriceValid) {
             var formdata = new FormData();
 
-            formdata.append("Expert_startDate", Expert_startDate);
-            formdata.append("Expert_endDate", Expert_endDate);
             formdata.append("word_count", wordCount);
             formdata.append("expert_price", expertPrice);
             formdata.append("budget", Vendor_budget)
@@ -336,7 +304,7 @@ function ReworkTaskConsole() {
                 .then((data) => {
                     // do something with data
                     console.log("budget DATA", data);
-                    setOrders(data);
+                    fetchDataForSubject();
                     setOpenEdit(false);
                 })
                 .catch((rejected) => {
@@ -458,79 +426,6 @@ function ReworkTaskConsole() {
         fetchDataForSubject();
     }, [currentStatus]);
 
-    const fetchData = async () => {
-        console.log(currentStatus);
-
-        var formdata = new FormData();
-        formdata.append("status", currentStatus);
-
-        var requestOptions = {
-            method: "POST",
-            body: formdata,
-            headers: {
-                'Authorization': 'Bearer ' + token
-            }
-        };
-
-        /* fetch(FRONTEND_API + "getOrdersStatus", requestOptions)
-          .then((res) => res.json())
-          .then((rawData) => {
-              console.log(rawData);
-              setOrders(rawData)
-          })
-          .catch((rejected) => {
-          console.log(rejected);
-          }); */
-    }
-
-
-
-    // useEffect(() => {
-    //     const fetchInitial = async () => {
-    //         fetch(FRONTEND_API + "getordersdata", {
-    //             headers: {
-    //                 'Authorization': 'Bearer ' + token
-    //             }
-    //         })
-    //             .then((res) => res.json())
-    //             .then((rawData) => {
-    //                 console.log(rawData)
-    //                 var dataSet = rawData;
-    //                 const distinctSubjectsSet = new Set();
-    //                 //setSubjects(rawData);
-    //                 // Loop through the subjects array to add distinct subject names to the Set
-    //                 dataSet.forEach((data) => {
-    //                     distinctSubjectsSet.add(data.subject);
-    //                 });
-
-    //                 // Convert the Set back to an array to get the distinct subject names
-    //                 const distinctSubjects = Array.from(distinctSubjectsSet);
-    //                 setSubjects(distinctSubjects)
-    //                 console.log(distinctSubjects)
-    //             })
-    //             .catch((rejected) => {
-    //                 console.log(rejected);
-    //             });
-    //     };
-       
-    //     fetchInitial();
-    // }, []);
-
-    /* const GMTtoIST = (gmtDate) => {
-        // Create a new Date object from the provided GMT date string
-        const dateObj = new Date(gmtDate);
-
-        // Convert the GMT date to IST
-        const istDate = new Date(dateObj.toLocaleString('en-IN', {
-          timeZone: 'Asia/Kolkata',
-        }));
-      
-        // Format the IST date to display date with month name
-        const options = { day: 'numeric', month: 'long', year: 'numeric' };
-        const formattedDate = istDate.toLocaleDateString('en-IN', options);
-      
-        return formattedDate;
-    } */
 
 
     return (
@@ -943,40 +838,6 @@ function ReworkTaskConsole() {
                                     </FormControl>
                                 </Grid>
 
-                                <Grid item xs={6}>
-                                    <FormControl fullWidth sx={{ marginTop: 3 }}>
-                                        <TextField id="outlined-basic" type='date'
-                                            value={Expert_startDate}
-                                            variant='outlined'
-                                            error={expertStartDateValid == false}
-                                            helperText={expertStartDateValid == false && 'Select Start Date'}
-                                            onChange={handleExpertStartDateChange}
-                                            
-                                            InputLabelProps={{
-                                                shrink: true,
-                                            }}
-                                            label="Expert Start Date"
-                                        />
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <FormControl fullWidth sx={{ marginTop: 3 }}>
-                                        <TextField id="outlined-basic" type='date'
-                                            value={Expert_endDate}
-                                            error={expertEndDateValid == false}
-                                            helperText={expertEndDateValid == false && 'Select End Date'}
-                                            onChange={handleExpertEndDateChange}
-                                            inputProps={{
-                                                min: Expert_startDate,
-                                            }}
-                                            InputLabelProps={{
-                                                shrink: true,
-                                            }}
-                                            label="Expert End Date"
-                                            variant="outlined" />
-                                    </FormControl>
-                                </Grid>
-
                             </Box>
                         )}
 
@@ -1017,38 +878,6 @@ function ReworkTaskConsole() {
                 <DialogContent sx={{
                     marginTop: 2
                 }}>
-                    <Grid item xs={6}>
-                        <FormControl fullWidth sx={{ m: 1, marginTop: 3 }}>
-                            <TextField id="outlined-basic" type='date'
-                                value={Expert_startDate}
-                                onInput={(e) => {
-                                    console.log(e.target.value);
-                                    setExpert_startDate(e.target.value);
-                                }}
-                                inputProps={{ min: today }}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                label="Expert Start Date"
-                                variant="outlined" />
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <FormControl fullWidth sx={{ m: 1, marginTop: 3 }}>
-                            <TextField id="outlined-basic" type='date'
-                                value={Expert_endDate}
-                                onInput={(e) => {
-                                    console.log(e.target.value);
-                                    setExpert_endDate(e.target.value);
-                                }}
-                                inputProps={{ min: Expert_startDate }}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                label="Expert End Date"
-                                variant="outlined" />
-                        </FormControl>
-                    </Grid>
 
                     <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                         <Grid item xs={6}>

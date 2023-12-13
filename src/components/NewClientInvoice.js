@@ -393,7 +393,7 @@ const convertValue = (amount, currency) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        // do something with data
+        //do something with data
         console.log("Orders data", data);
 
         setClientId(data[0].client_id)

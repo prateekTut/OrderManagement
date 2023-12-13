@@ -51,8 +51,7 @@ function PassedTaskConsole() {
     const [orderStatusValid, setOrderStatusValid] = useState(null);
     const [expertValid, setExpertValid] = useState(null);
     const [otmValid, setOtmValid] = useState(null);
-    const [expertStartDateValid, setExpertStartDateValid] = useState(null);
-    const [expertEndDateValid, setExpertEndDateValid] = useState(null);
+   
     const [vendorBudgetValid, setVendorBudgetValid] = useState(null);
 
     const [expertPriceValid, setExpertPriceValid] = useState(null);
@@ -66,16 +65,13 @@ function PassedTaskConsole() {
     const validateStatus = (value) => value != '';
     const validateExpert = (value) => value != '';
     const validateOtm = (value) => value != '';
-    const validateExpertStartDate = (value) => value != '';
-    const validateExpertEndDate = (value) => value != '';
     const validateVendorBudget = (value) => /^\d+$/.test(value);
 
     const validateExpertPrice = (value) => !isNaN(value) && value.length < 5;
     const validateWordCount = (value) => !isNaN(value) && value.length < 5;
 
     const [expert, setexpert] = useState([]);
-    const [Expert_startDate, setExpert_startDate] = useState("");
-    const [Expert_endDate, setExpert_endDate] = useState("");
+
     const [Qc_Expert_name, setQc_Expert_name] = useState("");
     const [otmMember, setOtmMember] = useState([]);
 
@@ -83,8 +79,7 @@ function PassedTaskConsole() {
 
     const resetFormFields = () => {
         setStatus("");
-        setExpert_startDate("");
-        setExpert_endDate("");
+       
         setQc_Expert_name("");
         setOtmUser("");
         // Reset other form fields if needed
@@ -94,8 +89,7 @@ function PassedTaskConsole() {
         setOrderStatusValid(null);
         setExpertValid(null);
         setOtmValid(null);
-        setExpertEndDateValid(null);
-        setExpertStartDateValid(null);
+        
     };
 
 
@@ -202,18 +196,7 @@ function PassedTaskConsole() {
 
     };
 
-    const handleExpertStartDateChange = (event) => {
-        const value = event.target.value
-        setExpert_startDate(value);
-        setExpertStartDateValid(validateExpertStartDate(value))
-    };
-
-    const handleExpertEndDateChange = (event) => {
-        const value = event.target.value
-        setExpert_endDate(value);
-        setExpertEndDateValid(validateExpertEndDate(value))
-    };
-
+  
     const handleModalUpdate = (id, prevStat) => {
         setOpen(true);
         setOrdersId(id);
@@ -225,14 +208,7 @@ function PassedTaskConsole() {
 
         setOrdersIdEdit(id);
         const filteredOrders = orders.filter(order => order.id == id);
-        console.log("in modal edit", filteredOrders);
-        console.log("in modal edit", filteredOrders[0].expert_price);
-        //const formattedDate = dateObject;
-        const dateEndObject = new Date(filteredOrders[0].expert_end_date);
-        const dateStartObject = new Date(filteredOrders[0].expert_start_date);
-
-        setExpert_endDate(dateEndObject.toISOString().split('T')[0]);
-        setExpert_startDate(dateStartObject.toISOString().split('T')[0]);
+   
         setWordCount(filteredOrders[0].word_count);
         setExpertPrice(filteredOrders[0].expert_price);
         setVendor_budget(filteredOrders[0].budget);
@@ -262,7 +238,7 @@ function PassedTaskConsole() {
                 setDialogOpen(true);
             }
         } else if (Status == "assigned") {
-            if (orderStatusValid && expertValid && expertStartDateValid && expertEndDateValid) {
+            if (orderStatusValid && expertValid ) {
                 updateStatusData();
             } else {
                 setDialogOpen(true);
@@ -284,8 +260,7 @@ function PassedTaskConsole() {
         var formdata = new FormData();
         formdata.append("status", Status)
         formdata.append("expert_id", Qc_Expert_name)
-        formdata.append("expert_start_date", Expert_startDate)
-        formdata.append("expert_end_date", Expert_endDate)
+      
 
         var requestOptions = {
             method: "POST",
@@ -316,11 +291,10 @@ function PassedTaskConsole() {
     };
 
     const handleOrderUpdate = () => {
-        if (wordCountValid || expertPriceValid || Expert_startDate != null) {
+        if (wordCountValid || expertPriceValid ) {
             var formdata = new FormData();
 
-            formdata.append("Expert_startDate", Expert_startDate);
-            formdata.append("Expert_endDate", Expert_endDate);
+           
             formdata.append("word_count", wordCount);
             formdata.append("expert_price", expertPrice);
             formdata.append("budget", Vendor_budget)
@@ -336,7 +310,7 @@ function PassedTaskConsole() {
                 .then((data) => {
                     // do something with data
                     console.log("budget DATA", data);
-                    setOrders(data);
+                    fetchDataForSubject();
                     setOpenEdit(false);
                 })
                 .catch((rejected) => {
@@ -466,80 +440,6 @@ function PassedTaskConsole() {
         fetchDataForSubject();
     }, [currentStatus]);
 
-    const fetchData = async () => {
-        console.log(currentStatus);
-
-        var formdata = new FormData();
-        formdata.append("status", currentStatus);
-
-        var requestOptions = {
-            method: "POST",
-            body: formdata,
-            headers: {
-                'Authorization': 'Bearer ' + token
-            }
-        };
-
-        /* fetch(FRONTEND_API + "getOrdersStatus", requestOptions)
-          .then((res) => res.json())
-          .then((rawData) => {
-              console.log(rawData);
-              setOrders(rawData)
-          })
-          .catch((rejected) => {
-          console.log(rejected);
-          }); */
-    }
-
-
-
-    // useEffect(() => {
-    //     const fetchInitial = async () => {
-    //         fetch(FRONTEND_API + "getordersdata", {
-    //             headers: {
-    //                 'Authorization': 'Bearer ' + token
-    //             }
-    //         })
-    //             .then((res) => res.json())
-    //             .then((rawData) => {
-    //                 console.log(rawData)
-    //                 var dataSet = rawData;
-    //                 const distinctSubjectsSet = new Set();
-    //                 //setSubjects(rawData);
-    //                 // Loop through the subjects array to add distinct subject names to the Set
-    //                 dataSet.forEach((data) => {
-    //                     distinctSubjectsSet.add(data.subject);
-    //                 });
-
-    //                 // Convert the Set back to an array to get the distinct subject names
-    //                 const distinctSubjects = Array.from(distinctSubjectsSet);
-    //                 setSubjects(distinctSubjects)
-    //                 console.log(distinctSubjects)
-    //             })
-    //             .catch((rejected) => {
-    //                 console.log(rejected);
-    //             });
-    //     };
-       
-    //     fetchInitial();
-    // }, []);
-
-    /* const GMTtoIST = (gmtDate) => {
-        // Create a new Date object from the provided GMT date string
-        const dateObj = new Date(gmtDate);
-
-        // Convert the GMT date to IST
-        const istDate = new Date(dateObj.toLocaleString('en-IN', {
-          timeZone: 'Asia/Kolkata',
-        }));
-      
-        // Format the IST date to display date with month name
-        const options = { day: 'numeric', month: 'long', year: 'numeric' };
-        const formattedDate = istDate.toLocaleDateString('en-IN', options);
-      
-        return formattedDate;
-    } */
-
 
     return (
         <Container>
@@ -557,22 +457,7 @@ function PassedTaskConsole() {
 
                         </Grid>
 
-                        {/* <FormControl sx={{ width: 250, marginTop: 2 }} >
-                            <InputLabel id="demo-simple-select-label">Subject</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                value={subjectValue}
-                                label="subjects"
-                                onChange={handleChange}
-                            >
-                                {subjects.map((data) => (
-
-                                    <MenuItem value={data}>{data}</MenuItem>
-
-                                ))}
-                            </Select>
-                        </FormControl> */}
+                       
 
                     </Box>
                 ) : (
@@ -580,28 +465,7 @@ function PassedTaskConsole() {
                     </Box>
                 )
                 }
-                {/* {roles == "lead" || roles == "otm" || roles == "expert" ? (
-                    <FormControl sx={{ width: 250 }} >
-                        <InputLabel id="demo-simple-select-label">Subject</InputLabel>
-                        <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            value={subjectValue}
-                            label="subjects"
-                            onChange={handleChange}
-                        >
-                            {subjects.map((data) => (
-
-                                <MenuItem value={data}>{data}</MenuItem>
-
-                            ))}
-                        </Select>
-                    </FormControl>
-                ) : (
-                    <Box sx={{ marginTop: 1 }}></Box>
-                )
-
-                } */}
+               
                 {orders && orders.Error ? (
                     <Box sx={{
                         width: 700,
@@ -636,9 +500,7 @@ function PassedTaskConsole() {
                                             <StyledTableCell >Expert</StyledTableCell>
                                             <StyledTableCell >Start Date</StyledTableCell>
                                             <StyledTableCell >End Date</StyledTableCell>
-                                            {/* <StyledTableCell >Expert Start Date</StyledTableCell>
-                                            <StyledTableCell >Expert End Date</StyledTableCell>
- */}
+                                           
                                             <StyledTableCell >Order Status</StyledTableCell>
                                             <StyledTableCell >Word Count</StyledTableCell>
                                             {roles != 'expert' && (
@@ -670,9 +532,7 @@ function PassedTaskConsole() {
                                                     <StyledTableCell>{orderData.expert_id}</StyledTableCell>
                                                     <StyledTableCell>{handleDate(orderData.order_start_date)}</StyledTableCell>
                                                     <StyledTableCell>{handleDate(orderData.order_end_date)}</StyledTableCell>
-                                                    {/* <StyledTableCell>{handleDate(orderData.expert_start_date)}</StyledTableCell>
-                                                    <StyledTableCell>{handleDate(orderData.expert_end_date)}</StyledTableCell>
-                                                    */} <StyledTableCell>{orderData.order_status}</StyledTableCell>
+                                                    <StyledTableCell>{orderData.order_status}</StyledTableCell>
                                                     <StyledTableCell>{orderData.word_count}</StyledTableCell>
                                                     {roles != 'expert' && (
                                                         <StyledTableCell>{handleBudget(orderData.expert_price, orderData.currency)}</StyledTableCell>
@@ -745,64 +605,6 @@ function PassedTaskConsole() {
                 {/* Add more details you want to display */}
             </Box>
 
-{/* 
-            <BottomNavigation
-                showLabels={true}
-                value={bottomNavSub} //subject
-                onChange={(event, newValue) => {
-                    setBottomNavSub(newValue);
-                    fetchDataForSubject(subjectValue, newValue);
-                    //setOrders(null)
-                }}
-                sx={{ position: 'fixed', bottom: 0, marginBottom: 2, width: '100%', marginLeft: -10 }}
-
-            >
-                <BottomNavigationAction
-                    label="New Order"
-                    onClick={() => setCurrentStatus('New Order')}
-                    value="new order"
-
-
-                />
-                <BottomNavigationAction
-                    label="Assigned"
-                    onClick={() => setCurrentStatus('Assigned')}
-                    value="assigned"
-
-
-                />
-                <BottomNavigationAction
-                    label="QC"
-                    onClick={() => setCurrentStatus('QC')}
-                    value="qc"
-
-
-                />
-                <BottomNavigationAction
-                    label="Rework"
-                    onClick={() => setCurrentStatus('Rework')}
-                    value="rework"
-
-
-                />
-                <BottomNavigationAction
-                    label="Pass"
-                    onClick={() => setCurrentStatus('Pass')}
-                    value="pass"
-
-
-                />
-                <BottomNavigationAction
-                    label="Failed"
-                    onClick={() => setCurrentStatus('Failed')}
-                    value="fail"
-
-
-
-                />
-
-            </BottomNavigation> */}
-
             <Dialog
                 open={open}
                 onClose={handleCloseEdit}
@@ -833,7 +635,7 @@ function PassedTaskConsole() {
                                     helperText={orderStatusValid == false && 'Select Status'}
                                     onChange={handleChangeStatus}>
                                     <MenuItem value={'qc'}>QC</MenuItem>
-                                    <MenuItem value={'pass'}>Pass</MenuItem>
+                                    <MenuItem value={'pass'}>Compleated</MenuItem>
                                     <MenuItem value={'fail'}>Failed</MenuItem>
                                     <MenuItem value={'rework'}>Rework</MenuItem>
                                 </Select>
@@ -951,39 +753,7 @@ function PassedTaskConsole() {
                                     </FormControl>
                                 </Grid>
 
-                                <Grid item xs={6}>
-                                    <FormControl fullWidth sx={{ marginTop: 3 }}>
-                                        <TextField id="outlined-basic" type='date'
-                                            value={Expert_startDate}
-                                            variant='outlined'
-                                            error={expertStartDateValid == false}
-                                            helperText={expertStartDateValid == false && 'Select Start Date'}
-                                            onChange={handleExpertStartDateChange}
-                                            
-                                            InputLabelProps={{
-                                                shrink: true,
-                                            }}
-                                            label="Expert Start Date"
-                                        />
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <FormControl fullWidth sx={{ marginTop: 3 }}>
-                                        <TextField id="outlined-basic" type='date'
-                                            value={Expert_endDate}
-                                            error={expertEndDateValid == false}
-                                            helperText={expertEndDateValid == false && 'Select End Date'}
-                                            onChange={handleExpertEndDateChange}
-                                            inputProps={{
-                                                min: Expert_startDate,
-                                            }}
-                                            InputLabelProps={{
-                                                shrink: true,
-                                            }}
-                                            label="Expert End Date"
-                                            variant="outlined" />
-                                    </FormControl>
-                                </Grid>
+                            
 
                             </Box>
                         )}
@@ -1025,38 +795,7 @@ function PassedTaskConsole() {
                 <DialogContent sx={{
                     marginTop: 2
                 }}>
-                    <Grid item xs={6}>
-                        <FormControl fullWidth sx={{ m: 1, marginTop: 3 }}>
-                            <TextField id="outlined-basic" type='date'
-                                value={Expert_startDate}
-                                onInput={(e) => {
-                                    console.log(e.target.value);
-                                    setExpert_startDate(e.target.value);
-                                }}
-                                inputProps={{ min: today }}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                label="Expert Start Date"
-                                variant="outlined" />
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <FormControl fullWidth sx={{ m: 1, marginTop: 3 }}>
-                            <TextField id="outlined-basic" type='date'
-                                value={Expert_endDate}
-                                onInput={(e) => {
-                                    console.log(e.target.value);
-                                    setExpert_endDate(e.target.value);
-                                }}
-                                inputProps={{ min: Expert_startDate }}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                label="Expert End Date"
-                                variant="outlined" />
-                        </FormControl>
-                    </Grid>
+                    
 
                     <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                         <Grid item xs={6}>
