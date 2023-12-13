@@ -68,7 +68,7 @@ function NewClientInvoice() {
   const currencies = [
     /* {
       value: '$',
-      label: 'US Dollar( USD, $)',
+      label: 'US Dollar(USD, $)',
     }, */
     {
       value: '₹',
@@ -147,28 +147,49 @@ function NewClientInvoice() {
     setTableData(updatedTableData);
   }
 
-  const handleRadioChange = (event) => {
-    //setSelectedRadio(event.target.value);
-    console.log(event.target.value);
-    setUserClientType(event.target.value);
-    //fetchInitial(event.target.value);
-  };
-
   const handleTaxRadioChange = (event) => {
     //setSelectedRadio(event.target.value);
     console.log(event.target.value);
     setSelectedTax(event.target.value);
   };
 
-  const handleChangeClient = (event) => {
-    const newValue = event.target.value;
-    setUserClient(newValue);
-    console.log(event.target.value);
-    //getOrdersOfClient(newValue);
-  };
-
   const handleCurrencyChange = (event) => {
     setCurrencyValue(event.target.value);
+    const conversionRate = getConversionRate(event.target.value);
+
+    // Update each row in tableData with the new currency value
+   /*  const updatedTableData = tableData.map((row) => {
+      const updatedAmount = row.amount * conversionRate;
+      const updatedIgst = row.igst * conversionRate;
+      const updatedCgst = row.cgst * conversionRate;
+      const updatedSgst = row.sgst * conversionRate;
+      const updatedVat = row.vat * conversionRate;
+      const updatedTotal = row.total * conversionRate;
+  
+      return {
+        ...row,
+        amount: updatedAmount,
+        igst: updatedIgst,
+        cgst: updatedCgst,
+        sgst: updatedSgst,
+        vat: updatedVat,
+        total: updatedTotal,
+      };
+    });
+  
+    setTableData(updatedTableData); */
+  };
+
+  const getConversionRate = (currency) => {
+    // Fetch the conversion rate for the specified currency from your backend or any other source
+    // For simplicity, assuming a fixed conversion rate for this example
+    const conversionRates = {
+      "$": 0.014, // Example conversion rate for USD to INR
+      "£": 0.011, // Example conversion rate for GBP to INR
+      // Add more currencies as needed
+    };
+  
+    return conversionRates[currency] || 1; // Default to 1 if currency is not found
   };
 
   const handleCloseTax = () => {
@@ -315,6 +336,27 @@ function NewClientInvoice() {
     setInvoiceNumber(newInvoiceNumber);
   };
 
+  //amount Conversion method
+const convertValue = (amount, currency) => {
+  console.log("in conversion", currencyValue, currency)
+  var newCurrency = null;
+  if(currencyValue == "$"){
+    newCurrency = "USD";
+  }else if(currencyValue == "₹"){
+    newCurrency = "INR";
+  }else{
+    newCurrency = "GBP";
+  }
+
+  if(currency == newCurrency){
+    return amount;
+  }else if(newCurrency == "INR"){
+    return amount * 83.40;
+  }else{
+    return amount * 0.0095;
+  }
+}
+
   useEffect(() => {
     fetchOrderData(params.userId);
     generateAndSetInvoiceNumber();
@@ -374,15 +416,17 @@ function NewClientInvoice() {
 
     for (let i = 0; i < receivedData.length; i++) {
       const receivedItem = receivedData[i];
+      const conv_amount = convertValue(receivedItem.order_budget, receivedItem.currency);
+
       updatedTableData[i] = {
         ...updatedTableData[i],
         id: i,
         order_id: receivedItem.id,
-        amount: receivedItem.order_budget,
+        amount: conv_amount,
         item: receivedItem.task,
-        total: receivedItem.order_budget,
+        total: conv_amount,
         quantity: 1,
-        rate: receivedItem.order_budget,
+        rate: conv_amount,
       };
     }
     console.log(updatedTableData);
@@ -497,6 +541,8 @@ function NewClientInvoice() {
     })
     return total;
   }
+
+  
 
   return (
     <Container sx={{ bgcolor: "#FBF1F7" }}>
@@ -848,7 +894,6 @@ function NewClientInvoice() {
                           <StyledTableCell> <CloseIcon onClick={() => handleRemoveRow(data.id)} /></StyledTableCell>
                         </TableBody>
                       ))}
-
                     </Table>
                   </TableContainer>
 
@@ -861,6 +906,7 @@ function NewClientInvoice() {
                       </Grid>
                       <Grid item xs={3}>
                         <Typography align="right" variant="subtitle1">
+                        <span style={{ marginRight: '2px', marginTop: '0px' }}>{currencyValue}</span>
                           {isNaN(getTotalAmount()) ? 0 : getTotalAmount().toFixed(2)}
                         </Typography>
                       </Grid>
@@ -940,13 +986,14 @@ function NewClientInvoice() {
                       )}
 
                       <Grid item xs={9}>
-
+                      
                         <Typography align="right" variant="h5" fontWeight="semi-bold">
                           Total:
                         </Typography>
                       </Grid>
                       <Grid item xs={3}>
                         <Typography align="right" variant="h5" fontWeight="bold">
+                        <span style={{ marginRight: '2px', marginTop: '0px' }}>{currencyValue}</span>
                           {isNaN(getTotal()) ? 0 : getTotal().toFixed(2)}
                         </Typography>
                       </Grid>
