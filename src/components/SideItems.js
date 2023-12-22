@@ -67,67 +67,14 @@ export default function SideItems() {
             </ListItemButton>
           </Link>
 
-          <ListItemButton onClick={toggleTaskSubmenu}>
-            <ListItemIcon>
-              <ShoppingCartIcon style={{ color: '#F34C19' }}/>
-            </ListItemIcon>
-            <ListItemText primary="Order Management" />
-            {openCollapseTask ? <ExpandLess /> : <ExpandMore />}
-          </ListItemButton>
-          
-          <Collapse in={openCollapseTask} timeout="auto" unmountOnExit>
-            <Link to="/unassigned-task">
-              <CustomListItemButton>
+            <Link to="/order-management">
+              <ListItemButton>
                 <ListItemIcon>
-                  <SchoolIcon style={{ color: '#343F71' }}/>
+                  <SchoolIcon style={{ color: '#F34C19' }}/>
                 </ListItemIcon>
-                <ListItemText primary="Unassigned" />
-              </CustomListItemButton>
+                <ListItemText primary="Manage Orders" />
+              </ListItemButton>
             </Link>
-
-            <Link to="/assign-task">
-              <CustomListItemButton>
-                <ListItemIcon>
-                  <SchoolIcon style={{ color: '#343F71' }} />
-                </ListItemIcon>
-                <ListItemText primary="Assigned" />
-              </CustomListItemButton>
-            </Link>
-            <Link to="/qc-task">
-              <CustomListItemButton>
-                <ListItemIcon>
-                  <SchoolIcon style={{ color: '#343F71' }} />
-                </ListItemIcon>
-                <ListItemText primary="QC" />
-              </CustomListItemButton>
-            </Link>
-           
-            <Link to="/rework-task">
-              <CustomListItemButton>
-                <ListItemIcon>
-                  <SchoolIcon style={{ color: '#343F71' }} />
-                </ListItemIcon>
-                <ListItemText primary="Rework" />
-              </CustomListItemButton>
-            </Link>
-            
-            <Link to="/passed-task">
-              <CustomListItemButton>
-                <ListItemIcon>
-                  <SchoolIcon style={{ color: '#343F71' }} />
-                </ListItemIcon>
-                <ListItemText primary="Compleated" />
-              </CustomListItemButton>
-            </Link>
-            <Link to="/failed-task">
-              <CustomListItemButton>
-                <ListItemIcon>
-                  <SchoolIcon style={{ color: '#343F71' }} />
-                </ListItemIcon>
-                <ListItemText primary="Failed" />
-              </CustomListItemButton>
-            </Link>
-          </Collapse>
 
           <ListItemButton onClick={toggleClientSubmenu}>
             <ListItemIcon>
@@ -177,7 +124,7 @@ export default function SideItems() {
               </CustomListItemButton>
             </Link>
 
-            <Link to="">
+            <Link to="/expense-manage">
               <CustomListItemButton>
                 <ListItemIcon>
                   <AssignmentIcon style={{ color: '#343F71' }}/>

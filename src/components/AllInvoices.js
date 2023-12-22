@@ -52,7 +52,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-import { Circle, PartPaid, Paid, DueStatus, DateText, PaidAmt } from './styles/style';
+import { Circle, PartPaid, Paid, DueStatus, DateText, PaidAmt, ButtonContainer } from './styles/style';
 import TablePagination from '@mui/material/TablePagination';
 
 
@@ -71,10 +71,13 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import DownloadIcon from '@mui/icons-material/Download';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import IconWithText from './IconWithText';
-import { Home, Work, School, MoneyOff } from '@mui/icons-material'; // Import different icons
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import MoneyOffIcon from '@mui/icons-material/MoneyOff';
+
+import Autocomplete from '@mui/material/Autocomplete';
+
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -249,6 +252,7 @@ function AllInvoices() {
   const [dateRange, setDateRange] = useState(initialDateRange);
 
   const [showDateRangePicker, setShowDateRangePicker] = useState(false);
+  //const [selectedDates, setSelectedDates] = useState({ startDate: null, endDate: null });
 
   const handleButtonClick = () => {
     setShowDateRangePicker(!showDateRangePicker);
@@ -273,18 +277,7 @@ function AllInvoices() {
 
   };
 
-  const getDates = () => {
-    console.log(dateRange);
-    if (dateRange[0].startDate != null) {
-      console.log("in gert dates");
-      const startDate = dateRange[0].startDate.toISOString().split('T')[0];
-      const endDate = dateRange[0].endDate.toISOString().split('T')[0];
-      console.log(startDate, endDate);
-      return "Date Ranges: " + startDate + " - " + endDate;
-    } else {
-      return "No date range selected";
-    }
-  };
+
 
   const formatDate = (dateString) => {
     const formattedDate = format(new Date(dateString), 'MMM dd, yyyy');
@@ -396,9 +389,41 @@ function AllInvoices() {
     setClientName(value);
   };
 
+  function formatDateObj(inputDate) {
+    const dateObject = new Date(inputDate);
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    const formattedDate = dateObject.toLocaleDateString('en-US', options);
+    return formattedDate;
+  }
+
+  const getDates = () => {
+    console.log(dateRange);
+    if (dateRange[0].startDate != null) {
+      console.log("in get dates");
+      const startDate = formatDateObj(dateRange[0].startDate);
+      const endDate = formatDateObj(dateRange[0].endDate);
+      console.log(startDate, endDate);
+      return startDate + " - " + endDate;
+    } else {
+      return "No date range selected";
+    }
+  };
+
+
+  const [selectedClient, setSelectedClient] = useState(null);
   //Filter Logic
   const filteredInvoices = invoices.filter((invoice) => {
-    const matchesClientName = invoice.name.toLowerCase().includes(clientName.toLowerCase());
+
+    if (!selectedClient && !invoiceStatus && (!dateRange[0] || dateRange[0].startDate === null)) {
+      return true;
+    }
+
+    if (selectedClient) {
+      const searchedClient = invoice.name.toLowerCase().includes(selectedClient.name.toLowerCase())
+      return searchedClient
+    }
+
+
     // Check if invoice status is selected
     if (invoiceStatus) {
       switch (invoiceStatus) {
@@ -415,24 +440,24 @@ function AllInvoices() {
           break;
       }
     }
+
     if (dateRange[0].startDate != null) {
       const invoiceDate = new Date(invoice.invoice_date);
+      console.log("invocie date", invoiceDate);
       const formattedInvoiceDate = invoiceDate.toISOString().split('T')[0];
 
       const withinDateRange =
         formattedInvoiceDate >= dateRange[0].startDate.toISOString().split('T')[0] &&
         formattedInvoiceDate <= dateRange[0].endDate.toISOString().split('T')[0];
-
-      return matchesClientName && withinDateRange;
+      console.log("range", withinDateRange);
+      return withinDateRange;
     }
-
-    return matchesClientName;
   });
 
   const resetFilter = () => {
     console.log("reset called");
     setDateRange(initialDateRange);
-    
+
   }
 
   //Menu Logic
@@ -545,8 +570,18 @@ function AllInvoices() {
     navigate(`/edit-invoices/${invoice_number}`);
   }
 
+  //Client dropdown
+  const handleClientSelect = (event, newValue) => {
+    setSelectedClient(newValue);
+  };
+
+  //handle click away date
+  const handleClickAwayDate = () => {
+
+  }
+
   return (
-    <Container>
+    <Container sx={{ marginBottom: 10 }}>
       {<Typography variant='h3' sx={{
         marginLeft: 2,
         paddingTop: 2,
@@ -629,26 +664,41 @@ function AllInvoices() {
             </Grid>
 
             <Grid item xs={2} sm={4} md={4}>
-              <InputLabel id="demo-select-small-label">Search Client</InputLabel>
-              <TextField
-                id="standard-helperText"
-                helperText="Client Name"
-                variant="standard"
-                value={clientName}
-                onChange={onClientNameChange}
-              />
+              <div>
+                <InputLabel id="demo-select-small-label">Search Client</InputLabel>
+                <Autocomplete
+                  options={invoices}
+                  getOptionLabel={(option) => option.name}
+                  onChange={handleClientSelect}
+                  renderInput={(params) => (
+                    <TextField {...params} sx={{ marginTop: 1, maxWidth: 250 }} size='small' variant="outlined" />
+                  )}
+                />
+              </div>
             </Grid>
 
             <Grid item xs={2} sm={4} md={4}>
               <InputLabel id="demo-select-small-label">Select Date Range</InputLabel>
-              <Button variant='contained' onClick={handleButtonClick} ref={buttonRef} >Select Date</Button>
-
+              {/* <Button variant='contained' onClick={handleButtonClick} ref={buttonRef} >Select Date</Button> */}
+              <ClickAwayListener onClickAway={handleClickAwayDate}>
+                <ButtonContainer
+                  sx={{ marginTop: 1 }}
+                  role="button"
+                  onClick={handleButtonClick}
+                  size='small'
+                  ref={buttonRef}
+                >
+                  <span>{getDates()}</span>
+                  <IconButton sx={{ display: 'flex', alignItems: 'end', alignContent: 'end' }}>
+                    <CalendarTodayIcon />
+                  </IconButton>
+                </ButtonContainer>
+              </ClickAwayListener>
               {showDateRangePicker && (
                 <div
                   style={{
                     position: 'absolute',
                     zIndex: 9999,
-
                     top: buttonRef.current.offsetTop + buttonRef.current.offsetHeight + 'px',
                     left: buttonRef.current.offsetLeft + 'px'
                   }}
@@ -661,17 +711,12 @@ function AllInvoices() {
                   />
                 </div>
               )}
-              {dateRange != null && (
-                <div>
-                  <p>{getDates()}</p>
-                </div>
-              )}
             </Grid>
 
           </Grid>
 
           <div>
-            { dateRange[0].startDate != null && (
+            {dateRange[0].startDate != null && (
               <div role='button' onClick={resetFilter}>
                 <div>Reset Filters</div>
               </div>
@@ -750,13 +795,12 @@ function AllInvoices() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-
       }}>
-
 
         <TableContainer sx={{
           marginBottom: 6,
-          marginRight: 2
+          marginRight: 2,
+          marginLeft: 2
         }}
           aria-label="customized table" >
           <TablePagination
@@ -770,7 +814,7 @@ function AllInvoices() {
             labelRowsPerPage="Invoices per page:"
             labelDisplayedRows={({ from, to, count }) => `Showing ${from} to ${to} Invoice of ${count} Invoice(s)`}
           />
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <Table sx={{ minWidth: 650,  }} aria-label="simple table">
             <TableHead>
               <StyledTableRow>
                 <StyledTableCell>Invoice ID</StyledTableCell>

@@ -38,7 +38,7 @@ const InvoiceGraph = ({ invoices }) => {
                         type="number"
                         dataKey="totalAmount"
                         name="Total Amount"
-                        unit="$"
+                        unit="₹"
                         stroke={theme.palette.text.secondary}
                         style={theme.typography.body2}
                     />

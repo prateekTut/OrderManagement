@@ -33,16 +33,11 @@ import AddFreelancers from "./components/AddFreelancers";
 import StudentInvoices from "./components/StudentInvoices";
 import GenerateVendorInvoice from "./components/GenerateVendorInvoice";
 
-import AssignTaskConsole from "./components/AssignTaskConsole";
-import UnassignedTaskConsole from "./components/UnassignedTaskConsole";
-import ReworkTaskConsole from "./components/ReworkTaskConsole";
-import PassedTaskConsole from "./components/PassedTaskConsole";
-import FailedTaskConsole from "./components/FailedTaskConsole";
-import QcTaskConsole from "./components/QcTaskConsole";
 import AllInvoices from "./components/AllInvoices";
 import GenerateInvoice from "./components/GenerateInvoice";
 import EditInvoices from "./components/EditInvoices";
-
+import AssignTaskConsole from "./components/AssignTaskConsole";
+import ExpenseManagement from "./components/ExpenseManagement";
 
 // Create a styled component for the Paper element
 const StyledBox = styled(Box)(({ theme }) => ({
@@ -93,7 +88,6 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
       <Routes>
 
         <Route path='/' element={<NewLogin />} />
@@ -107,7 +101,9 @@ function App() {
 
             <Route path='/register' element={<Register />} />
             <Route path='/registerExpert' element={<AddExpert />} />
-
+            <Route path="/add-freelancers" element={<AddFreelancers />} />
+            <Route path='/register-clients' element={<RegisterClients />} />
+            
             <Route path='/UpdateClientdata' element={<ClientStudentConsole />} />
             <Route path='/Updatevonder' element={<ClientVendorConsole />} />
 
@@ -126,23 +122,22 @@ function App() {
             {/* <Route path="/vendor-order-history" element={<VendorOrderHistory />} /> */}
             <Route path="/order-history" element={<AllInvoices />} />
 
-            <Route path='/register-clients' element={<RegisterClients />} />
-
-            <Route path="/add-freelancers" element={<AddFreelancers />} />
+           
+            <Route path="/expense-manage" element={<ExpenseManagement />} />
+         
             <Route path="/generated-invoice/:invoiceId" element={<StudentInvoices />} />
 
             <Route path='/edit-invoices/:id' element={<EditInvoices />} />
+
+            <Route path="/order-management" element={<AssignTaskConsole />} />
+
           </Route>
 
           <Route element={<RequireAuth allowedRoles={["admin", "hr", "otm", "lead", "expert"]} />}>
 
             <Route path='/dashboard' element={<Dashbord />} />
-            <Route path='/unassigned-task' element={<UnassignedTaskConsole />} />
-            <Route path='/assign-task' element={<AssignTaskConsole />} />
-            <Route path='/rework-task' element={<ReworkTaskConsole />} />
-            <Route path='/passed-task' element={<PassedTaskConsole />} />
-            <Route path='/failed-task' element={<FailedTaskConsole />} />
-            <Route path='/qc-task' element={<QcTaskConsole />} />
+            <Route path="/order-management" element={<AssignTaskConsole />} />
+
             <Route path='/addtask/*' element={<AddTaskNew />} />
           </Route>
 

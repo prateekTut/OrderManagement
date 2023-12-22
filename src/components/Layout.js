@@ -6,16 +6,19 @@ import Dashbord from "./Dashbord";
 
 const StyledBox = styled(Box)(({ theme }) => ({
     marginTop: "55px",
-    paddingLeft: "30px",
-    
+    marginLeft: 50,
+    flex: 1, 
+    overflowY: 'auto'
 }));
 
   
 const Layout = () => {
     return (
-        <Box>
+        <Box sx={{background: "#FBF1F7", height: "100vh", // Use 100vh for 100% of the viewport height
+        display: 'flex',
+        flexDirection: 'column',}}>
             <NavBarMain />
-            <StyledBox >
+            <StyledBox>
                <Outlet />
             </StyledBox>
         </Box>

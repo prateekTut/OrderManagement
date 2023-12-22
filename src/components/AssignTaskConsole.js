@@ -1,14 +1,14 @@
 import React from 'react'
 import { FormControl, MenuItem, InputLabel, BottomNavigation, BottomNavigationAction, TextField, Grid, Container, FormLabel, FormControlLabel, Radio, RadioGroup } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+
 import Paper from '@mui/material/Paper';
 import { Button } from '@mui/material';
 import { Link } from "react-router-dom";
@@ -22,10 +22,40 @@ import { FRONTEND_API } from "./urls";
 import { event } from 'jquery';
 import { DialogContentText, Alert } from '@mui/material';
 
+import UpgradeOutlinedIcon from '@mui/icons-material/UpgradeOutlined';
+import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
+import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
+import "./css/invoices.css"
+import { ButtonContainer } from './styles/style';
+
+import IconButton from '@mui/material/IconButton';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import { DateCalendar, DatePicker, LocalizationProvider, StaticDatePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
+import { format } from 'date-fns';
+import UpdateSharpIcon from '@mui/icons-material/UpdateSharp';
+import InfoSharpIcon from '@mui/icons-material/InfoSharp';
+
+import { StyledTableCell, StyledTableRow } from './styles/TableStyles';
+
+const StyledBottomNavigationAction = styled(BottomNavigationAction)`
+    color: #007A78;
+    &.Mui-selected {
+        color: red;
+        font-size: 22px;
+    }
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2); /* Replace the shadow values with your desired elevation */
+    background-color: #f5f5f5; 
+    font-size: 20px !important;
+`;
+
+
+  
 
 function AssignTaskConsole() {
 
- 
+
     const [orders, setOrders] = useState([]);
     const [ordersId, setOrdersId] = useState([]);
     const [ordersIdEdit, setOrdersIdEdit] = useState([]);
@@ -33,14 +63,16 @@ function AssignTaskConsole() {
 
     const [userType, setUserType] = useState('');
 
+    const [bottomNavSub, setBottomNavSub] = useState('New Order');
     const [currentStatus, setCurrentStatus] = useState('New Order');
+
     const [prevStatus, setPrevStatus] = useState("");
 
     const token = localStorage.getItem("token")
     const roles = localStorage.getItem("roles")
     const userId = localStorage.getItem("userId")
 
-    const today = new Date().toISOString().split('T')[0];
+    const today = dayjs();
 
     const [Status, setStatus] = useState("");
     const [open, setOpen] = React.useState(false);
@@ -56,6 +88,8 @@ function AssignTaskConsole() {
 
     const [expertPrice, setExpertPrice] = useState("");
     const [wordCount, setWordCount] = useState("");
+    const [subject, setSubject] = useState("");
+    const [endDate, setEndDate] = useState(dayjs().startOf('day'));
 
     const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -68,11 +102,13 @@ function AssignTaskConsole() {
     const validateWordCount = (value) => !isNaN(value) && value.length < 5;
 
     const [expert, setexpert] = useState([]);
-    
     const [Qc_Expert_name, setQc_Expert_name] = useState("");
     const [otmMember, setOtmMember] = useState([]);
 
     const [otmUser, setOtmUser] = React.useState('');
+
+    const [openDatePicker, setOpenDatePicker] = useState(false);
+    const buttonRef = useRef(null);
 
     const resetFormFields = () => {
         setStatus("");
@@ -85,42 +121,41 @@ function AssignTaskConsole() {
         setOrderStatusValid(null);
         setExpertValid(null);
         setOtmValid(null);
+
     };
 
-
-    const BottomNavigationAction = styled(MuiBottomNavigationAction)(`
-        color: #007A78;
-        &.Mui-selected {
-        color: red;
-        font-size: 22px;
-        }
-        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2); /* Replace the shadow values with your desired elevation */
-        background-color: #f5f5f5; 
-        font-size: 20px !important;
-        
-    `);
+    useEffect(() => {
+        //fetchData();
+        fetchDataForSubject(currentStatus);
+        setBottomNavSub(currentStatus);
+    }, []);
 
 
-    const StyledTableCell = styled(TableCell)(({ theme }) => ({
-        [`&.${tableCellClasses.head}`]: {
-            backgroundColor: theme.palette.common.black,
-            color: theme.palette.common.white,
-        },
-        [`&.${tableCellClasses.body}`]: {
-            fontSize: 14,
-        },
-    }));
+    const fetchDataForEdit = () => {
+        var formdata = new FormData();
 
-    const StyledTableRow = styled(TableRow)(({ theme }) => ({
-        '&:nth-of-type(odd)': {
-            backgroundColor: theme.palette.action.hover,
-        },
-        // hide last border
-        '&:last-child td, &:last-child th': {
-            border: 0,
-        },
-    }));
+        formdata.append("type", "otm");
 
+
+        var requestOptions = {
+            method: "POST",
+            body: formdata,
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        };
+
+        fetch(FRONTEND_API + "getUsers", requestOptions)
+            .then((res) => res.json())
+            .then((data) => {
+                // do something with data
+                console.log(data);
+                setOtmMember(data);
+            })
+            .catch((rejected) => {
+                console.log(rejected);
+            });
+    };
 
     const handleVendorBudgetChange = (event) => {
         const { name, value } = event.target;
@@ -168,38 +203,20 @@ function AssignTaskConsole() {
 
     const handleModalEdit = (id) => {
         fetchDataForEdit();
+
         setOrdersIdEdit(id);
         const filteredOrders = orders.filter(order => order.id == id);
         setWordCount(filteredOrders[0].word_count);
         setExpertPrice(filteredOrders[0].expert_price);
         setVendor_budget(filteredOrders[0].budget);
+        setSubject(filteredOrders[0].subject);
+        const dateString = filteredOrders[0].order_end_date; // Assuming it's a string
+        const dateObject = dayjs(dateString);
+        setEndDate(dateObject);
         setOpenEdit(true);
     };
 
 
-    const fetchDataForEdit = () => {
-        var formdata = new FormData();
-
-        formdata.append("type", "otm");
-        var requestOptions = {
-            method: "POST",
-            body: formdata,
-            headers: {
-                'Authorization': 'Bearer ' + token
-            }
-        };
-
-        fetch(FRONTEND_API + "getUsers", requestOptions)
-            .then((res) => res.json())
-            .then((data) => {
-                // do something with data
-                console.log("In fetch data for edit",data);
-                setOtmMember(data);
-            })
-            .catch((rejected) => {
-                console.log(rejected);
-            });
-    };
     const handleCloseEdit = () => {
         setOpenEdit(false);
         //resetFormFields();
@@ -261,7 +278,7 @@ function AssignTaskConsole() {
                 resetFormFields();
                 resetValidationFields();
                 //setOrders(data);
-                fetchDataForSubject();
+                fetchDataForSubject(currentStatus);
                 setOpen(false);
 
             })
@@ -275,12 +292,15 @@ function AssignTaskConsole() {
     };
 
     const handleOrderUpdate = () => {
-        if (wordCountValid || expertPriceValid ) {
+        console.log("In edit")
+        if (wordCountValid || endDate) {
+            console.log("In edit cond valid")
             var formdata = new FormData();
-
             formdata.append("word_count", wordCount);
             formdata.append("expert_price", expertPrice);
-            formdata.append("budget", Vendor_budget)
+            formdata.append("budget", Vendor_budget);
+            formdata.append("subject", subject);
+            formdata.append("deadline", endDate.format("YYYY-MM-DD"))
             var requestOptions = {
                 method: "POST",
                 body: formdata,
@@ -293,7 +313,7 @@ function AssignTaskConsole() {
                 .then((data) => {
                     // do something with data
                     console.log("budget DATA", data);
-                    setOrders(data);
+                    fetchDataForSubject(currentStatus);
                     setOpenEdit(false);
                 })
                 .catch((rejected) => {
@@ -301,6 +321,7 @@ function AssignTaskConsole() {
                 });
         }
     }
+
 
     const handleUserTypeChange = (event) => {
         //setSelectedRadio(event.target.value);
@@ -346,30 +367,23 @@ function AssignTaskConsole() {
         };
 
         fetch(FRONTEND_API + "getexpert", requestOptions)
-        .then((res) => res.json())
-        .then((data) => {
-            // do something with data
-            console.log(data);
-            setexpert(data);
-        })
-        .catch((rejected) => {
-            console.log(rejected);
-        });
+            .then((res) => res.json())
+            .then((data) => {
+                // do something with data
+                console.log(data);
+                setexpert(data);
+            })
+            .catch((rejected) => {
+                console.log(rejected);
+            });
     }
-    
-    const compareOrderEndDateDesc = (order1, order2) => {
-        const endDate1 = new Date(order1.order_end_date);
-        const endDate2 = new Date(order2.order_end_date);
-      
-        // Compare order_end_dates in descending order
-        return endDate2 - endDate1;
-    };
 
-    const fetchDataForSubject = () => {
-        
+    const fetchDataForSubject = (status) => {
+        //console.log(subject);
+        console.log(status);
+
         var formdata = new FormData();
-        //formdata.append("subject", subject);
-        formdata.append("status", "assigned"); //status
+        formdata.append("status", status); //status
 
         var requestOptions = {
             method: "POST",
@@ -382,28 +396,15 @@ function AssignTaskConsole() {
         fetch(FRONTEND_API + "getOrdersBySubjectAndStatus", requestOptions)
             .then((res) => res.json())
             .then((rawData) => {
-                console.log(rawData);
-                console.log(currentStatus);
+
                 if (roles == "admin") {
-                    console.log("admin")
-                    const sortedOrdersDesc = rawData.slice().sort(compareOrderEndDateDesc);
-                    console.log(sortedOrdersDesc)
-                    setOrders(sortedOrdersDesc); 
+                    setOrders(rawData);
                 } else if (roles == "expert") {
-                    console.log("expert", userId)
-                    /* rawData.map((order) => {
-                        if(userId == order.expert_id){
-                            setOrders(order);
-                        }
-                    }) */
-                    console.log(rawData);
                     const filteredOrders = rawData.filter(order => order.expertId == userId);
-                    console.log(filteredOrders);
                     setOrders(filteredOrders);
                 } else {
                     setOrders(rawData);
                 }
-                console.log("orders set");
             })
             .catch((rejected) => {
                 console.log(rejected);
@@ -411,49 +412,86 @@ function AssignTaskConsole() {
     }
 
 
+    const handleButtonClick = () => {
+        if (openDatePicker) {
+            setOpenDatePicker(false);
+        } else {
+            setOpenDatePicker(true);
+        }
+    }
 
-    useEffect(() => {
-        fetchDataForSubject();
-        //fetchData();
-    }, [currentStatus]);
+    const handleEndDateChange = (date) => {
+        //const { name, value } = event.target;
+        console.log(date);
+        setEndDate(date);
+        setOpenDatePicker(false);
 
 
+    };
 
+    const handleSubjectChange = (event) => {
+        setSubject(event.target.value)
+    }
+
+
+    const [openWarn, setOpenWarn] = React.useState(false);
+    const [deleteId, setDeleteId] = useState("");
+
+    const handleClickOpenWarn = (id) => {
+        setOpenWarn(true);
+        setDeleteId(id);
+    };
+
+    const handleCloseWarn = () => {
+        setOpenWarn(false);
+    };
+
+    const handleDeleteOrder = () => {
+        var requestOptions = {
+            method: "POST",
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        };
+        fetch(FRONTEND_API + "deleteOrder/".concat(deleteId), requestOptions)
+            .then((res) => res.json())
+            .then((data) => {
+                fetchDataForSubject(currentStatus);
+                setOpenWarn(false);
+            })
+            .catch((rejected) => {
+                console.log(rejected);
+            });
+    }
+
+    const isSingleRow = orders.length === 1;
     return (
+        
         <Container>
+          
             <Box>
                 {/* Render your order data here based on your API response */console.log(roles)}
-                {roles != "expert" && roles != 'lead' && roles != 'otm' ? (
-                    <Box sx={{ marginTop: 10, marginBottom: 3 }}>
+                {roles != "expert" && roles != 'lead' && roles != 'otm' && (
+                    <Box sx={{ marginTop: 5, marginBottom: 3 }}>
                         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                             <Grid item xs={6}>
                                 <Button variant="contained" href="/addtask">Add Task</Button>
                             </Grid>
-                            <Grid item xs={6}>
-
-                            </Grid>
-
                         </Grid>
+                    </Box>
+                )}
 
-                    </Box>
-                ) : (
-                    <Box sx={{ marginTop: 10 }}>
-                    </Box>
-                )
-                }
-                
-                {orders && orders.Error ? (
+                {orders && orders[0] && orders[0].Error ? (
                     <Box sx={{
-                        width: 700,
-                        height: 250
+                        width: "100vh",
+                        height: "100vh",
+
                     }}>
                         <p>No Orders to show</p>
                     </Box>
                 ) : (
 
                     <div>
-
-
                         <Box sx={{
                             display: "flex",
                             justifyContent: "center",
@@ -463,6 +501,8 @@ function AssignTaskConsole() {
                         }}>
 
                             <TableContainer component={Paper} sx={{
+
+
                                 marginRight: 2
                             }}
                                 aria-label="customized table" >
@@ -470,54 +510,48 @@ function AssignTaskConsole() {
                                     <TableHead>
                                         <StyledTableRow>
                                             <StyledTableCell>Order ID</StyledTableCell>
-                                            <StyledTableCell>Client</StyledTableCell>
+                                            <StyledTableCell>Subject</StyledTableCell>
                                             <StyledTableCell >Expert</StyledTableCell>
-                                            <StyledTableCell >Start Date</StyledTableCell>
-                                            <StyledTableCell >End Date</StyledTableCell>
+                                            <StyledTableCell >Deadline</StyledTableCell>
                                             <StyledTableCell >Order Status</StyledTableCell>
-                                            <StyledTableCell >Word Count</StyledTableCell>
-                                            {roles != 'expert' && (
-                                                <StyledTableCell >Expert Price</StyledTableCell>
-
-
-                                            )}
-                                            {roles != 'expert' && (
-                                                <StyledTableCell >Budget</StyledTableCell>
-
-
-                                            )}
-
-                                            <StyledTableCell >Description</StyledTableCell>
                                             <StyledTableCell >Operations</StyledTableCell>
                                         </StyledTableRow>
                                     </TableHead>
 
                                     <TableBody>
                                         {console.log(orders)}
-                                        {orders !== null && (
+                                        {
                                             orders.map((orderData) => (
 
                                                 <StyledTableRow key={orderData.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                                    {console.log(orderData.budget)}
 
                                                     <StyledTableCell component="th" scope="row">{orderData.id}</StyledTableCell>
-                                                    <StyledTableCell>{orderData.client_id} </StyledTableCell>
-                                                    <StyledTableCell>{orderData.expert_id}</StyledTableCell>
-                                                    <StyledTableCell>{handleDate(orderData.order_start_date)}</StyledTableCell>
+                                                    <StyledTableCell>{orderData.subject} </StyledTableCell>
+                                                    <StyledTableCell>
+                                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                            {orderData.expert_id == "" ? (
+                                                                <span style={{ marginRight: '5px' }}>
+
+                                                                    Unassigned
+
+                                                                </span>
+                                                            ) : (
+                                                                <span style={{ marginRight: '5px' }}>
+
+                                                                    {orderData.expert_id}
+
+                                                                </span>
+                                                            )
+
+                                                            }
+
+                                                            <div role='button' onClick={() => handleModalUpdate(orderData.id, orderData.order_status)}>
+                                                                <UpdateSharpIcon />
+                                                            </div>
+                                                        </div>
+                                                    </StyledTableCell>
                                                     <StyledTableCell>{handleDate(orderData.order_end_date)}</StyledTableCell>
                                                     <StyledTableCell>{orderData.order_status}</StyledTableCell>
-                                                    <StyledTableCell>{orderData.word_count}</StyledTableCell>
-                                                    {roles != 'expert' && (
-                                                        <StyledTableCell>{handleBudget(orderData.expert_price, orderData.currency)}</StyledTableCell>
-                                                    )}
-
-                                                    {roles != 'expert' && (
-                                                        <StyledTableCell>{handleBudget(orderData.budget, orderData.currency)}</StyledTableCell>
-                                                    )}
-
-
-
-                                                    <StyledTableCell>{orderData.description}</StyledTableCell>
                                                     <StyledTableCell>
                                                         {roles == "lead" && orderData.id != null && (
                                                             <Button variant="contained" type='submit' color="success"
@@ -529,34 +563,20 @@ function AssignTaskConsole() {
                                                         )
                                                         }
                                                         {roles == "admin" && orderData.id != null && (
-                                                            <Box sx={{
-                                                                marginTop: 5,
-                                                                marginBottom: 5
-                                                            }}>
-
-                                                                <Button variant="contained" type='submit' color="success"
-                                                                    onClick={() => handleModalUpdate(orderData.id, orderData.order_status)}
-                                                                    size="small"
-                                                                    sx={{ marginRight: 2 }}>
-                                                                    Update Status
-                                                                </Button>
-
-                                                                <Button
-                                                                    onClick={() => handleModalEdit(orderData.id)}
-                                                                    variant="contained"
-                                                                    color="success" size="small"
-                                                                    sx={{ marginRight: 2, marginTop: 2 }}>
-                                                                    Edit
-                                                                </Button>
-                                                                {/* <Button variant='contained' size='small' color='error'  
-                                                onClick={() => deleteUser(orderData.id)}  sx={{marginTop: 2}}
-                                                >Delete
-                                            </Button> */}
-                                                            </Box>
+                                                            <div className="container-in">
+                                                                <div className="container-icon" role='button' onClick={() => handleModalEdit(orderData.id)}>
+                                                                    <DriveFileRenameOutlineOutlinedIcon fontSize='small' />
+                                                                    <div className="text">Edit</div>
+                                                                </div>
+                                                                <div className="container-icon" role='button' onClick={() => handleClickOpenWarn(orderData.id)} >
+                                                                    <DeleteForeverOutlinedIcon fontSize='small' />
+                                                                    <div className="text">Delete</div>
+                                                                </div>
+                                                            </div>
                                                         )}
                                                     </StyledTableCell>
                                                 </StyledTableRow>
-                                            )))}
+                                            ))}
                                     </TableBody>
                                 </Table>
                             </TableContainer>
@@ -571,7 +591,69 @@ function AssignTaskConsole() {
                         <p>Select Subject First</p>
                     </Box>
                 )}
+
+
+
+
+                {/* Add more details you want to display */}
             </Box>
+        
+
+            <BottomNavigation
+                showLabels={true}
+                value={bottomNavSub} //subject
+                onChange={(event, newValue) => {
+                    setBottomNavSub(newValue);
+                    fetchDataForSubject(newValue);
+                    console.log("initial", bottomNavSub);
+                }}
+                sx={{ position: 'fixed', bottom: 0, marginBottom: 2, width: '100%', marginLeft: -10 }}>
+
+                <StyledBottomNavigationAction
+                    label="New Order"
+                    onClick={() => setCurrentStatus('New Order')}
+                    value="new order"
+
+
+                />
+                <StyledBottomNavigationAction
+                    label="Assigned"
+                    onClick={() => setCurrentStatus('Assigned')}
+                    value="assigned"
+
+
+                />
+                <StyledBottomNavigationAction
+                    label="QC"
+                    onClick={() => setCurrentStatus('QC')}
+                    value="qc"
+
+
+                />
+                <StyledBottomNavigationAction
+                    label="Rework"
+                    onClick={() => setCurrentStatus('Rework')}
+                    value="rework"
+
+
+                />
+                <StyledBottomNavigationAction
+                    label="Completed"
+                    onClick={() => setCurrentStatus('Completed')}
+                    value="pass"
+
+
+                />
+                <StyledBottomNavigationAction
+                    label="Failed"
+                    onClick={() => setCurrentStatus('Failed')}
+                    value="fail"
+
+
+
+                />
+
+            </BottomNavigation>
 
             <Dialog
                 open={open}
@@ -627,27 +709,27 @@ function AssignTaskConsole() {
                                 </FormControl>
 
                                 <FormControl fullWidth sx={{ marginTop: 3 }}>
-                                <InputLabel >Expert</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={Qc_Expert_name}
-                                    label="Experts"
-                                    variant='outlined'
-                                    error={expertValid == false}
-                                    helperText={expertValid == false && 'Select Expert'}
-                                    onChange={handleChangeQc}
+                                    <InputLabel >Expert</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={Qc_Expert_name}
+                                        label="Experts"
+                                        variant='outlined'
+                                        error={expertValid == false}
+                                        helperText={expertValid == false && 'Select Expert'}
+                                        onChange={handleChangeQc}
 
-                                >
-                                    {expert.map((data) => (
+                                    >
+                                        {expert.map((data) => (
 
-                                        <MenuItem value={data.id}>{data.firstname}</MenuItem>
+                                            <MenuItem value={data.id}>{data.firstname}</MenuItem>
 
-                                    ))}
-                                </Select>
-                            </FormControl>
+                                        ))}
+                                    </Select>
+                                </FormControl>
                             </Box>
-                           
+
 
                         )}
 
@@ -697,7 +779,7 @@ function AssignTaskConsole() {
                                         </Select>
                                     </FormControl>
                                 </Grid>
-                                
+
                                 <Grid item xs={6}>
                                     <FormControl fullWidth sx={{ marginTop: 3 }}>
                                         <InputLabel >Expert</InputLabel>
@@ -720,6 +802,9 @@ function AssignTaskConsole() {
                                         </Select>
                                     </FormControl>
                                 </Grid>
+
+
+
                             </Box>
                         )}
 
@@ -762,6 +847,74 @@ function AssignTaskConsole() {
                 }}>
 
                     <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                        <Grid item xs={6}>
+                            <FormControl fullWidth sx={{
+                                marginTop: 3,
+                                m: 1
+                            }}>
+                                <FormLabel id="demo-row-radio-buttons-group-label">Subject</FormLabel>
+                                <TextField id="outlined-basic"
+                                    value={subject}
+                                    onChange={handleSubjectChange}
+                                    variant="outlined"
+                                />
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <FormControl sx={{ m: 1 }} fullWidth>
+                                <FormLabel id="demo-row-radio-buttons-group-label">Task Deadline</FormLabel>
+                                <ButtonContainer
+
+                                    role="button"
+                                    onClick={handleButtonClick}
+                                    size='small'
+                                    ref={buttonRef}
+                                >
+                                    <span style={{ marginLeft: '10px' }}>
+
+                                        {endDate.format('YYYY-MM-DD')}
+
+                                    </span>
+                                    <IconButton sx={{ display: 'flex', alignItems: 'end', alignContent: 'end' }}>
+                                        <CalendarTodayIcon />
+                                    </IconButton>
+                                </ButtonContainer>
+
+                                {openDatePicker && (
+                                    <div
+                                        style={{
+                                            position: 'absolute',
+                                            zIndex: 9999,
+                                            top: buttonRef.current.offsetTop + buttonRef.current.offsetHeight + 'px',
+                                            left: buttonRef.current.offsetLeft + 'px',
+                                            backgroundColor: '#fff', // Set a background color for the calendar container
+                                            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+                                        }}
+                                    >
+                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                            <DateCalendar
+                                                value={endDate}
+
+                                                onChange={(newValue) => handleEndDateChange(newValue)}
+                                                renderInput={() => null} // Hide the input inside the calendar
+                                                PopperProps={{
+                                                    style: { zIndex: 9999, backgroundColor: '#fff' }, // Adjust z-index as needed
+                                                }}
+                                                minDate={today}
+                                                sx={{
+                                                    '.Mui-selected': {
+                                                        backgroundColor: 'red', // Customize the background color of selected days
+                                                    },
+                                                    '.MuiPickersDay-day': {
+                                                        color: 'green', // Customize the color of the calendar days
+                                                    },
+                                                }}
+                                            />
+                                        </LocalizationProvider>
+                                    </div>
+                                )}
+                            </FormControl>
+                        </Grid>
                         <Grid item xs={6}>
                             <FormControl fullWidth sx={{
                                 marginTop: 3,
@@ -828,7 +981,30 @@ function AssignTaskConsole() {
                 </DialogActions>
             </Dialog>
 
+            <Dialog
+                open={openWarn}
+                onClose={handleCloseWarn}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    {"Are you sure you want to delete this order?"}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        After selecting this step this order will be permanently deleted.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseWarn}>Close</Button>
+                    <Button onClick={handleDeleteOrder} autoFocus>
+                        Ok
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
         </Container>
+
     )
 }
 

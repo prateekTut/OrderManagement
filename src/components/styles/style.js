@@ -43,3 +43,14 @@ export const DateText = styled('div')({
   color: 'black',
   marginTop: 5,
 });
+
+export const ButtonContainer = styled('div')({
+  display: 'flex',
+  justifyContent: 'space-between', // Align items to the start and end of the container
+  alignItems: 'center',
+  border: '1px solid #ccc',
+  padding: '4px',
+  width: 250,
+  borderRadius: '4px',
+  cursor: 'pointer',
+});

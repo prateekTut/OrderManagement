@@ -17,6 +17,7 @@ import { styled } from '@mui/material/styles';
 import { FRONTEND_API } from "./urls";
 
 import { useNavigate } from "react-router-dom";
+import { StyledTableCell, StyledTableRow } from './styles/TableStyles';
 
 
 function TeamLeadConsole() {
@@ -26,26 +27,6 @@ function TeamLeadConsole() {
     const roles = localStorage.getItem("roles")
     const [searchQuery, setSearchQuery] = useState('');
     const navigate = useNavigate();
-
-    const StyledTableCell = styled(TableCell)(({ theme }) => ({
-        [`&.${tableCellClasses.head}`]: {
-            backgroundColor: theme.palette.common.black,
-            color: theme.palette.common.white,
-        },
-        [`&.${tableCellClasses.body}`]: {
-            fontSize: 14,
-        },
-    }));
-
-    const StyledTableRow = styled(TableRow)(({ theme }) => ({
-        '&:nth-of-type(odd)': {
-            backgroundColor: theme.palette.action.hover,
-        },
-        // hide last border
-        '&:last-child td, &:last-child th': {
-            border: 0,
-        },
-    }));
 
     const handleUserUpdate = (id) => {
         navigate(`/updateExpert/${id}`);

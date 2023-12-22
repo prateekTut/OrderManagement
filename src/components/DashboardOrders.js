@@ -58,10 +58,10 @@ function DashboardOrders() {
         fetchOrders();
     }, []);
 
- /*    const formatDate = (dateString) => {
-        const formattedDate = format(new Date(dateString), 'MMMM dd, yyyy');
+    const formatDate = (dateString) => {
+        const formattedDate = format(new Date(dateString), 'MMM dd, yyyy');
         return formattedDate;
-    } */
+    }
    return (
     <Box>
         <Typography variant="h7" sx={{mt: 2, color: "#343F71", fontWeight: "bold", textAlign: "center"}}>
@@ -83,7 +83,7 @@ function DashboardOrders() {
                  .slice(0, 5) // Get the first 5 elements
                 .map((row) => (
                     <StyledTableRow key={row.id}>
-                        <StyledTableCell>{row.task_date}</StyledTableCell>
+                        <StyledTableCell>{formatDate(row.task_date)}</StyledTableCell>
                         <StyledTableCell>{row.subject}</StyledTableCell>
                         <StyledTableCell>{row.expert_id == null ? "Unassigned" : row.expert_id}</StyledTableCell>                       
                         <StyledTableCell>{row.order_status}</StyledTableCell>

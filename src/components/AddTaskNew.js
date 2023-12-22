@@ -1,15 +1,21 @@
 import React from 'react'
 import { Container, FormControl, TextField, InputLabel, Select, MenuItem, Grid, Button, FormLabel } from '@mui/material'
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef} from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import { FRONTEND_API } from "./urls";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Alert } from '@mui/material';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { Subject } from '@mui/icons-material';
+import { Start, Subject } from '@mui/icons-material';
 import { FormText } from 'react-bootstrap';
 import dayjs from 'dayjs';
+import { Circle, PartPaid, Paid, DueStatus, DateText, PaidAmt, ButtonContainer } from './styles/style';
+import IconButton from '@mui/material/IconButton';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import { DateCalendar, DatePicker, LocalizationProvider, StaticDatePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import InputAdornment from '@mui/material/InputAdornment';
 
 function AddTaskNew() {
     const currencies = [
@@ -44,11 +50,11 @@ function AddTaskNew() {
     const [orderId, setOrderId] = useState("");
 
     const today = dayjs();
-    const nextDate = today.add(1, 'day'); 
-    
+    const nextDate = today.add(1, 'day');
+
     const [newSubject, setNewSubject] = useState("");
-    const [Start_date, setStart_date] = useState(today);
-    const [End_date, setEnd_date] = useState("");
+    const [Start_date, setStart_date] = useState(dayjs().startOf('day'));
+    const [End_date, setEnd_date] = useState(dayjs().startOf('day'));
     const [Description, setDescription] = useState("");
     const [Word_count, setWord_count] = useState("");
     const [Expert_price, setExpert_price] = useState("");
@@ -59,20 +65,20 @@ function AddTaskNew() {
     const [orderIdValid, setOrderIdValid] = useState(null);
     const [clientValid, setClientValid] = useState(null);
     const [subjectValid, setSubjectValid] = useState(null);
-    const [startDateValid, setStartDateValid] = useState(null);
-    const [endDateValid, setEndDateValid] = useState(null);
+
     const [vendorBudgetValid, setVendorBudgetValid] = useState(null);
     const [wordCountValid, setWordCountValid] = useState(null);
     const [expertPriceValid, setExpertPriceValid] = useState(null);
 
     const [dialogOpen, setDialogOpen] = useState(false);
 
+    const [openDatePicker, setOpenDatePicker] = useState(false);
+    const buttonRef = useRef(null);
+
     const resetFormFields = () => {
         setVendor_budget("");
         setSubject("");
         setOrderId("")
-        setStart_date("");
-        setEnd_date("");
         //setclient([]);
         setDescription("");
         setWord_count("");
@@ -82,10 +88,9 @@ function AddTaskNew() {
 
     const validateSubject = (value) => value != '';
     const validateClient = (value) => value != '';
-    const validateStartDate = (value) => value != '';
-    const validateEndDate = (value) => value != '';
+
     const validateOrderId = (value) => value != '';
-    
+
 
     const validateVendorBudget = (value) => /^\d+$/.test(value); // Example validation for a numeric value
     const vaildateWordCount = (value) => /^\d+$/.test(value);
@@ -149,16 +154,29 @@ function AddTaskNew() {
         setExpertPriceValid(validateExpertPrice(newValue));
     };
 
-    const handleStartDateChange = (event) => {
-        const { name, value } = event.target;
-        setStart_date(value);
-        setStartDateValid(validateStartDate(value));
+    const handleStartDateChange = (date) => {
+        console.log(date);
+        console.log(typeof date, date);
+
+        if (date && typeof date === 'object') {
+            console.log("cond statis");
+            //const selectedDate = date[0];
+            const jsDate = date.toDate();
+            const formattedDate = dayjs(jsDate).format('YYYY-MM-DD');
+            console.log(formattedDate);
+            setStart_date(formattedDate);
+        }
+        setOpenDatePicker(false);
+        //setStartDateValid(validateStartDate(value));
     };
 
-    const handleEndDateChange = (event) => {
-        const { name, value } = event.target;
-        setEnd_date(value);
-        setEndDateValid(validateEndDate(value));
+    const handleEndDateChange = (date) => {
+        //const { name, value } = event.target;
+        console.log(date);
+        setEnd_date(date);
+        setOpenDatePicker(false);
+
+        console.log(End_date);
     };
 
     const handleRadioChange = (event) => {
@@ -221,41 +239,36 @@ function AddTaskNew() {
         setVendorBudgetValid(null);
         setWordCountValid(null);
         setExpertPriceValid(null);
-        setStartDateValid(null);
-        setEndDateValid(null);
+
     };
 
     const uploadData = (event) => {
         event.preventDefault();
         console.log(subjectValid);
-        if (orderIdValid && subjectValid && wordCountValid && startDateValid && endDateValid && currencyValue !== '') {
+        if (orderIdValid && subjectValid && wordCountValid && currencyValue !== '') {
             // Proceed with form submission
 
             console.log('Form submitted');
             var formdata = new FormData();
-            // if (subject !== 'other') {
-            //     formdata.append("Task_Subject", subject);
-            // } else {
-                
-            // }
             formdata.append("order_id", orderId);
             formdata.append("Task_Subject", newSubject);
             formdata.append("currency", currencyValue);
             formdata.append("Vendor_budget", Vendor_budget);
             formdata.append("client_id", userClient);
             formdata.append("Status", "new order");
-            formdata.append("Start_date", Start_date);
-            formdata.append("End_date", End_date);
+            formdata.append("Start_date", today);
+            formdata.append("End_date", End_date.format('YYYY-MM-DD'));
             formdata.append("Description", Description);
             formdata.append("Word_count", Word_count);
-            if(userType == 'freelancer'){
+            if (userType == 'freelancer') {
                 formdata.append("Expert_price", Expert_price);
-            }else{
+            } else {
                 formdata.append("Expert_price", 0);
             }
-            
+
 
             console.log(formdata);
+
             var requestOptions = {
                 method: "POST",
                 body: formdata,
@@ -291,6 +304,14 @@ function AddTaskNew() {
         setDialogOpen(false);
     };
 
+    const handleButtonClick = () => {
+        if (openDatePicker) {
+            setOpenDatePicker(false);
+        } else {
+            setOpenDatePicker(true);
+        }
+    }
+
     return (
 
         <Container maxWidth="sm" sx={{
@@ -299,38 +320,19 @@ function AddTaskNew() {
         }}>
             <h1>Add Task </h1>
             <form autoComplete="off" onSubmit={uploadData}>
-                {/* <FormControl fullWidth sx={{ m: 1 }}>
-
-                    <InputLabel id="demo-simple-select-label">Subject</InputLabel>
-                    <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={subject}
-                        label="Subject"
-                        name='Subject'
-                        onChange={handleChangeSubject}
-                    >
-                        <MenuItem value={'mathematics'}>Mathematics</MenuItem>
-                        <MenuItem value={'science'}>Science</MenuItem>
-                        <MenuItem value={'english'}>English</MenuItem>
-                        <MenuItem value={'data science'}>Data Science</MenuItem>
-                        <MenuItem value={'other'}>Add Subject</MenuItem>
-                    </Select>
-
-                </FormControl> */}
                 <FormControl fullWidth sx={{ m: 1 }}>
-                   
-                   <TextField id="outlined-basic"
-                       value={orderId}
-                       onChange={handleOrderIdChange}
-                       variant="outlined"
-                       error={orderIdValid == false}
-                       helperText={orderIdValid == false && 'Cannot be left blank'}
-                       label="Order ID" />
-               
-               </FormControl>
+
+                    <TextField id="outlined-basic"
+                        value={orderId}
+                        onChange={handleOrderIdChange}
+                        variant="outlined"
+                        error={orderIdValid == false}
+                        helperText={orderIdValid == false && 'Cannot be left blank'}
+                        label="Order ID" />
+
+                </FormControl>
                 <FormControl fullWidth sx={{ m: 1 }}>
-                   
+
                     <TextField id="outlined-basic"
                         value={newSubject}
                         onChange={handleNewSubject}
@@ -338,7 +340,7 @@ function AddTaskNew() {
                         error={subjectValid == false}
                         helperText={subjectValid == false && 'Cannot be left blank'}
                         label="Subject" />
-                
+
                 </FormControl>
                 <Grid container rowSpacing={1} columnSpacing={1}>
                     <Grid item xs={4}>
@@ -373,37 +375,55 @@ function AddTaskNew() {
                         </FormControl>
                     </Grid>
                 </Grid>
-                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                    <Grid item xs={6}>
-                        <FormControl fullWidth sx={{ m: 1, marginTop: 3 }}>
-                            <TextField id="outlined-basic"
-                                type='date'
-                                value={Start_date}
-                                onChange={handleStartDateChange}
 
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                label="Task Start Date"
-                                variant="outlined" />
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <FormControl fullWidth sx={{ m: 1, marginTop: 3 }}>
-                            <TextField id="outlined-basic" type='date'
+                
+                <FormLabel sx={{m:1, marginTop: 3}} id="demo-row-radio-buttons-group-label">Task Deadline</FormLabel>
+                <ButtonContainer
+                    sx={{m:1}}
+                    role="button"
+                    onClick={handleButtonClick}
+                    size='small'
+                    ref={buttonRef}
+                >
+                    <span style={{ marginLeft: '10px' }}>{End_date.format('YYYY-MM-DD')}</span>
+                    <IconButton sx={{ display: 'flex', alignItems: 'end', alignContent: 'end' }}>
+                        <CalendarTodayIcon />
+                    </IconButton>
+                </ButtonContainer>
+                
+                {openDatePicker && (
+                    <div
+                        style={{
+                            position: 'absolute',
+                            zIndex: 9999,
+                            top: buttonRef.current.offsetTop + buttonRef.current.offsetHeight + 'px',
+                            left: buttonRef.current.offsetLeft + 'px',
+                            backgroundColor: '#fff', // Set a background color for the calendar container
+                            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)', 
+                        }}
+                    >
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DateCalendar
                                 value={End_date}
-                                onChange={handleEndDateChange}
-                                inputProps={{
-                                    min: Start_date,
+                               
+                                onChange={(newValue) => handleEndDateChange(newValue)}
+                                renderInput={() => null} // Hide the input inside the calendar
+                                PopperProps={{
+                                    style: { zIndex: 9999, backgroundColor: '#fff'}, // Adjust z-index as needed
                                 }}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                label="Task End Date"
-                                variant="outlined" />
-                        </FormControl>
-                    </Grid>
-                </Grid>
+                                minDate={today}
+                                sx={{
+                                    '.Mui-selected': {
+                                      backgroundColor: 'red', // Customize the background color of selected days
+                                    },
+                                    '.MuiPickersDay-day': {
+                                      color: 'green', // Customize the color of the calendar days
+                                    },
+                                  }}
+                            />
+                        </LocalizationProvider>
+                    </div>
+                )}
 
                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                     <Grid item xs={6}>
