@@ -378,11 +378,10 @@ function AddTaskNew() {
                 {openDatePicker && (
                     <div
                         style={{
-                            position: 'fixed',
+                            position: 'absolute',
                             zIndex: 9999,
                             top: buttonRef.current.offsetTop + buttonRef.current.offsetHeight + 'px',
                             left: buttonRef.current.offsetLeft + 'px',
-                            bottom:"auto",
                             backgroundColor: '#fff',
                             boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
                         }}>
