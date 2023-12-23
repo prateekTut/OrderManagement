@@ -209,7 +209,7 @@ export default function SideItems() {
               <ListItemText primary="Register User" />
             </ListItemButton>
           </Link>
-          <Link to="/register-clients">
+          {/* <Link to="/register-clients">
             <ListItemButton>
               <ListItemIcon>
                 <PersonAddAltIcon style={{ color: '#F34C19' }}/>
@@ -224,7 +224,7 @@ export default function SideItems() {
               </ListItemIcon>
               <ListItemText primary="Add Freelancers" />
             </ListItemButton>
-          </Link>
+          </Link> */}
         </React.Fragment>
       )}
 

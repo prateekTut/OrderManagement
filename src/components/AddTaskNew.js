@@ -154,22 +154,6 @@ function AddTaskNew() {
         setExpertPriceValid(validateExpertPrice(newValue));
     };
 
-    const handleStartDateChange = (date) => {
-        console.log(date);
-        console.log(typeof date, date);
-
-        if (date && typeof date === 'object') {
-            console.log("cond statis");
-            //const selectedDate = date[0];
-            const jsDate = date.toDate();
-            const formattedDate = dayjs(jsDate).format('YYYY-MM-DD');
-            console.log(formattedDate);
-            setStart_date(formattedDate);
-        }
-        setOpenDatePicker(false);
-        //setStartDateValid(validateStartDate(value));
-    };
-
     const handleEndDateChange = (date) => {
         //const { name, value } = event.target;
         console.log(date);
@@ -394,14 +378,14 @@ function AddTaskNew() {
                 {openDatePicker && (
                     <div
                         style={{
-                            position: 'absolute',
+                            position: 'fixed',
                             zIndex: 9999,
                             top: buttonRef.current.offsetTop + buttonRef.current.offsetHeight + 'px',
                             left: buttonRef.current.offsetLeft + 'px',
-                            backgroundColor: '#fff', // Set a background color for the calendar container
-                            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)', 
-                        }}
-                    >
+                            bottom:"auto",
+                            backgroundColor: '#fff',
+                            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+                        }}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DateCalendar
                                 value={End_date}

@@ -18,6 +18,8 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import { DialogContentText } from '@mui/material';
+
 import { useNavigate } from "react-router-dom";
 import { FRONTEND_API } from "./urls";
 import AddIcon from '@mui/icons-material/Add';
@@ -34,11 +36,45 @@ function ExpertsConsole() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const [userType, setUserType] = useState('');
+  const [expertType, setExpertType] = useState('');
+
+  const [openWarn, setOpenWarn] = React.useState(false);
+  const [deleteId, setDeleteId] = useState("");
 
   const handleUserUpdate = (expertId) => {
     //setOpen(true);
     //setExpertUsersId(id);
     navigate(`/updateExpert/${expertId}`)
+  };
+
+  const handleClickOpenWarn = (id) => {
+    setOpenWarn(true);
+    setDeleteId(id);
+  };
+
+  const handleCloseWarn = () => {
+    setOpenWarn(false);
+  };
+
+  const handleUserDelete = () => {
+    var requestOptions = {
+      method: "POST",
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    };
+
+    fetch(FRONTEND_API + "delete_users/".concat(deleteId), requestOptions)
+      .then((res) => res.json())
+      .then((data) => {
+        // do something with data
+        console.log(data);
+        fetchExpertsData(expertType);
+        handleCloseWarn();
+      })
+      .catch((rejected) => {
+        console.log(rejected);
+      });
   };
 
   const handleCloseUpdate = () => {
@@ -55,6 +91,7 @@ function ExpertsConsole() {
     console.log(event.target.value);
     setUserType(event.target.value);
     //fetchInitial(event.target.value);
+    setExpertType(event.target.value);
     fetchExpertsData(event.target.value);
   };
 
@@ -107,7 +144,7 @@ function ExpertsConsole() {
     client.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const moveToRegister = () =>{
+  const moveToRegister = () => {
     navigate('/register');
   }
 
@@ -130,14 +167,14 @@ function ExpertsConsole() {
             justifyContent: "flex-end",
             alignItems: "end",
             flexDirection: "column",
-          
+
             marginRight: 2,
           }}
         >
           <Button
-           startIcon={<AddIcon />}
-           variant='contained'
-           onClick={moveToRegister}>
+            startIcon={<AddIcon />}
+            variant='contained'
+            onClick={moveToRegister}>
             Add Expert
           </Button>
         </Box>
@@ -196,8 +233,8 @@ function ExpertsConsole() {
                     <StyledTableCell >DOB</StyledTableCell>
                     <StyledTableCell >Address</StyledTableCell>
                     {/* <StyledTableCell >Invoice</StyledTableCell> */}
-                    <StyledTableCell >Update</StyledTableCell>
-                    <StyledTableCell >Designation</StyledTableCell>
+                    <StyledTableCell >Operations</StyledTableCell>
+                
                   </StyledTableRow>
                 </TableHead>
 
@@ -211,7 +248,7 @@ function ExpertsConsole() {
                         <StyledTableCell>{user.contact}</StyledTableCell>
                         <StyledTableCell>{user.DOB}</StyledTableCell>
                         <StyledTableCell>{user.address}</StyledTableCell>
-                        <StyledTableCell>{user.designation}</StyledTableCell>
+                        
                         {/* <StyledTableCell>
                              <Button variant="contained" type='submit' color="success" 
                                onClick={() => tutorsinvoice(user.id)}
@@ -221,24 +258,25 @@ function ExpertsConsole() {
                              </Button>
                            </StyledTableCell> */}
                         {roles != "hr" && (
-                          <StyledTableCell>
-                            <Button variant="contained" type='submit' color="success"
-                              onClick={() => handleUserUpdate(user.id)}
-                              size="small"
-                              sx={{ marginRight: 2 }}>
-                              Update
-                            </Button>
-                          </StyledTableCell>
-                        )}
+                          <div>
+                            <StyledTableCell>
+                              <Button variant="contained" type='submit' color="success"
+                                onClick={() => handleUserUpdate(user.id)}
+                                size="small"
+                                sx={{ marginRight: 2 }}>
+                                Update
+                              </Button>
 
-                        {/* <StyledTableCell>
-                             <Button variant="contained" type='submit' color="error" 
-                               onClick={() => deleteUser(user.id)}
-                               size="small" 
-                               sx={{marginRight: 2}}>
-                               Delete
-                             </Button>
-                           </StyledTableCell> */}
+                              <Button variant="contained" type='submit' color="error"
+                                onClick={() => handleClickOpenWarn(user.id)}
+                                size="small"
+                                sx={{ marginRight: 2 }}>
+                                Delete
+                              </Button>
+
+                            </StyledTableCell>
+                          </div>
+                        )}
                       </StyledTableRow>
                     )))}
                 </TableBody>
@@ -247,6 +285,27 @@ function ExpertsConsole() {
           </Box>
         )}
 
+        <Dialog
+          open={openWarn}
+          onClose={handleCloseWarn}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Are you sure you want to delete this user?"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              After selecting this step this user will be permanently deleted.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseWarn}>Close</Button>
+            <Button onClick={handleUserDelete} autoFocus>
+              Ok
+            </Button>
+          </DialogActions>
+        </Dialog>
 
       </Container>
     </Box>

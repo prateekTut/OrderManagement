@@ -18,6 +18,8 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import { DialogContentText } from '@mui/material';
+
 import { FRONTEND_API } from "./urls";
 import { StyledTableCell, StyledTableRow } from './styles/TableStyles';
 
@@ -42,6 +44,10 @@ function ClientStudentConsole() {
 
     const validatePhone = (value) =>  !isNaN(value) && value.length == 10;
     const validateUniv = (value) => value.length >= 4;
+
+
+    const [openWarn, setOpenWarn] = React.useState(false);
+    const [deleteId, setDeleteId] = useState("");
 
     const viewBudgetData = (userId) => {
       console.log("student ID", userId);
@@ -101,6 +107,44 @@ function ClientStudentConsole() {
       client.university.toLowerCase().includes(searchQuery.toLowerCase())
       // ... add more fields to search
     );
+
+    const handleClickOpenWarn = (id) => {
+      setOpenWarn(true);
+      setDeleteId(id);
+    };
+  
+    const handleCloseWarn = () => {
+      setOpenWarn(false);
+    };
+  
+    const handleUserDelete = () => {
+      var requestOptions = {
+        method: "POST",
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
+      };
+  
+      fetch(FRONTEND_API + "delete_clients/".concat(deleteId), requestOptions)
+        .then((res) => res.json())
+        .then((data) => {
+          // do something with data
+          console.log(data);
+          const fetchData = async () => {
+            const rawData = await fetchClientsData();
+            if (rawData) {
+              console.log("raw ", rawData);
+              setClient(rawData);
+            }
+          };
+          fetchData();
+          handleCloseWarn();
+        })
+        .catch((rejected) => {
+          console.log(rejected);
+        });
+    };
+
 
     return (
       <Container>
@@ -184,6 +228,13 @@ function ClientStudentConsole() {
                             sx={{marginRight: 2}}>
                             Update
                           </Button>
+                          <Button variant="contained" type='submit' color="error" 
+
+                            onClick={() => handleClickOpenWarn(user.id)}
+                            size="small" 
+                            sx={{marginRight: 2}}>
+                            Delete
+                          </Button>
                         </StyledTableCell>
                       </StyledTableRow>
                       )))}
@@ -193,6 +244,28 @@ function ClientStudentConsole() {
               
           </TableContainer>
       </Box>
+
+      <Dialog
+          open={openWarn}
+          onClose={handleCloseWarn}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Are you sure you want to delete this user?"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              After selecting this step this user will be permanently deleted.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseWarn}>Close</Button>
+            <Button onClick={handleUserDelete} autoFocus>
+              Ok
+            </Button>
+          </DialogActions>
+        </Dialog>
     </Container>
     )
 }

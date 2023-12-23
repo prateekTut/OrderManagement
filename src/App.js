@@ -1,7 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NewLogin from "./components/NewLogin"
-import AddBudget from "./components/AddBudget";
 import UpdateBudgetdata from "./components/UpdateBudgetdata";
 
 import Allbutton from "./components/Allbutton";
@@ -18,7 +17,6 @@ import OtmUsersConsole from "./components/OtmUsersConole";
 import ExpertsConsole from "./components/ExpertsConsole";
 import ClientStudentConsole from "./components/ClientStudentConsole";
 import ClientVendorConsole from "./components/ClientVendorConsole";
-import AddExpert from "./components/AddExpert";
 import EditClientsDetails from "./components/EditClientsDetails";
 
 import UpdateExpert from "./components/UpdateExpert";
@@ -100,7 +98,6 @@ function App() {
           <Route element={<RequireAuth allowedRoles={["admin"]} />}>
 
             <Route path='/register' element={<Register />} />
-            <Route path='/registerExpert' element={<AddExpert />} />
             <Route path="/add-freelancers" element={<AddFreelancers />} />
             <Route path='/register-clients' element={<RegisterClients />} />
             
@@ -109,7 +106,6 @@ function App() {
 
             <Route path="/updateExpert/:expertId" element={<UpdateExpert />} />
 
-            <Route path='/Budget' element={<AddBudget />} />
             <Route path='/Updatebudget' element={<UpdateBudgetdata />} />
 
             <Route path='/allbutton' element={<Allbutton />} />
