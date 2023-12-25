@@ -36,6 +36,8 @@ import GenerateInvoice from "./components/GenerateInvoice";
 import EditInvoices from "./components/EditInvoices";
 import AssignTaskConsole from "./components/AssignTaskConsole";
 import ExpenseManagement from "./components/ExpenseManagement";
+import Amplify from 'aws-amplify';
+import awsconfig from './aws-exports';
 
 // Create a styled component for the Paper element
 const StyledBox = styled(Box)(({ theme }) => ({
@@ -83,7 +85,7 @@ const theme = createTheme({
 function App() {
 
   const location = useLocation();
-
+  Amplify.configure(awsconfig);
   return (
     <ThemeProvider theme={theme}>
       <Routes>

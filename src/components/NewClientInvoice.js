@@ -2,7 +2,7 @@ import { Box, Container, CssBaseline, Grid, InputAdornment, Paper, Typography } 
 import React, { useRef } from 'react'
 import Logo from "./img/logo.jpg";
 import { FormControl, TextField, InputLabel, Select, MenuItem, Button, FormControlLabel } from '@mui/material'
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import { FRONTEND_API } from "./urls";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Alert } from '@mui/material';
@@ -26,6 +26,9 @@ import Divider from '@mui/material/Divider';
 import { useReactToPrint } from "react-to-print";
 import { useParams } from "react-router-dom";
 import dayjs from 'dayjs';
+import { useDropzone } from 'react-dropzone';
+import FileUpload from './FileUpload';
+import { Storage } from 'aws-amplify';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -66,18 +69,18 @@ function generateInvoiceNumber() {
 function NewClientInvoice() {
 
   const currencies = [
-    /* {
-      value: '$',
-      label: 'US Dollar(USD, $)',
-    }, */
     {
       value: '₹',
       label: 'Indian Rupee(INR, ₹)',
     },
-    /*  {
-       value: '£',
-       label: 'British Pound Sterling(GBP, £)',
-     }, */
+    {
+      value: '$',
+      label: 'US Dollar(USD, $)',
+    },
+    {
+      value: '£',
+      label: 'British Pound Sterling(GBP, £)',
+    },
   ];
   let params = useParams();
 
@@ -153,44 +156,89 @@ function NewClientInvoice() {
     setSelectedTax(event.target.value);
   };
 
-  const handleCurrencyChange = (event) => {
-    setCurrencyValue(event.target.value);
-    const conversionRate = getConversionRate(event.target.value);
-
-    // Update each row in tableData with the new currency value
-   /*  const updatedTableData = tableData.map((row) => {
-      const updatedAmount = row.amount * conversionRate;
-      const updatedIgst = row.igst * conversionRate;
-      const updatedCgst = row.cgst * conversionRate;
-      const updatedSgst = row.sgst * conversionRate;
-      const updatedVat = row.vat * conversionRate;
-      const updatedTotal = row.total * conversionRate;
+  /* 
+  const getConversionRate = (sourceCurrency, targetCurrency) => {
+    const conversionRates = {
+      'USD': { 'INR': 75, 'GBP': 0.72 },
+      'INR': { 'USD': 1 / 75, 'GBP': 0.0096 },
+      'GBP': { 'USD': 1.39, 'INR': 104 },
+      // Add more conversion rates as needed
+    };
+  
+    if (conversionRates[sourceCurrency] && conversionRates[sourceCurrency][targetCurrency]) {
+      return conversionRates[sourceCurrency][targetCurrency];
+    } else if (sourceCurrency === targetCurrency) {
+      return 1; // Same currency, no conversion needed
+    } else if (conversionRates[targetCurrency] && conversionRates[targetCurrency][sourceCurrency]) {
+      return 1 / conversionRates[targetCurrency][sourceCurrency]; // Inverse conversion
+    } else {
+      console.error(`Conversion rate not found for ${sourceCurrency} to ${targetCurrency}`);
+      return 1; // Default to 1 if conversion rate is not found
+    }
+  };
+  
+  
+  const convertTableDataToCurrency = (data, targetCurrency) => {
+    return data.map((row) => {
+      const sourceCurrency = row.currency || 'INR'; 
+      const convertedRate = row.rate * getConversionRate(sourceCurrency, targetCurrency);
+      const convertedTaxRate = row.taxRate * getConversionRate(sourceCurrency, targetCurrency);
+      const convertedAmount = row.amount * getConversionRate(sourceCurrency, targetCurrency);
+      const convertedIgst = row.igst * getConversionRate(sourceCurrency, targetCurrency);
+      const convertedCgst = row.cgst * getConversionRate(sourceCurrency, targetCurrency);
+      const convertedSgst = row.sgst * getConversionRate(sourceCurrency, targetCurrency);
+      const convertedVat = row.vat * getConversionRate(sourceCurrency, targetCurrency);
+      const convertedTotal = row.total * getConversionRate(sourceCurrency, targetCurrency);
   
       return {
         ...row,
-        amount: updatedAmount,
-        igst: updatedIgst,
-        cgst: updatedCgst,
-        sgst: updatedSgst,
-        vat: updatedVat,
-        total: updatedTotal,
+        rate: convertedRate,
+        taxRate: convertedTaxRate,
+        amount: convertedAmount,
+        igst: convertedIgst,
+        cgst: convertedCgst,
+        sgst: convertedSgst,
+        vat: convertedVat,
+        total: convertedTotal,
+        currency: targetCurrency,
       };
     });
-  
-    setTableData(updatedTableData); */
+  };
+ */
+  const getCurrencyStr = (currency) => {
+    if (currency == '₹')
+      return "INR"
+    else if (currency == "$")
+      return "USD"
+    else
+      return "GBP"
+  }
+  const handleCurrencyChange = (event) => {
+
+    const targetCurrency = event.target.value;
+    setCurrencyValue(targetCurrency);
+    // const currencyStr = getCurrencyStr(targetCurrency);
+    /* 
+        const convertedTableData = convertTableDataToCurrency(tableData, currencyStr);
+        setTableData(convertedTableData); */
   };
 
-  const getConversionRate = (currency) => {
-    // Fetch the conversion rate for the specified currency from your backend or any other source
-    // For simplicity, assuming a fixed conversion rate for this example
+  const convertTaxRateToCurrency = (taxRate, targetCurrency) => {
+    // Add your conversion logic here based on the selected currency
+    // For example, you can have conversion rates for different currencies
+    // and calculate the converted tax rate accordingly.
+    // This is a placeholder, update it with your actual conversion logic.
     const conversionRates = {
-      "$": 0.014, // Example conversion rate for USD to INR
-      "£": 0.011, // Example conversion rate for GBP to INR
-      // Add more currencies as needed
+      'USD': 1, // 1:1 for USD
+      'INR': 75, // Example: 1 USD = 75 INR
+      'GBP': 0.72, // Example: 1 USD = 0.72 GBP
     };
-  
-    return conversionRates[currency] || 1; // Default to 1 if currency is not found
+    console.log(taxRate, targetCurrency);
+    return (taxRate * conversionRates[targetCurrency]).toFixed(2);
   };
+
+
+
 
   const handleCloseTax = () => {
     if (savedTax == null) {
@@ -337,25 +385,25 @@ function NewClientInvoice() {
   };
 
   //amount Conversion method
-const convertValue = (amount, currency) => {
-  console.log("in conversion", currencyValue, currency)
-  var newCurrency = null;
-  if(currencyValue == "$"){
-    newCurrency = "USD";
-  }else if(currencyValue == "₹"){
-    newCurrency = "INR";
-  }else{
-    newCurrency = "GBP";
-  }
+  const convertValue = (amount, currency) => {
+    console.log("in conversion", currencyValue, currency)
+    var newCurrency = null;
+    if (currencyValue == "$") {
+      newCurrency = "USD";
+    } else if (currencyValue == "₹") {
+      newCurrency = "INR";
+    } else {
+      newCurrency = "GBP";
+    }
 
-  if(currency == newCurrency){
-    return amount;
-  }else if(newCurrency == "INR"){
-    return amount * 83.40;
-  }else{
-    return amount * 0.0095;
+    if (currency == newCurrency) {
+      return amount;
+    } else if (newCurrency == "INR") {
+      return amount * 83.40;
+    } else {
+      return amount * 0.0095;
+    }
   }
-}
 
   useEffect(() => {
     fetchOrderData(params.userId);
@@ -474,7 +522,8 @@ const convertValue = (amount, currency) => {
         } else {
           total = amount;
         }
-
+        var amount_conv = convertTaxRateToCurrency(amount, currencyValue);
+        console.log("converted amount", amount_conv);
         //igst = (taxRate / 100) * (amount);
 
         return { ...row, [field]: newValue, amount, igst, cgst, sgst, vat, total };
@@ -542,8 +591,19 @@ const convertValue = (amount, currency) => {
     return total;
   }
 
-  
 
+  //File upload system logic
+  const handleFileUpload = async (file) => {
+    try {
+      const result = await Storage.put(file.name, file);
+      console.log('File successfully uploaded:', result);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      // Handle the error and provide user feedback
+    }
+  };
+
+  
   return (
     <Container sx={{ bgcolor: "#FBF1F7" }}>
       <Box sx={{ display: 'flex', }}>
@@ -906,7 +966,7 @@ const convertValue = (amount, currency) => {
                       </Grid>
                       <Grid item xs={3}>
                         <Typography align="right" variant="subtitle1">
-                        <span style={{ marginRight: '2px', marginTop: '0px' }}>{currencyValue}</span>
+                          <span style={{ marginRight: '2px', marginTop: '0px' }}>{currencyValue}</span>
                           {isNaN(getTotalAmount()) ? 0 : getTotalAmount().toFixed(2)}
                         </Typography>
                       </Grid>
@@ -986,14 +1046,14 @@ const convertValue = (amount, currency) => {
                       )}
 
                       <Grid item xs={9}>
-                      
+
                         <Typography align="right" variant="h5" fontWeight="semi-bold">
                           Total:
                         </Typography>
                       </Grid>
                       <Grid item xs={3}>
                         <Typography align="right" variant="h5" fontWeight="bold">
-                        <span style={{ marginRight: '2px', marginTop: '0px' }}>{currencyValue}</span>
+                          <span style={{ marginRight: '2px', marginTop: '0px' }}>{currencyValue}</span>
                           {isNaN(getTotal()) ? 0 : getTotal().toFixed(2)}
                         </Typography>
                       </Grid>
@@ -1010,7 +1070,7 @@ const convertValue = (amount, currency) => {
                   <Button variant='outlined' sx={{ mt: 3 }} onClick={handleDiscount}>
                     Add Discount
                   </Button>
-
+                  <FileUpload  onFileUpload={handleFileUpload}  />
                 </Box>
                 {tableData.length >= 1 && (
                   <Button variant="outlined" type='submit' sx={{ mt: 3, width: '200px' }} onClick={handlePrint}>
