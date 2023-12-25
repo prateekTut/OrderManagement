@@ -13,7 +13,11 @@
     },
     "categories": {
       "hosting": {
-        "S3AndCloudFront": {}
+        "S3AndCloudFront": {},
+        "amplifyhosting": {
+          "appId": "dtxt0buk8df9r",
+          "type": "cicd"
+        }
       }
     }
   }
