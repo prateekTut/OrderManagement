@@ -28,7 +28,6 @@ import { useParams } from "react-router-dom";
 import dayjs from 'dayjs';
 import { useDropzone } from 'react-dropzone';
 import FileUpload from './FileUpload';
-import { Storage } from 'aws-amplify';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -595,8 +594,25 @@ function NewClientInvoice() {
   //File upload system logic
   const handleFileUpload = async (file) => {
     try {
-      const result = await Storage.put(file.name, file);
-      console.log('File successfully uploaded:', result);
+      // Create a FormData object to send the file
+      const formData = new FormData();
+      formData.append('document', file);
+  
+      // Make a POST request to your backend endpoint
+      const response = await fetch(FRONTEND_API + "upload", {
+        method: 'POST',
+        body: formData,
+      });
+  
+      // Check if the request was successful
+      if (response.ok) {
+        const result = await response.json();
+        console.log('File successfully uploaded:', result);
+      } else {
+        // Handle the error
+        console.error('Error uploading file:', response.statusText);
+        // Provide user feedback or additional error handling
+      }
     } catch (error) {
       console.error('Error uploading file:', error);
       // Handle the error and provide user feedback
