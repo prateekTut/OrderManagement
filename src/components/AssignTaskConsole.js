@@ -465,7 +465,7 @@ function AssignTaskConsole() {
             });
     }
     const [page, setPage] = useState(0);
-    const itemsPerPage = 8;
+    const itemsPerPage = 6;
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -540,7 +540,7 @@ function AssignTaskConsole() {
                                     <TableBody>
                                         {console.log(orders)}
                                         {
-                                            orders.map((orderData) => (
+                                            orders.slice(page * itemsPerPage, (page + 1) * itemsPerPage).map((orderData) => (
 
                                                 <StyledTableRow key={orderData.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
 
