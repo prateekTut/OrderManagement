@@ -30,6 +30,11 @@ import dayjs from 'dayjs';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+
+
+
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: '#343F71',
@@ -69,22 +74,20 @@ function generateInvoiceNumber() {
 function GenerateVendorInvoice() {
 
   const currencies = [
-    /* {
+    {
       value: '$',
       label: 'US Dollar( USD, $)',
-    }, */
+    },
     {
       value: '₹',
       label: 'Indian Rupee(INR, ₹)',
     },
-    /*  {
+     {
        value: '£',
        label: 'British Pound Sterling(GBP, £)',
-     }, */
+     },
   ];
   let params = useParams();
-
-  
 
   const [userClientType, setUserClientType] = useState('');
   const [client, setclient] = useState([]);
@@ -111,6 +114,7 @@ function GenerateVendorInvoice() {
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [discountDialog, setDiscountDialogOpen] = useState(false);
+  const [dialogValidationOpen, setDialogValidationOpen] = useState(false);
 
   const [dateRange, setDateRange] = useState([
     {
@@ -125,7 +129,9 @@ function GenerateVendorInvoice() {
   const handleButtonClick = () => {
     setShowDateRangePicker(!showDateRangePicker);
   };
-
+  const handleCloseDialog = () => {
+    setDialogValidationOpen(false);
+  };
   const handleDateRangeChange = (ranges) => {
     setDateRange([ranges.selection]);
     // Close the DateRangePicker when a date is selected
@@ -149,7 +155,7 @@ function GenerateVendorInvoice() {
     const startDate = dateRange[0].startDate.toLocaleDateString('en-US');
     const endDate = dateRange[0].endDate.toLocaleDateString('en-US');
     console.log(startDate, endDate);
-    return "Date Ranges: " + startDate + " - " +  endDate;
+    return "Date Ranges: " + startDate + " - " + endDate;
   };
 
   const fetchClientsData = (start, end) => {
@@ -195,8 +201,8 @@ function GenerateVendorInvoice() {
   ]);
 
   const today = dayjs();
-  const nextDate = today.add(1, 'day'); 
-  
+  const nextDate = today.add(1, 'day');
+
   const [dueDate, setDueDate] = useState(nextDate);
   const [invoiceDate, setInvoiceDate] = useState(today);
   const [subtotal, setSubtotal] = useState(0);
@@ -329,62 +335,29 @@ function GenerateVendorInvoice() {
   /*  const handlePrint = () => {
      window.print();
    }; */
+  const [selectedFile, setSelectedFile] = useState(null);
 
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
 
-  const insertInvoice = () => {
-    console.log(params.userId);
-
-    const data = tableData;
-
-    if (invoiceDate != null && dueDate != null) {
-
-      const jsonData = {
-        data: data,            // Your JSON data
-        invoiceNumber: invoiceNumber,
-        invoiceDate: invoiceDate,
-        dueDate: dueDate,
-        taxType: savedTax,
-        discount: getDiscount(),
-        diskPercent: discount,
-        currency: currencyValue,
-        total: getTotal(),
-        totalAmount: getTotalAmount(),
-        subTax: saveSubTax
-      };
-      const jsonPayload = JSON.stringify(jsonData);
-
-      var requestOptions = {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + token
-        },
-        body: jsonPayload,
-      };
-
-      fetch(FRONTEND_API + 'saveInvoice/'.concat(params.userId), requestOptions)
-        .then((response) =>{
-          if (response.status == 200) {
-            setStatus("200")
-            return response.json();
-          }else{
-            setStatus(response.status)
-            return response.json();
-          }
-        })
-        .then((data) => {
-          console.log(data);
-          setAlertContent(data.message);
-          setAlert(true);
-          // Log the response from the server
-          // You can perform additional actions here if needed
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-        });
+    // Check if a file is selected
+    if (file) {
+      // Check file type
+      const fileType = file.name.split('.').pop().toLowerCase();
+      if (fileType === 'doc' || fileType === 'pdf') {
+        // Check file size (2MB limit)
+        if (file.size <= 2 * 1024 * 1024) {
+          setSelectedFile(file);
+        } else {
+          alert('File size exceeds 2MB limit.');
+        }
+      } else {
+        alert('Invalid file type. Please select a DOC or PDF file.');
+      }
     }
-
   };
+
+
 
   const generateAndSetInvoiceNumber = () => {
     const newInvoiceNumber = generateInvoiceNumber();
@@ -418,29 +391,29 @@ function GenerateVendorInvoice() {
       });
   };
 
-  const fetchOrderData = (userId) => {
-    console.log("Tutor ID", userId);
-    fetch(FRONTEND_API + "/getStudentOrderHistory/".concat(userId), {
-      headers: {
-        'Authorization': 'Bearer ' + token
-      }
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        // do something with data
-        console.log("Orders data", data);
-
-        setClientId(data[0].client_id)
-        fetchClientForInvoice(data[0].client_id);
-        setOrders(data);
-
-        // navigate("/OTMform");
-        updateTableDataWithReceivedData(tableData, data);
+  /*   const fetchOrderData = (userId) => {
+      console.log("Tutor ID", userId);
+      fetch(FRONTEND_API + "/getStudentOrderHistory/".concat(userId), {
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
       })
-      .catch((rejected) => {
-        console.log(rejected);
-      });
-  };
+        .then((res) => res.json())
+        .then((data) => {
+          // do something with data
+          console.log("Orders data", data);
+  
+          setClientId(data[0].client_id)
+          fetchClientForInvoice(data[0].client_id);
+          setOrders(data);
+  
+          // navigate("/OTMform");
+          updateTableDataWithReceivedData(tableData, data);
+        })
+        .catch((rejected) => {
+          console.log(rejected);
+        });
+    }; */
 
   const updateTableDataWithReceivedData = (tableData, receivedData) => {
     // Assuming the receivedData array contains an object with the data you want to add
@@ -574,6 +547,96 @@ function GenerateVendorInvoice() {
     return total;
   }
 
+
+  const insertInvoice = async () => {
+    console.log(clientId);
+    const pdf = new jsPDF('p', 'mm', 'a4');
+
+    await html2canvas(componentRef.current).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      pdf.addImage(imgData, 'PNG', 0, 0, 210, 297); // Adjust width and height as needed
+    });
+
+    const data = tableData;
+    const pdfBlob = pdf.output('blob');
+    const pdfFile = new File([pdfBlob], 'invoice.pdf', { type: 'application/pdf' });
+
+    if (invoiceDate != null && dueDate != null) {
+
+
+      console.log(selectedFile);
+
+      /*  const jsonData = {
+         data: data,            // Your JSON data
+         invoiceNumber: invoiceNumber,
+         invoiceDate: invoiceDate,
+         dueDate: dueDate,
+         taxType: savedTax,
+         document: selectedFile,
+         discount: getDiscount(),
+         diskPercent: discount,
+         currency: currencyValue,
+         total: getTotal(),
+         totalAmount: getTotalAmount(),
+         subTax: saveSubTax
+       }; */
+
+      //const jsonPayload = JSON.stringify(jsonData);
+
+      const formData = new FormData();
+      formData.append('data', JSON.stringify({
+        data: data,
+        invoiceNumber: invoiceNumber,
+        invoiceDate: invoiceDate,
+        dueDate: dueDate,
+        taxType: savedTax,
+        discount: getDiscount(),
+        diskPercent: discount,
+        currency: currencyValue,
+        total: getTotal(),
+        totalAmount: getTotalAmount(),
+        subTax: saveSubTax,
+      }));
+
+      formData.append('document', selectedFile);
+      formData.append('invoicepdf', pdfFile);
+      console.log(formData);
+
+      var requestOptions = {
+        method: "POST",
+        headers: {
+          'Authorization': 'Bearer ' + token
+        },
+        body: formData,
+      };
+
+      fetch(FRONTEND_API + 'saveInvoice/'.concat(params.userId), requestOptions)
+        .then((response) => {
+          if (response.status == 200) {
+            setStatus("200")
+            return response.json();
+          } else {
+            setStatus(response.status)
+            return response.json();
+          }
+        })
+        .then((data) => {
+          console.log(data);
+          setAlertContent(data.message);
+          setAlert(true);
+          // Log the response from the server
+          // You can perform additional actions here if needed
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+
+    } else {
+      setDialogValidationOpen(true);
+    }
+
+  };
+
   return (
     <Container sx={{ bgcolor: "#FBF1F7" }}>
       <Box sx={{ display: 'flex', }}>
@@ -582,270 +645,246 @@ function GenerateVendorInvoice() {
           <Grid container spacing={3}>
             {/* Chart */}
             <Grid item xs={12}>
-              <Paper sx={{ m: 5, p: 5, display: 'flex', flexDirection: 'column', border: '1px solid #C7A1BD' }} ref={componentRef}>
+              <Paper sx={{ m: 5, p: 5, display: 'flex', flexDirection: 'column', border: '1px solid #C7A1BD' }}>
+                <div ref={componentRef} >
+                  <Typography variant="h4" sx={{ display: 'flex', justifyContent: 'center', mb: '20px' }}>
+                    Invoice
+                  </Typography>
 
-                <Typography variant="h4" sx={{ display: 'flex', justifyContent: 'center', mb: '20px' }}>
-                  Invoice
-                </Typography>
+                  <Grid container spacing={3}>
+                    <Grid item xs={6}>
+                      <Grid container spacing={2}>
+                        <Grid item xs={6}>
+                          <div>
+                            <strong>Invoice No:</strong>
+                          </div>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <div>
+                            <p>{invoiceNumber}</p>
+                          </div>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <div>
+                            <strong>Date:</strong>
+                          </div>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <div>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                              <DatePicker
+                                value={invoiceDate} // Set the value prop to display the selected date
+                                onChange={handleInvoiceDate} // Capture the selected date
+                                renderInput={(params) => <TextField {...params} label="Select Date" variant="outlined" />}
 
-                <Grid container spacing={3}>
-                  <Grid item xs={6}>
-                    <Grid container spacing={2}>
-                      <Grid item xs={6}>
-                        <div>
-                          <strong>Invoice No:</strong>
-                        </div>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <div>
-                          <p>{invoiceNumber}</p>
-                        </div>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <div>
-                          <strong>Date:</strong>
-                        </div>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <div>
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker
-                              value={invoiceDate} // Set the value prop to display the selected date
-                              onChange={handleInvoiceDate} // Capture the selected date
-                              renderInput={(params) => <TextField {...params} label="Select Date" variant="outlined" />}
+                              />
+                            </LocalizationProvider>
+                          </div>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <div>
+                            <strong>Add Due Date:</strong>
+                          </div>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <div>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                              <DatePicker
+                                value={dueDate} // Set the value prop to display the selected date
+                                onChange={handleDueDate} // Capture the selected date
+                                renderInput={(params) => <TextField {...params} label="Select Date" variant="outlined" />}
+                              />
+                            </LocalizationProvider>
+                          </div>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <div>
+                            <strong>Select Date Range:</strong>
+                          </div>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Button variant='contained'
+                            onClick={handleButtonClick}>Select Date</Button>
 
+                          {showDateRangePicker && (
+                            <DateRange
+                              editableDateInputs={true}
+                              onChange={handleDateRangeChange}
+                              moveRangeOnFirstSelection={false}
+                              ranges={dateRange}
                             />
-                          </LocalizationProvider>
-                        </div>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <div>
-                          <strong>Add Due Date:</strong>
-                        </div>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <div>
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker
-                              value={dueDate} // Set the value prop to display the selected date
-                              onChange={handleDueDate} // Capture the selected date
-                              renderInput={(params) => <TextField {...params} label="Select Date" variant="outlined" />}
-                            />
-                          </LocalizationProvider>
-                        </div>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <div>
-                          <strong>Select Date Range:</strong>
-                        </div>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Button variant='contained'
-                          onClick={handleButtonClick}>Select Date</Button>
+                          )}
+                          {dateRange != null && (
+                            <div>
+                              <p>{getDates()}</p>
+                            </div>
+                          )}
+                        </Grid>
 
-                        {showDateRangePicker && (
-                          <DateRange
-                            editableDateInputs={true}
-                            onChange={handleDateRangeChange}
-                            moveRangeOnFirstSelection={false}
-                            ranges={dateRange}
-                          />
-                        )}
-                        {dateRange != null && (
-                        <div>
-                          <p>{getDates()}</p>
-                        </div>
-                      )}  
                       </Grid>
-                      
+                    </Grid>
+                    <Grid item xs={6} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                      <img src={Logo} alt='BigCo Inc. logo' id='invoicelogo' />
                     </Grid>
                   </Grid>
-                  <Grid item xs={6} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <img src={Logo} alt='BigCo Inc. logo' id='invoicelogo' />
+
+                  <Grid container spacing={3} marginTop="10px">
+                    <Grid item xs={6}>
+                      <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', backgroundColor: "#FBF1F7" }}>
+                        <Box sx={{ paddingBottom: 2 }}>
+                          <strong>Billed By-</strong>
+                          <p id='companylogo'>
+                            <span id='tutorshivetext'> TutorsHive Pvt. Ltd. </span>
+                            <br />
+                            Regd. office: 88A, Nancy Residency, First Floor, <br />
+                            Sindhu Nagar, Scheme No. 17, Murlipura, Jaipur, jaipur,
+                            <br />
+                            Email: info@webz.com.pl
+                          </p>
+                          <img src={Logo} alt='BigCo Inc. logo' id='invoicelogo' />
+                        </Box>
+                      </Paper>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', backgroundColor: "#FBF1F7", height: "230px" }}>
+                        <strong>Billed To-</strong>
+                        {client != null && (
+                          <div>
+                            <p>Name: {client.name}</p>
+                            <p>Email: {client.email}</p>
+                            <p>Contact: {client.contact}</p>
+                          </div>
+                        )}
+                      </Paper>
+                    </Grid>
                   </Grid>
-                </Grid>
+                  <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
+                    <Button variant="outlined" sx={{ mt: 3, mb: 2, marginRight: 2 }}
+                      onClick={handleTaxUpdate}>
+                      {savedTax != '' ? 'Configure Tax' : 'Add Tax'}
+                    </Button>
+                    <InputLabel id="demo-simple-select-label" sx={{ marginRight: 2 }}>Currency</InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={currencyValue}
 
-                <Grid container spacing={3} marginTop="10px">
-                  <Grid item xs={6}>
-                    <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', backgroundColor: "#FBF1F7" }}>
-                      <Box sx={{ paddingBottom: 2 }}>
-                        <strong>Billed By-</strong>
-                        <p id='companylogo'>
-                          <span id='tutorshivetext'> TutorsHive Pvt. Ltd. </span>
-                          <br />
-                          Regd. office: 88A, Nancy Residency, First Floor, <br />
-                          Sindhu Nagar, Scheme No. 17, Murlipura, Jaipur, jaipur,
-                          <br />
-                          Email: info@webz.com.pl
-                        </p>
-                        <img src={Logo} alt='BigCo Inc. logo' id='invoicelogo' />
-                      </Box>
-                    </Paper>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', backgroundColor: "#FBF1F7", height: "230px" }}>
-                      <strong>Billed To-</strong>
-                      {client != null && (
-                        <div>
-                          <p>Name: {client.name}</p>
-                          <p>Email: {client.email}</p>
-                          <p>Contact: {client.contact}</p>
-                        </div>
-                      )}
-                    </Paper>
-                  </Grid>
-                </Grid>
-                <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
-                  <Button variant="outlined" sx={{ mt: 3, mb: 2, marginRight: 2 }}
-                    onClick={handleTaxUpdate}>
-                    {savedTax != '' ? 'Configure Tax' : 'Add Tax'}
-                  </Button>
-                  <InputLabel id="demo-simple-select-label" sx={{ marginRight: 2 }}>Currency</InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={currencyValue}
+                      onChange={handleCurrencyChange}
+                      error={currencyValue === ''}
+                      helperText={currencyValue === '' && 'Select Currency'}
+                      fullWidth
+                      sx={{ width: '200px' }}
+                    >
+                      {currencies.map((data) => (
 
-                    onChange={handleCurrencyChange}
-                    error={currencyValue === ''}
-                    helperText={currencyValue === '' && 'Select Currency'}
-                    fullWidth
-                    sx={{ width: '200px' }}
-                  >
-                    {currencies.map((data) => (
+                        <MenuItem value={data.value}>{data.label}</MenuItem>
 
-                      <MenuItem value={data.value}>{data.label}</MenuItem>
+                      ))}
+                    </Select>
+                  </div>
 
-                    ))}
-                  </Select>
-                </div>
+                  <Box>
+                    <TableContainer component={Paper} sx={{
+                      marginBottom: 6,
+                      marginRight: 2,
+                      mt: 3
+                    }}
+                      aria-label="customized table" >
+                      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead fullWidth>
+                          <StyledTableRow>
+                            <StyledTableCell>Item</StyledTableCell>
+                            {savedTax && (
+                              <StyledTableCell >{savedTax == 'gst' ? 'GST Rate' : 'VAT Rate'}</StyledTableCell>
+                            )}
+                            <StyledTableCell>Quantity</StyledTableCell>
+                            <StyledTableCell >Rate</StyledTableCell>
+                            {/* */}
 
-                <Box>
-                  <TableContainer component={Paper} sx={{
-                    marginBottom: 6,
-                    marginRight: 2,
-                    mt: 3
-                  }}
-                    aria-label="customized table" >
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                      <TableHead fullWidth>
-                        <StyledTableRow>
-                          <StyledTableCell>Item</StyledTableCell>
-                          {savedTax && (
-                            <StyledTableCell >{savedTax == 'gst' ? 'GST Rate' : 'VAT Rate'}</StyledTableCell>
-                          )}
-                          <StyledTableCell>Quantity</StyledTableCell>
-                          <StyledTableCell >Rate</StyledTableCell>
-                          {/* */}
+                            {savedTax == 'gst' && saveSubTax == 'gst' && (
 
-                          {savedTax == 'gst' && saveSubTax == 'gst' && (
+                              <StyledTableCell >Amount</StyledTableCell>
 
-                            <StyledTableCell >Amount</StyledTableCell>
+                            )}
+                            {savedTax == 'gst' && saveSubTax == 'igst' && (
 
+                              <StyledTableCell >Amount</StyledTableCell>
 
-                          )}
-                          {savedTax == 'gst' && saveSubTax == 'igst' && (
+                            )}
+                            {savedTax == 'gst' && saveSubTax == 'igst' && (
+                              <StyledTableCell >IGST</StyledTableCell>
+                            )}
+                            {savedTax == 'gst' && saveSubTax == 'gst' && (
 
-                            <StyledTableCell >Amount</StyledTableCell>
+                              <StyledTableCell >CGST</StyledTableCell>
 
+                            )}
+                            {savedTax == 'gst' && saveSubTax == 'gst' && (
 
-                          )}
-                          {savedTax == 'gst' && saveSubTax == 'igst' && (
-                            <StyledTableCell >IGST</StyledTableCell>
-                          )}
-                          {savedTax == 'gst' && saveSubTax == 'gst' && (
+                              <StyledTableCell >SGST</StyledTableCell>
 
-                            <StyledTableCell >CGST</StyledTableCell>
+                            )}
+                            {savedTax == 'vat' && (
 
+                              <StyledTableCell >VAT</StyledTableCell>
 
-                          )}
-                          {savedTax == 'gst' && saveSubTax == 'gst' && (
+                            )}
 
-                            <StyledTableCell >SGST</StyledTableCell>
+                            <StyledTableCell >Total</StyledTableCell>
+                            <StyledTableCell ></StyledTableCell>
+                          </StyledTableRow>
+                        </TableHead>
 
-                          )}
-                          {savedTax == 'vat' && (
-
-                            <StyledTableCell >VAT</StyledTableCell>
-
-                          )}
-
-                          <StyledTableCell >Total</StyledTableCell>
-                          <StyledTableCell ></StyledTableCell>
-                        </StyledTableRow>
-                      </TableHead>
-
-
-                      {tableData.length > 0 && tableData.map((data, index) => (
-                        <TableBody key={data.id}>
-                          <StyledTableCell>
-                            <TextField
-
-                              variant="standard"
-                              value={data.item}
-                              onChange={(event) => handleInputChange(event, 'item', data.id)}
-                            />
-                          </StyledTableCell>
-                          {savedTax && (
+                        {tableData.length > 0 && tableData.map((data, index) => (
+                          <TableBody key={data.id}>
                             <StyledTableCell>
-                              <div>
-                                <TextField
-
-                                  variant="standard"
-                                  value={data.taxRate}
-                                  onChange={(event) => handleInputChange(event, 'taxRate', data.id)}
-                                  InputProps={{
-                                    endAdornment: <InputAdornment position="end">%</InputAdornment>,
-                                  }}
-                                />
-
-                              </div>
-                            </StyledTableCell>
-                          )}
-                          <StyledTableCell>
-                            <TextField id="standard-basic"
-
-                              variant="standard"
-                              value={data.quantity}
-                              onChange={(event) => handleInputChange(event, 'quantity', data.id)}
-                            />
-                          </StyledTableCell>
-
-                          <StyledTableCell>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                              <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
                               <TextField
-                                id="standard-basic"
 
                                 variant="standard"
-                                value={data.rate}
-                                onChange={(event) => handleInputChange(event, 'rate', data.id)}
+                                value={data.item}
+                                onChange={(event) => handleInputChange(event, 'item', data.id)}
                               />
-                            </div>
-                          </StyledTableCell>
+                            </StyledTableCell>
+                            {savedTax && (
+                              <StyledTableCell>
+                                <div>
+                                  <TextField
 
-                          {savedTax == 'gst' && saveSubTax == 'igst' && (
+                                    variant="standard"
+                                    value={data.taxRate}
+                                    onChange={(event) => handleInputChange(event, 'taxRate', data.id)}
+                                    InputProps={{
+                                      endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                                    }}
+                                  />
+
+                                </div>
+                              </StyledTableCell>
+                            )}
+                            <StyledTableCell>
+                              <TextField id="standard-basic"
+
+                                variant="standard"
+                                value={data.quantity}
+                                onChange={(event) => handleInputChange(event, 'quantity', data.id)}
+                              />
+                            </StyledTableCell>
+
                             <StyledTableCell>
                               <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
-
                                 <TextField
                                   id="standard-basic"
-                                  disabled
-                                  variant="standard"
-                                  value={data.amount}
-                                  onChange={(event) => handleInputChange(event, 'amount', data.id)}
-                                />
 
+                                  variant="standard"
+                                  value={data.rate}
+                                  onChange={(event) => handleInputChange(event, 'rate', data.id)}
+                                />
                               </div>
                             </StyledTableCell>
-                          )}
 
-                          {savedTax == 'gst' && saveSubTax == 'igst' && (
-                            <div>
-
-
-                              <StyledTableCell >
+                            {savedTax == 'gst' && saveSubTax == 'igst' && (
+                              <StyledTableCell>
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
                                   <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
 
@@ -853,215 +892,238 @@ function GenerateVendorInvoice() {
                                     id="standard-basic"
                                     disabled
                                     variant="standard"
-                                    value={data.igst != null ? data.igst.toFixed(2) : 0}
-                                    onChange={(event) => handleInputChange(event, 'igst', data.id)}
-
+                                    value={data.amount}
+                                    onChange={(event) => handleInputChange(event, 'amount', data.id)}
                                   />
 
                                 </div>
                               </StyledTableCell>
-                            </div>
-                          )}
-                          {savedTax == 'gst' && saveSubTax == 'gst' && (
-                            <StyledTableCell>
-                              <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
+                            )}
 
-                                <TextField
-                                  id="standard-basic"
-                                  disabled
-                                  variant="standard"
-                                  value={data.amount}
-                                  onChange={(event) => handleInputChange(event, 'amount', data.id)}
-                                />
+                            {savedTax == 'gst' && saveSubTax == 'igst' && (
+                              <div>
 
+                                <StyledTableCell >
+                                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
+
+                                    <TextField
+                                      id="standard-basic"
+                                      disabled
+                                      variant="standard"
+                                      value={data.igst != null ? data.igst.toFixed(2) : 0}
+                                      onChange={(event) => handleInputChange(event, 'igst', data.id)}
+
+                                    />
+
+                                  </div>
+                                </StyledTableCell>
                               </div>
-                            </StyledTableCell>
-                          )}
-                          {savedTax == 'gst' && saveSubTax == 'gst' && (
-                            <div>
+                            )}
+                            {savedTax == 'gst' && saveSubTax == 'gst' && (
+                              <StyledTableCell>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                  <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
 
+                                  <TextField
+                                    id="standard-basic"
+                                    disabled
+                                    variant="standard"
+                                    value={data.amount}
+                                    onChange={(event) => handleInputChange(event, 'amount', data.id)}
+                                  />
+
+                                </div>
+                              </StyledTableCell>
+                            )}
+                            {savedTax == 'gst' && saveSubTax == 'gst' && (
+                              <div>
+
+                                <StyledTableCell >
+                                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
+                                    <TextField
+                                      disabled
+                                      id="standard-basic"
+
+                                      variant="standard"
+                                      value={data.cgst != null ? data.cgst.toFixed(2) : 0}
+                                      onChange={(event) => handleInputChange(event, 'cgst', data.id)}
+
+                                    />
+                                  </div>
+                                </StyledTableCell>
+                              </div>
+
+                            )}
+                            {savedTax == 'gst' && saveSubTax == 'gst' && (
+                              <StyledTableCell >
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                  <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
+
+                                  <TextField
+                                    disabled
+                                    id="standard-basic"
+                                    variant="standard"
+                                    value={data.sgst != null ? data.sgst.toFixed(2) : 0}
+                                    onChange={(event) => handleInputChange(event, 'sgst', data.id)}
+
+                                  />
+                                </div>
+                              </StyledTableCell>
+                            )}
+
+                            {savedTax == 'vat' && (
 
                               <StyledTableCell >
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
                                   <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
+
                                   <TextField
                                     disabled
                                     id="standard-basic"
-
                                     variant="standard"
-                                    value={data.cgst != null ? data.cgst.toFixed(2) : 0}
-                                    onChange={(event) => handleInputChange(event, 'cgst', data.id)}
+                                    value={data.vat != null ? data.vat.toFixed(2) : 0}
+                                    onChange={(event) => handleInputChange(event, 'vat', data.id)}
 
                                   />
                                 </div>
                               </StyledTableCell>
-                            </div>
 
-                          )}
-                          {savedTax == 'gst' && saveSubTax == 'gst' && (
-                            <StyledTableCell >
+                            )}
+
+                            <StyledTableCell>
                               <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
 
-                                <TextField
-                                  disabled
-                                  id="standard-basic"
-                                  variant="standard"
-                                  value={data.sgst != null ? data.sgst.toFixed(2) : 0}
-                                  onChange={(event) => handleInputChange(event, 'sgst', data.id)}
-
-                                />
+                                {data.total != null ? data.total.toFixed(2) : 0}
                               </div>
                             </StyledTableCell>
-                          )}
+                            <StyledTableCell> <CloseIcon onClick={() => handleRemoveRow(data.id)} /></StyledTableCell>
+                          </TableBody>
+                        ))}
 
-                          {savedTax == 'vat' && (
+                      </Table>
+                    </TableContainer>
 
-                            <StyledTableCell >
-                              <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
+                    {tableData.length >= 1 && (
+                      <Grid alignItems='end' display='flex' justifyContent='flex-end' container spacing={2}>
+                        <Grid item xs={9}>
+                          <Typography align="right" variant="subtitle1">
+                            Amount:
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={3}>
+                          <Typography align="right" variant="subtitle1">
+                          <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
+                            {isNaN(getTotalAmount()) ? 0 : getTotalAmount().toFixed(2)}
+                          </Typography>
+                        </Grid>
 
-                                <TextField
-                                  disabled
-                                  id="standard-basic"
-                                  variant="standard"
-                                  value={data.vat != null ? data.vat.toFixed(2) : 0}
-                                  onChange={(event) => handleInputChange(event, 'vat', data.id)}
-
-                                />
-                              </div>
-                            </StyledTableCell>
-
-                          )}
-
-                          <StyledTableCell>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                        {savedTax === 'gst' && saveSubTax === 'gst' && (
+                          <>
+                            <Grid item xs={9}>
+                              <Typography align="right" variant="subtitle1">
+                                SGST:
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={3}>
+                              <Typography align="right" variant="subtitle1">
                               <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
+                                {isNaN(getSgst()) ? 0 : getSgst().toFixed(2)}
+                              </Typography>
+                            </Grid>
 
-                              {data.total != null ? data.total.toFixed(2) : 0}
-                            </div>
-                          </StyledTableCell>
-                          <StyledTableCell> <CloseIcon onClick={() => handleRemoveRow(data.id)} /></StyledTableCell>
-                        </TableBody>
-                      ))}
+                            <Grid item xs={9}>
+                              <Typography align="right" variant="subtitle1">
+                                CGST:
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={3}>
+                              <Typography align="right" variant="subtitle1">
+                              <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
+                                {isNaN(getCgst()) ? 0 : getCgst().toFixed(2)}
+                              </Typography>
+                            </Grid>
+                          </>
+                        )}
 
-                    </Table>
-                  </TableContainer>
+                        {savedTax === 'gst' && saveSubTax === 'igst' && (
+                          <>
+                            <Grid item xs={9}>
+                              <Typography align="right" variant="subtitle1">
+                                IGST:
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={3}>
+                              <Typography align="right" variant="subtitle1">
+                              <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
+                                {isNaN(getIgst()) ? 0 : getIgst().toFixed(2)}
+                              </Typography>
+                            </Grid>
+                          </>
+                        )}
 
-                  {tableData.length >= 1 && (
-                    <Grid alignItems='end' display='flex' justifyContent='flex-end' container spacing={2}>
-                      <Grid item xs={9}>
-                        <Typography align="right" variant="subtitle1">
-                          Amount:
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={3}>
-                        <Typography align="right" variant="subtitle1">
-                          {isNaN(getTotalAmount()) ? 0 : getTotalAmount().toFixed(2)}
-                        </Typography>
-                      </Grid>
+                        {savedTax === 'vat' && (
+                          <>
+                            <Grid item xs={9}>
+                              <Typography align="right" variant="subtitle1">
+                                VAT:
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={3}>
+                              <Typography align="right" variant="subtitle1">
+                                
+                                (+){isNaN(getIgst()) ? 0 : getIgst().toFixed(2)}
+                              </Typography>
+                            </Grid>
 
-                      {savedTax === 'gst' && saveSubTax === 'gst' && (
-                        <>
-                          <Grid item xs={9}>
-                            <Typography align="right" variant="subtitle1">
-                              SGST:
-                            </Typography>
-                          </Grid>
-                          <Grid item xs={3}>
-                            <Typography align="right" variant="subtitle1">
-                              {isNaN(getSgst()) ? 0 : getSgst().toFixed(2)}
-                            </Typography>
-                          </Grid>
+                          </>
+                        )}
+                        {discount != 0 && (
+                          <>
+                            <Grid item xs={9}>
 
-                          <Grid item xs={9}>
-                            <Typography align="right" variant="subtitle1">
-                              CGST:
-                            </Typography>
-                          </Grid>
-                          <Grid item xs={3}>
-                            <Typography align="right" variant="subtitle1">
-                              {isNaN(getCgst()) ? 0 : getCgst().toFixed(2)}
-                            </Typography>
-                          </Grid>
-                        </>
-                      )}
+                              <Typography align="right" variant="subtitle1">
+                                Discount({discount}%):
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={3}>
+                              <Typography align="right" variant="subtitle1">
+                                (-){isNaN(getDiscount()) ? 0 : getDiscount().toFixed(2)}
+                              </Typography>
+                            </Grid>
 
-                      {savedTax === 'gst' && saveSubTax === 'igst' && (
-                        <>
-                          <Grid item xs={9}>
-                            <Typography align="right" variant="subtitle1">
-                              IGST:
-                            </Typography>
-                          </Grid>
-                          <Grid item xs={3}>
-                            <Typography align="right" variant="subtitle1">
-                              {isNaN(getIgst()) ? 0 : getIgst().toFixed(2)}
-                            </Typography>
-                          </Grid>
-                        </>
-                      )}
+                          </>
 
-                      {savedTax === 'vat' && (
-                        <>
-                          <Grid item xs={9}>
-                            <Typography align="right" variant="subtitle1">
-                              VAT:
-                            </Typography>
-                          </Grid>
-                          <Grid item xs={3}>
-                            <Typography align="right" variant="subtitle1">
-                              (+){isNaN(getIgst()) ? 0 : getIgst().toFixed(2)}
-                            </Typography>
-                          </Grid>
+                        )}
 
-                        </>
-                      )}
-                      {discount != 0 && (
-                        <>
-                          <Grid item xs={9}>
+                        <Grid item xs={9}>
 
-                            <Typography align="right" variant="subtitle1">
-                              Discount({discount}%):
-                            </Typography>
-                          </Grid>
-                          <Grid item xs={3}>
-                            <Typography align="right" variant="subtitle1">
-                              (-){isNaN(getDiscount()) ? 0 : getDiscount().toFixed(2)}
-                            </Typography>
-                          </Grid>
+                          <Typography align="right" variant="h5" fontWeight="semi-bold">
+                            Total:
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={3}>
+                          <Typography align="right" variant="h5" fontWeight="bold">
+                          <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
+                            {isNaN(getTotal()) ? 0 : getTotal().toFixed(2)}
+                          </Typography>
+                        </Grid>
 
-                        </>
-
-                      )}
-
-                      <Grid item xs={9}>
-
-                        <Typography align="right" variant="h5" fontWeight="semi-bold">
-                          Total:
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={3}>
-                        <Typography align="right" variant="h5" fontWeight="bold">
-                          {isNaN(getTotal()) ? 0 : getTotal().toFixed(2)}
-                        </Typography>
                       </Grid>
 
+                    )}
 
-                    </Grid>
 
-
-                  )}
-
-                  <Button variant='outlined' sx={{ mt: 3 }} onClick={handleAddRow}>
-                    Add More Items
-                  </Button>
-                  <Button variant='outlined' sx={{ mt: 3 }} onClick={handleDiscount}>
-                    Add Discount
-                  </Button>
-
-                </Box>
+                  </Box>
+                </div>
+                <Button variant='outlined' sx={{ mt: 3, width: '200px' }} onClick={handleAddRow}>
+                  Add More Items
+                </Button>
+                <Button variant='outlined' sx={{ mt: 3, width: '200px' }} onClick={handleDiscount}>
+                  Add Discount
+                </Button>
                 {tableData.length >= 1 && (
                   <Button variant="outlined" type='submit' sx={{ mt: 3, width: '200px' }} onClick={handlePrint}>
                     Print & Save as PDF
@@ -1079,6 +1141,21 @@ function GenerateVendorInvoice() {
           </Grid>
         </Container>
       </Box>
+
+
+      <Dialog open={dialogValidationOpen} onClose={handleCloseDialog}>
+        <DialogTitle>Form Validation Failed</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Please fill in all required fields correctly.</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+
       <BootstrapDialog fullWidth open={discountDialog} sx={{
 
       }}>
@@ -1188,7 +1265,9 @@ function GenerateVendorInvoice() {
       </BootstrapDialog>
 
     </Container>
+
   )
+
 }
 
 export default GenerateVendorInvoice

@@ -1,6 +1,5 @@
 // FileUpload.js
-import React, { useState } from 'react';
-import Button from '@mui/material/Button';
+import React, { useState, useRef } from 'react';
 
 const FileUpload = ({ onFileUpload }) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -25,7 +24,7 @@ const FileUpload = ({ onFileUpload }) => {
     }
   };
 
-  const handleUpload = () => {
+  const initiateUpload = () => {
     if (selectedFile) {
       // Perform the actual upload or pass the file to the parent component
       onFileUpload(selectedFile);
@@ -34,12 +33,12 @@ const FileUpload = ({ onFileUpload }) => {
     }
   };
 
+  // Expose the function to get the selected file externally
+  const getSelectedFile = () => selectedFile;
+
   return (
     <div>
       <input type="file" accept=".doc, .pdf" onChange={handleFileChange} />
-      <Button variant="contained" color="primary" onClick={handleUpload}>
-        Upload
-      </Button>
     </div>
   );
 };

@@ -45,6 +45,8 @@ function StudentInvoices() {
   const [invoices, setInvoices] = useState([]);
   const [data, setData] = useState();
   const componentRef = useRef();
+  const [currency, setCurrency] = useState("");
+
 
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
@@ -72,6 +74,8 @@ function StudentInvoices() {
         console.log("invoice is", data.invoices);
         setData(data.data);
         setInvoices(data.invoices);
+        console.log("currency is", data.data.currency)
+        setCurrency(data.data.currency)
         fetchClientForInvoice(data.data.client_id);
 
       })
@@ -166,7 +170,7 @@ function StudentInvoices() {
                       <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', backgroundColor: "#FBF1F7" }}>
                         <Box sx={{ paddingBottom: 2 }}>
                           <strong>Billed By-</strong>
-                          <p id='companylogo'>
+                          <p style={{marginTop: "5px", height: "155px"}} id='companylogo'>
                             <span id='tutorshivetext'> TutorsHive Pvt. Ltd. </span>
                             <br />
                             Regd. office: 88A, Nancy Residency, First Floor, <br />
@@ -174,7 +178,7 @@ function StudentInvoices() {
                             <br />
                             Email: info@webz.com.pl
                           </p>
-                          <img src={Logo} alt='BigCo Inc. logo' id='invoicelogo' />
+                      
                         </Box>
                       </Paper>
                     </Grid>
@@ -211,17 +215,17 @@ function StudentInvoices() {
                             {data.tax_type != null && (
                               <StyledTableCell >Amount</StyledTableCell>
                             )}
-                            {data.tax_type == 'gst' && data.sub_tax == 'igst' &&(
+                            {data.tax_type == 'gst' && data.sub_tax == 'igst' && (
                               <StyledTableCell >IGST</StyledTableCell>
                             )}
-                           
-                            {data.tax_type == 'gst' && data.sub_tax !== 'igst'&& (
+
+                            {data.tax_type == 'gst' && data.sub_tax !== 'igst' && (
                               <StyledTableCell >CGST</StyledTableCell>
                             )}
                             {data.tax_type == 'gst' && data.sub_tax !== 'igst' && (
                               <StyledTableCell >SGST</StyledTableCell>
                             )}
-                            {data.tax_type == 'vat' && data.sub_tax !== 'igst'&& (
+                            {data.tax_type == 'vat' && data.sub_tax !== 'igst' && (
                               <StyledTableCell >VAT</StyledTableCell>
                             )}
 
@@ -232,7 +236,8 @@ function StudentInvoices() {
                         {invoices.map((invoice) => (
                           <TableBody key={invoice.id}>
                             <StyledTableCell>
-                              {invoice.item}
+                                         {invoice.item}
+                              
                             </StyledTableCell>
 
                             <StyledTableCell>
@@ -244,34 +249,49 @@ function StudentInvoices() {
                             </StyledTableCell>
 
                             <StyledTableCell>
-                              {invoice.rate}
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <span style={{ marginRight: '5px', marginTop: '0px' }}>{currency}</span>
+
+                     
+                             {invoice.rate}
+                             </div>
                             </StyledTableCell>
-                              
+
                             <StyledTableCell>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <span style={{ marginRight: '5px', marginTop: '0px' }}>{currency}</span>
+
+                     
                               {invoice.amount}
+                              </div>
                             </StyledTableCell>
-                            
+
                             {data.tax_type == 'vat' && (
                               <StyledTableCell>
                                 {invoice.vat}
                               </StyledTableCell>
                             )}
 
-                           
-                            {data.tax_type == 'gst' && data.sub_tax == 'gst' &&(
+
+                            {data.tax_type == 'gst' && data.sub_tax == 'gst' && (
                               <StyledTableCell >{invoice.cgst}</StyledTableCell>
                             )}
-                            {data.tax_type == 'gst' && data.sub_tax == 'gst' &&(
+                            {data.tax_type == 'gst' && data.sub_tax == 'gst' && (
                               <StyledTableCell >{invoice.sgst}</StyledTableCell>
                             )}
-                            
-                            {data.tax_type == 'gst' && data.sub_tax == 'igst' &&(
+
+                            {data.tax_type == 'gst' && data.sub_tax == 'igst' && (
                               <StyledTableCell >{invoice.igst}</StyledTableCell>
                             )}
-                          
-                           
+
+
                             <StyledTableCell>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <span style={{ marginRight: '5px', marginTop: '0px' }}>{currency}</span>
+
+                     
                               {invoice.item_total}
+                              </div>
                             </StyledTableCell>
 
                           </TableBody>
@@ -288,11 +308,13 @@ function StudentInvoices() {
                       </Grid>
                       <Grid item xs={3}>
                         <Typography align="right" variant="subtitle1">
+                        <span style={{ marginRight: '5px', marginTop: '0px'}}>{currency}</span>
+                         
                           {data.total_amount}
                         </Typography>
                       </Grid>
 
-                      {data.tax_type === 'gst' && data.sub_tax == 'gst' &&(
+                      {data.tax_type === 'gst' && data.sub_tax == 'gst' && (
                         <>
                           <Grid item xs={9}>
                             <Typography align="right" variant="subtitle1">
@@ -301,7 +323,7 @@ function StudentInvoices() {
                           </Grid>
                           <Grid item xs={3}>
                             <Typography align="right" variant="subtitle1">
-                              {(data.tax_amount/2)}
+                              {(data.tax_amount / 2)}
                             </Typography>
                           </Grid>
 
@@ -312,7 +334,7 @@ function StudentInvoices() {
                           </Grid>
                           <Grid item xs={3}>
                             <Typography align="right" variant="subtitle1">
-                            {(data.tax_amount/2)}
+                              {(data.tax_amount / 2)}
                             </Typography>
                           </Grid>
                         </>
@@ -327,7 +349,7 @@ function StudentInvoices() {
                           </Grid>
                           <Grid item xs={3}>
                             <Typography align="right" variant="subtitle1">
-                            {(data.tax_amount)}
+                              {(data.tax_amount)}
                             </Typography>
                           </Grid>
                         </>
@@ -373,9 +395,11 @@ function StudentInvoices() {
                         </Typography>
                       </Grid>
                       <Grid item xs={3}>
-                        <Typography align="right" variant="h5" fontWeight="bold">
-                          {data.total}
-                        </Typography>
+                         <Typography align="right" variant="h5" fontWeight="bold">
+                          <span style={{ marginRight: '5px', marginTop: '0px' , fontWeight: "bold"}}>{currency}</span>
+                            {data.total}
+                          </Typography>
+                        
                       </Grid>
 
 
