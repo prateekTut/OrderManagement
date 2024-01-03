@@ -38,6 +38,7 @@ import UpdateSharpIcon from '@mui/icons-material/UpdateSharp';
 import InfoSharpIcon from '@mui/icons-material/InfoSharp';
 
 import { StyledTableCell, StyledTableRow } from './styles/TableStyles';
+import TablePagination from '@mui/material/TablePagination';
 
 const StyledBottomNavigationAction = styled(BottomNavigationAction)`
     color: #007A78;
@@ -51,7 +52,7 @@ const StyledBottomNavigationAction = styled(BottomNavigationAction)`
 `;
 
 
-  
+
 
 function AssignTaskConsole() {
 
@@ -463,12 +464,19 @@ function AssignTaskConsole() {
                 console.log(rejected);
             });
     }
+    const [page, setPage] = useState(0);
+    const itemsPerPage = 8;
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+
+
 
     const isSingleRow = orders.length === 1;
     return (
-        
+
         <Container>
-          
+
             <Box>
                 {/* Render your order data here based on your API response */console.log(roles)}
                 {roles != "expert" && roles != 'lead' && roles != 'otm' && (
@@ -506,6 +514,17 @@ function AssignTaskConsole() {
                                 marginRight: 2
                             }}
                                 aria-label="customized table" >
+                                <TablePagination
+                                    className='table-page'
+                                    rowsPerPageOptions={[itemsPerPage]}
+                                    component="div"
+                                    count={orders.length}
+                                    rowsPerPage={itemsPerPage}
+                                    page={page}
+                                    onPageChange={handleChangePage}
+                                    labelRowsPerPage="Orders per page:"
+                                    labelDisplayedRows={({ from, to, count }) => `Showing ${from} to ${to} Order of ${count} Order(s)`}
+                                />
                                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                                     <TableHead>
                                         <StyledTableRow>
@@ -597,7 +616,7 @@ function AssignTaskConsole() {
 
                 {/* Add more details you want to display */}
             </Box>
-        
+
 
             <BottomNavigation
                 showLabels={true}
