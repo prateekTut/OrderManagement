@@ -552,13 +552,35 @@ function GenerateVendorInvoice() {
     console.log(clientId);
     const pdf = new jsPDF('p', 'mm', 'a4');
 
-    await html2canvas(componentRef.current).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
-      pdf.addImage(imgData, 'PNG', 0, 0, 210, 297); // Adjust width and height as needed
+    let pdfBlob;
+
+    await html2canvas(componentRef.current).then(async (canvas) => {
+      let imgData, quality = 1.0;
+    
+      do {
+        // Convert canvas to image data URL with the current quality
+        imgData = canvas.toDataURL('image/jpeg', quality);
+    
+        // Add the image to the PDF
+        pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297); // Adjust width and height as needed
+    
+        // Output PDF blob
+        pdfBlob = pdf.output('blob');
+    
+        // Check the size of the PDF blob
+        if (pdfBlob.size > 1024 * 1024 && quality > 0.1) {
+          // If the size is still greater than 1MB, reduce quality and retry
+          quality -= 0.1;
+          pdf.deletePage(); // Remove the added page
+        } else {
+          // Break the loop if the size is within the limit or quality is too low
+          break;
+        }
+      } while (true);
     });
 
     const data = tableData;
-    const pdfBlob = pdf.output('blob');
+    //const pdfBlob = pdf.output('blob');
     const pdfFile = new File([pdfBlob], 'invoice.pdf', { type: 'application/pdf' });
 
     if (invoiceDate != null && dueDate != null) {

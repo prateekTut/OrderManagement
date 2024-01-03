@@ -351,37 +351,45 @@ function NewClientInvoice() {
     console.log(clientId);
     const pdf = new jsPDF('p', 'mm', 'a4');
 
-    await html2canvas(componentRef.current).then((canvas) => {
+   /*  await html2canvas(componentRef.current).then((canvas) => {
       const imgData = canvas.toDataURL('image/png');
       pdf.addImage(imgData, 'PNG', 0, 0, 210, 297); // Adjust width and height as needed
     });
+ */
+    let pdfBlob;
 
-    const data = tableData;
-    const pdfBlob = pdf.output('blob');
+    await html2canvas(componentRef.current).then(async (canvas) => {
+      let imgData, quality = 1.0;
+    
+      do {
+        // Convert canvas to image data URL with the current quality
+        imgData = canvas.toDataURL('image/jpeg', quality);
+    
+        // Add the image to the PDF
+        pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297); // Adjust width and height as needed
+    
+        // Output PDF blob
+        pdfBlob = pdf.output('blob');
+    
+        // Check the size of the PDF blob
+        if (pdfBlob.size > 1024 * 1024 && quality > 0.1) {
+          // If the size is still greater than 1MB, reduce quality and retry
+          quality -= 0.1;
+          pdf.deletePage(); // Remove the added page
+        } else {
+          // Break the loop if the size is within the limit or quality is too low
+          break;
+        }
+      } while (true);
+    });
+
+    //const pdfBlob = pdf.output('blob');
     const pdfFile = new File([pdfBlob], 'invoice.pdf', { type: 'application/pdf' });
-
+    console.log(pdfBlob)
+    
+    const data = tableData;
     if (invoiceDate != null && dueDate != null) {
-
-
-      console.log(selectedFile);
-
-      /*  const jsonData = {
-         data: data,            // Your JSON data
-         invoiceNumber: invoiceNumber,
-         invoiceDate: invoiceDate,
-         dueDate: dueDate,
-         taxType: savedTax,
-         document: selectedFile,
-         discount: getDiscount(),
-         diskPercent: discount,
-         currency: currencyValue,
-         total: getTotal(),
-         totalAmount: getTotalAmount(),
-         subTax: saveSubTax
-       }; */
-
-      //const jsonPayload = JSON.stringify(jsonData);
-
+  
       const formData = new FormData();
       formData.append('data', JSON.stringify({
         data: data,
@@ -521,17 +529,17 @@ function NewClientInvoice() {
 
     for (let i = 0; i < receivedData.length; i++) {
       const receivedItem = receivedData[i];
-      const conv_amount = convertValue(receivedItem.order_budget, receivedItem.currency);
+      //const conv_amount = convertValue(receivedItem.order_budget, receivedItem.currency);
 
       updatedTableData[i] = {
         ...updatedTableData[i],
         id: i,
         order_id: receivedItem.id,
-        amount: conv_amount,
+        amount: receivedItem.order_budget,
         item: receivedItem.task,
-        total: conv_amount,
+        total: receivedItem.order_budget,
         quantity: 1,
-        rate: conv_amount,
+        rate: receivedItem.order_budget,
       };
     }
     console.log(updatedTableData);
