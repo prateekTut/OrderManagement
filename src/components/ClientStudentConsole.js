@@ -147,7 +147,7 @@ function ClientStudentConsole() {
 
 
     return (
-      <Container>
+      <div>
       <Typography variant='h1' sx={{
           marginLeft: 2,
           paddingTop: 2,
@@ -266,7 +266,7 @@ function ClientStudentConsole() {
             </Button>
           </DialogActions>
         </Dialog>
-    </Container>
+    </div>
     )
 }
 

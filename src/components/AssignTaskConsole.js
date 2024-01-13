@@ -1,5 +1,5 @@
 import React from 'react'
-import { FormControl, MenuItem, InputLabel, BottomNavigation, BottomNavigationAction, TextField, Grid, Container, FormLabel, FormControlLabel, Radio, RadioGroup } from '@mui/material';
+import { FormControl, MenuItem, InputLabel, BottomNavigation, BottomNavigationAction, TextField, Grid, Container, FormLabel, FormControlLabel, Radio, RadioGroup, Fab } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useState, useEffect, useRef } from "react";
 import Box from '@mui/material/Box';
@@ -11,7 +11,7 @@ import TableHead from '@mui/material/TableHead';
 
 import Paper from '@mui/material/Paper';
 import { Button } from '@mui/material';
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -39,20 +39,21 @@ import InfoSharpIcon from '@mui/icons-material/InfoSharp';
 
 import { StyledTableCell, StyledTableRow } from './styles/TableStyles';
 import TablePagination from '@mui/material/TablePagination';
+import AddIcon from '@mui/icons-material/Add';
 
 const StyledBottomNavigationAction = styled(BottomNavigationAction)`
-    color: #007A78;
+    color: #ffff;
     &.Mui-selected {
-        color: red;
-        font-size: 22px;
+        background-color: #F34C19;
+        font-size: 24px;
+        color: #ffff;
     }
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2); /* Replace the shadow values with your desired elevation */
-    background-color: #f5f5f5; 
+    background-color: #343F71; 
     font-size: 20px !important;
+    margin-right: 13px;
+    border-radius: 5px;
 `;
-
-
-
 
 function AssignTaskConsole() {
 
@@ -110,6 +111,7 @@ function AssignTaskConsole() {
 
     const [openDatePicker, setOpenDatePicker] = useState(false);
     const buttonRef = useRef(null);
+    const navigate = useNavigate();
 
     const resetFormFields = () => {
         setStatus("");
@@ -128,7 +130,7 @@ function AssignTaskConsole() {
     useEffect(() => {
         //fetchData();
         fetchDataForSubject(currentStatus);
-        setBottomNavSub(currentStatus);
+        setBottomNavSub("New Order");
     }, []);
 
 
@@ -470,22 +472,52 @@ function AssignTaskConsole() {
         setPage(newPage);
     };
 
+    const handleFabClick = () => {
+        // Navigate to the /addtask route
+        navigate('/addtask');
+    };
+    const [searchQuery, setSearchQuery] = useState('');
 
+    const handleSearchChange = (event) => {
+        setSearchQuery(event.target.value);
+    };
+
+    const serachedOrders = orders.filter((order) =>
+        order.id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        order.subject?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const isSingleRow = orders.length === 1;
     return (
-
-        <Container>
-
-            <Box>
-                {/* Render your order data here based on your API response */console.log(roles)}
+        <div>
+            <Box sx={{
+                display: "flex",
+                justifyContent: "end",
+                alignItems: "end",
+                marginBottom: 2,
+                marginTop: 4,
+                marginRight: 2
+            }}>
+                <TextField
+                    label="Search"
+                    variant="outlined"
+                    size="small"
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                />
+            </Box>
+            <Box sx={{ marginTop: 2, marginBottom: 10 }}>
                 {roles != "expert" && roles != 'lead' && roles != 'otm' && (
-                    <Box sx={{ marginTop: 5, marginBottom: 3 }}>
-                        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                            <Grid item xs={6}>
-                                <Button variant="contained" href="/addtask">Add Task</Button>
-                            </Grid>
-                        </Grid>
+                    <Box sx={{
+                        position: 'fixed',
+                        bottom: 0,
+                        right: 0,
+                        margin: '25px',
+                        zIndex: 1
+                    }}>
+                        <Fab color="secondary" aria-label="add" onClick={handleFabClick} >
+                            <AddIcon />
+                        </Fab>
                     </Box>
                 )}
 
@@ -493,7 +525,6 @@ function AssignTaskConsole() {
                     <Box sx={{
                         width: "100vh",
                         height: "100vh",
-
                     }}>
                         <p>No Orders to show</p>
                     </Box>
@@ -508,10 +539,9 @@ function AssignTaskConsole() {
                             marginTop: 2
                         }}>
 
+
                             <TableContainer component={Paper} sx={{
-
-
-                                marginRight: 2
+                                marginRight: 2,
                             }}
                                 aria-label="customized table" >
                                 <TablePagination
@@ -540,19 +570,24 @@ function AssignTaskConsole() {
                                     <TableBody>
                                         {console.log(orders)}
                                         {
-                                            orders.slice(page * itemsPerPage, (page + 1) * itemsPerPage).map((orderData) => (
+                                            serachedOrders.slice(page * itemsPerPage, (page + 1) * itemsPerPage).map((orderData) => (
 
                                                 <StyledTableRow key={orderData.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
 
-                                                    <StyledTableCell component="th" scope="row">{orderData.id}</StyledTableCell>
+                                                    <StyledTableCell component="th" scope="row">
+                                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                            {orderData.id}
+                                                            <div role='button' style={{marginLeft: '4px'}}>
+                                                                <InfoSharpIcon color='secondary' fontSize='small'/>
+                                                            </div>
+                                                        </div>
+                                                    </StyledTableCell>
                                                     <StyledTableCell>{orderData.subject} </StyledTableCell>
                                                     <StyledTableCell>
                                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                                             {orderData.expert_id == "" ? (
                                                                 <span style={{ marginRight: '5px' }}>
-
                                                                     Unassigned
-
                                                                 </span>
                                                             ) : (
                                                                 <span style={{ marginRight: '5px' }}>
@@ -602,19 +637,7 @@ function AssignTaskConsole() {
                         </Box>
                     </div>
                 )}
-                {orders == null && (
-                    <Box sx={{
-                        width: 700,
-                        height: 250
-                    }}>
-                        <p>Select Subject First</p>
-                    </Box>
-                )}
 
-
-
-
-                {/* Add more details you want to display */}
             </Box>
 
 
@@ -624,9 +647,15 @@ function AssignTaskConsole() {
                 onChange={(event, newValue) => {
                     setBottomNavSub(newValue);
                     fetchDataForSubject(newValue);
-                    console.log("initial", bottomNavSub);
                 }}
-                sx={{ position: 'fixed', bottom: 0, marginBottom: 2, width: '100%', marginLeft: -10 }}>
+                sx={{
+                    position: 'fixed', bottom: 0, marginBottom: 2,
+                    display: 'inline-flex',
+                    width: '100%',
+                    left: 0, // Center the navigation horizontally
+                    justifyContent: 'center',
+                    backgroundColor: 'transparent',
+                }}>
 
                 <StyledBottomNavigationAction
                     label="New Order"
@@ -1022,8 +1051,7 @@ function AssignTaskConsole() {
                 </DialogActions>
             </Dialog>
 
-        </Container>
-
+        </div>
     )
 }
 

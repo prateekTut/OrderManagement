@@ -32,6 +32,9 @@ import FileUpload from './FileUpload';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
+import { PDFDownloadLink, BlobProvider } from '@react-pdf/renderer';
+import PDFDemo from './styles/PDFDemo';
+
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -345,7 +348,8 @@ function NewClientInvoice() {
       }
     }
   };
-
+  const [clientInvoice, setClientInvoice] = useState(null);
+  const [downloadPdf, setDownloadPdf] = useState(false);
 
   const insertInvoice = async () => {
     console.log(clientId);
@@ -431,8 +435,10 @@ function NewClientInvoice() {
           console.log(data);
           setAlertContent(data.message);
           setAlert(true);
-          // Log the response from the server
-          // You can perform additional actions here if needed
+          setClientInvoice(data);
+          setTimeout(() => {
+            setDownloadPdf(true);
+          }, 2000);
         })
         .catch((error) => {
           console.error('Error:', error);
@@ -442,6 +448,28 @@ function NewClientInvoice() {
       setDialogValidationOpen(true);
     }
 
+  };
+
+
+
+
+  const fetchInvoiceByNumber = (invoiceNumber) => {
+    console.log("Tutor ID", invoiceNumber);
+    fetch(FRONTEND_API + "/getInvoice/".concat(invoiceNumber), {
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        // do something with data
+        console.log("Invoices data", data);
+       /*  setClientInvoice(data);
+        setDownloadPdf(true); */
+      })
+      .catch((rejected) => {
+        console.log(rejected);
+      });
   };
 
   const generateAndSetInvoiceNumber = () => {
@@ -685,6 +713,39 @@ function NewClientInvoice() {
   //   }
   // };
 
+  function getFile(blob){
+    console.log(blob);
+     const formData = new FormData();
+      formData.append('invoicepdf', blob);
+      console.log(formData);
+
+      var requestOptions = {
+        method: "POST",
+        headers: {
+          'Authorization': 'Bearer ' + token
+        },
+        body: formData,
+      };
+
+      fetch(FRONTEND_API + 'uploadInvoice/'.concat(invoiceNumber), requestOptions)
+        .then((response) => {
+          if (response.status == 200) {
+            setStatus("200")
+            return response.json();
+          } else {
+            setStatus(response.status)
+            return response.json();
+          }
+        })
+        .then((data) => {
+          console.log(data);
+          setAlertContent(data.message);
+          setAlert(true);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+  }
 
   return (
     <Container sx={{ bgcolor: "#FBF1F7" }}>
@@ -769,12 +830,12 @@ function NewClientInvoice() {
                             <br />
                             Email: info@webz.com.pl
                           </p>
-                          <img src={Logo} alt='BigCo Inc. logo' id='invoicelogo' />
+
                         </Box>
                       </Paper>
                     </Grid>
                     <Grid item xs={6}>
-                      <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', backgroundColor: "#FBF1F7", height: "230px" }}>
+                      <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', backgroundColor: "#FBF1F7", height: "160px" }}>
                         <strong>Billed To-</strong>
                         {client != null && (
                           <div>
@@ -1158,11 +1219,25 @@ function NewClientInvoice() {
                 <div style={{ marginTop: '15px' }}>
                   <input type="file" accept=".doc, .pdf" onChange={handleFileChange} />
                 </div>
-                {tableData.length >= 1 && (
+              {/*   {tableData.length >= 1 && (
                   <Button variant="outlined" type='submit' sx={{ mt: 3, width: '200px' }} onClick={handlePrint}>
                     Print & Save as PDF
                   </Button>
-                )}
+                )} */}
+                  {downloadPdf && (
+                        <PDFDownloadLink document={<PDFDemo invoice={clientInvoice} />} fileName="example.pdf">
+                          {({ blob, url, loading, error }) => {
+                            if (!loading && blob) {
+                              // Use the blob as needed in your application logic
+                              console.log('PDF Blob:', blob);
+                              getFile(blob);
+                              // You can send the blob to the backend here or perform any other action
+                            }
+
+                            return null; // This will prevent rendering any visible content
+                          }}
+                        </PDFDownloadLink>
+                      )}
                 <Button variant="outlined" type='submit' sx={{ mt: 3, width: '200px' }} onClick={() => insertInvoice()}>
                   Save Invoice
                 </Button>
@@ -1197,7 +1272,6 @@ function NewClientInvoice() {
         <DialogContent dividers fullWidth sx={{ padding: 3 }}>
           <InputLabel id="demo-simple-select-label" sx={{ mb: 1 }}>Enter Discount</InputLabel>
           <TextField
-
             id="standard-basic"
             variant="standard"
             value={event.value}

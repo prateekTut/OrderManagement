@@ -52,7 +52,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-import { Circle, PartPaid, Paid, DueStatus, DateText, PaidAmt, ButtonContainer } from './styles/style';
+import { Circle, PartPaid, Paid, DueStatus, DateText, PaidAmt, ButtonContainer, Unpaid } from './styles/style';
 import TablePagination from '@mui/material/TablePagination';
 
 
@@ -88,9 +88,6 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 
 
 function AllInvoices() {
-
-  let params = useParams();
-  console.log(params, params.clientId);
 
   const [invoices, setInvoices] = useState([]);
   const [toggleLifetime, setToggleLifetime] = useState(false);
@@ -162,6 +159,7 @@ function AllInvoices() {
       const rawData = await fetchInvoicesData();
       if (rawData) {
         console.log("raw ", rawData);
+        //fetchInvoiceByNumber(rawData[0].invoice_number);
         setInvoices(rawData);
       }
     };
@@ -292,7 +290,7 @@ function AllInvoices() {
     formdata.append("payment_date", paymentDate)
     formdata.append("payment_method", paymentMode)
     console.log(selectedInvoice.amount, "Amount");
-    if (paidAmount != null && paidAmount != 0 && paidAmount != '' &&  paidAmount <= selectedInvoice.amount) {
+    if (paidAmount != null && paidAmount != 0 && paidAmount != '' && paidAmount <= selectedInvoice.amount) {
       var requestOptions = {
         method: "POST",
         body: formdata,
@@ -615,7 +613,7 @@ function AllInvoices() {
     setInvoiceForMail(foundInvoice);
     console.log("Send mail dialog");
     setOpenEmailDialog(true);
-   
+
   };
 
   const handleCloseEmailDialog = () => {
@@ -623,22 +621,22 @@ function AllInvoices() {
     setInvoiceForMail([]);
   };
 
-  
+
   const handleDownloadPDF = async (id) => {
     const foundInvoice = invoices.find((invoice) => invoice.id === id);
     console.log("In get pdf", foundInvoice.invoice_number);
     var invoiceNumber = foundInvoice.invoice_number;
-    
+
     try {
       const response = await fetch(FRONTEND_API + "download-invoice/".concat(invoiceNumber));
       if (!response.ok) {
         throw new Error(`Failed to download PDF: ${response.statusText}`);
       }
-  
+
       // Convert the response blob to a blob URL
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
-  
+
       // Create a link and trigger a click to download the PDF
       const link = document.createElement('a');
       link.href = url;
@@ -646,7 +644,7 @@ function AllInvoices() {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-  
+
       // Optionally, revoke the blob URL to free up resources
       URL.revokeObjectURL(url);
     } catch (error) {
@@ -654,9 +652,10 @@ function AllInvoices() {
     }
   };
 
+  
 
   return (
-    <Container sx={{ marginBottom: 10 }}>
+    <div style={{ marginRight: "10px" }}>
       {<Typography variant='h3' sx={{
         marginLeft: 2,
         paddingTop: 2,
@@ -682,7 +681,7 @@ function AllInvoices() {
 
                 <Grid item xs={2} sm={4} md={4}>
                   <IconWithText
-                    icon={<ReceiptIcon />} // Use the School icon
+                    icon={<ReceiptIcon />}
                     heading="Total Invoice"
                     content={invoices.length}
                     iconColor="#2E9EFF"
@@ -690,7 +689,7 @@ function AllInvoices() {
                 </Grid>
                 <Grid item xs={2} sm={4} md={4}>
                   <IconWithText
-                    icon={<MonetizationOnIcon />} // Use the Work icon
+                    icon={<MonetizationOnIcon />}
                     heading="Invoice Due"
                     content={countDueInvoices(invoices)}
                     iconColor="#2E9EFF"
@@ -698,7 +697,7 @@ function AllInvoices() {
                 </Grid>
                 <Grid item xs={2} sm={4} md={4}>
                   <IconWithText
-                    icon={<MoneyOffIcon />} // Use the School icon
+                    icon={<MoneyOffIcon />}
                     heading="Amount Due"
                     content={`₹${calculateTotalAmountDueInINR(invoices)}`}
                     iconColor="#1AAA3A"
@@ -889,10 +888,10 @@ function AllInvoices() {
             labelRowsPerPage="Invoices per page:"
             labelDisplayedRows={({ from, to, count }) => `Showing ${from} to ${to} Invoice of ${count} Invoice(s)`}
           />
-          <Table sx={{ minWidth: 650,  }} aria-label="simple table">
+          <Table sx={{ minWidth: 650, }} aria-label="simple table">
             <TableHead>
               <StyledTableRow>
-                <StyledTableCell>Invoice ID</StyledTableCell>
+                <StyledTableCell>#</StyledTableCell>
                 <StyledTableCell>Invoice Number</StyledTableCell>
                 <StyledTableCell >Invoice Date</StyledTableCell>
                 <StyledTableCell>Billed To</StyledTableCell>
@@ -905,10 +904,10 @@ function AllInvoices() {
 
             <TableBody>
               {(
-                filteredInvoices.slice(page * itemsPerPage, (page + 1) * itemsPerPage).map((user) => (
+                filteredInvoices.slice(page * itemsPerPage, (page + 1) * itemsPerPage).map((user, index) => (
 
-                  <StyledTableRow key={user.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                    <StyledTableCell component="th" scope="row">{user.id}</StyledTableCell>
+                  <StyledTableRow key={index + 1} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                    <StyledTableCell component="th" scope="row">{index + 1}</StyledTableCell>
                     <StyledTableCell>{user.invoice_number} </StyledTableCell>
                     <StyledTableCell>{formatDate(user.invoice_date)}</StyledTableCell>
                     <StyledTableCell>{user.name}</StyledTableCell>
@@ -927,9 +926,13 @@ function AllInvoices() {
                       )}
 
 
-                      {getDueStatus(user.due_date) !== null && getPaymentStatus(user.amount, user.paid_amount) !== 'Paid' && (
+                      {getDueStatus(user.due_date) !== null && getPaymentStatus(user.amount, user.paid_amount) != 'Paid' && (
                         <DueStatus>{getDueStatus(user.due_date, user.amount, user.paid_amount)}</DueStatus>
                       )}
+                      {(user.paid_amount == null && (
+                        <Unpaid>Unpaid</Unpaid>
+
+                      ))}
 
                       <DateText>{formatDate(user.due_date)}</DateText>
                     </StyledTableCell>
@@ -950,62 +953,60 @@ function AllInvoices() {
                           </div>
                         )
                         }
-                        
-                          <div className="container-icon">
-                            <div role='button' onClick={(e) => handleClick(e, user.id)}>
-                              <MoreHorizIcon fontSize='small' />
-                              <div className="text">More</div>
-                            </div>
 
-                            <Menu
-                              id={`menu-${user.id}`} 
-                              anchorEl={anchorEl}
-                              open={menuOpen} 
-                              onClose={() => setMenuOpen(false)}
-                            >
+                        <div className="container-icon">
+                          <div role='button' onClick={(e) => handleClick(e, user.id)}>
+                            <MoreHorizIcon fontSize='small' />
+                            <div className="text">More</div>
+                          </div>
 
-                              <MenuList >
-                                <MenuItem onClick={() => handleOpenEmailDialog(selectedInvoiceId)}>
-                                  <ListItemIcon>
-                                    <MailIcon fontSize="small" />
-                                  </ListItemIcon>
-                                  <ListItemText>Send Email</ListItemText>
-                                </MenuItem>
+                          <Menu
+                            id={`menu-${user.id}`}
+                            anchorEl={anchorEl}
+                            open={menuOpen}
+                            onClose={() => setMenuOpen(false)}
+                          >
 
-                                {/* <MenuItem>
+                            <MenuList >
+                              <MenuItem onClick={() => handleOpenEmailDialog(selectedInvoiceId)}>
+                                <ListItemIcon>
+                                  <MailIcon fontSize="small" />
+                                </ListItemIcon>
+                                <ListItemText>Send Email</ListItemText>
+                              </MenuItem>
+
+                              {/* <MenuItem>
                                   <ListItemIcon>
                                     <NotificationsNoneIcon fontSize="small" />
                                   </ListItemIcon>
                                   <ListItemText>Send Reminder by Email</ListItemText>
                                 </MenuItem>*/}
 
-                                <MenuItem onClick= {() => handleDownloadPDF(selectedInvoiceId)}>
-                                  <ListItemIcon>
-                                    <DownloadIcon fontSize="small" />
-                                  </ListItemIcon>
-                                  <ListItemText>Download</ListItemText>
-                                </MenuItem> 
+                              <MenuItem onClick={() => handleDownloadPDF(selectedInvoiceId)}>
+                                <ListItemIcon>
+                                  <DownloadIcon fontSize="small" />
+                                </ListItemIcon>
+                                <ListItemText>Download</ListItemText>
+                              </MenuItem>
 
-                                <MenuItem onClick={() => handleClickOpenWarn(selectedInvoiceId)}>
-                                  <ListItemIcon>
-                                    <DeleteIcon fontSize="small" />
-                                  </ListItemIcon>
-                                  <ListItemText>Delete</ListItemText>
-                                </MenuItem>
+                              <MenuItem onClick={() => handleClickOpenWarn(selectedInvoiceId)}>
+                                <ListItemIcon>
+                                  <DeleteIcon fontSize="small" />
+                                </ListItemIcon>
+                                <ListItemText>Delete</ListItemText>
+                              </MenuItem>
 
-                                <MenuItem onClick={() => handleCloseMenu()}>
-                                  <ListItemIcon>
-                                    <CancelIcon fontSize="small" />
-                                  </ListItemIcon>
-                                  <ListItemText>Cancel</ListItemText>
-                                </MenuItem>
-                              </MenuList>
+                              <MenuItem onClick={() => handleCloseMenu()}>
+                                <ListItemIcon>
+                                  <CancelIcon fontSize="small" />
+                                </ListItemIcon>
+                                <ListItemText>Cancel</ListItemText>
+                              </MenuItem>
+                            </MenuList>
 
-                            </Menu>
-                          </div>
+                          </Menu>
+                        </div>
                       </div>
-
-
                     </StyledTableCell>
                   </StyledTableRow>
                 )))}
@@ -1151,27 +1152,27 @@ function AllInvoices() {
       </Dialog>
 
       <Dialog
-          open={openWarn}
-          onClose={handleCloseWarn}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">
-            {"Are you sure you want to delete this user?"}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              After selecting this step this user will be permanently deleted.
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseWarn}>Close</Button>
-            <Button onClick={handleInvoiceDelete} autoFocus>
-              Ok
-            </Button>
-          </DialogActions>
-        </Dialog>
-    </Container>
+        open={openWarn}
+        onClose={handleCloseWarn}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Are you sure you want to delete this user?"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            After selecting this step this user will be permanently deleted.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseWarn}>Close</Button>
+          <Button onClick={handleInvoiceDelete} autoFocus>
+            Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
   )
 }
 

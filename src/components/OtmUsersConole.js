@@ -112,7 +112,7 @@ function OtmUsersConsole() {
   }
 
   return (
-    <Container>
+    <div style={{marginRight: '10px'}}>
       <Typography variant='h1' sx={{
           marginLeft: 2,
           paddingTop: 2,
@@ -202,7 +202,7 @@ function OtmUsersConsole() {
       </Box>
 
 
-    </Container>
+    </div>
   )
 }
 

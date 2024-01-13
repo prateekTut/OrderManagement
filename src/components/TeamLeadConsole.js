@@ -77,7 +77,7 @@ function TeamLeadConsole() {
     );
 
     return (
-        <Container>
+        <div style={{marginRight: '10px'}}>
             <Typography variant='h1' sx={{
                 marginLeft: 2,
                 paddingTop: 2,
@@ -167,7 +167,7 @@ function TeamLeadConsole() {
             </Box>
 
 
-        </Container>
+        </div>
     )
 }
 

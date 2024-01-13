@@ -28,7 +28,6 @@ import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import { Box, Container, CssBaseline, Paper } from "@mui/material";
 import NewClientInvoice from "./components/NewClientInvoice";
 import AddFreelancers from "./components/AddFreelancers";
-import StudentInvoices from "./components/StudentInvoices";
 import GenerateVendorInvoice from "./components/GenerateVendorInvoice";
 
 import AllInvoices from "./components/AllInvoices";
@@ -36,6 +35,8 @@ import GenerateInvoice from "./components/GenerateInvoice";
 import EditInvoices from "./components/EditInvoices";
 import AssignTaskConsole from "./components/AssignTaskConsole";
 import ExpenseManagement from "./components/ExpenseManagement";
+import ViewInvocie from "./components/ViewInvoice";
+import PDFDemo from "./components/styles/PDFDemo";
 
 
 // Create a styled component for the Paper element
@@ -60,9 +61,11 @@ const theme = createTheme({
     },
     background: {
       backgroundColor: '#E9D8E4'
-    }
+    },
+    
   },
   typography: {
+    fontSize: 13,
     fontFamily: 'Roboto, sans-serif',
     h1: {
       fontSize: '3rem',
@@ -121,12 +124,12 @@ function App() {
            
             <Route path="/expense-manage" element={<ExpenseManagement />} />
          
-            <Route path="/generated-invoice/:invoiceId" element={<StudentInvoices />} />
+            <Route path="/generated-invoice/:invoiceId" element={<ViewInvocie />} />
 
             <Route path='/edit-invoices/:id' element={<EditInvoices />} />
 
             <Route path="/order-management" element={<AssignTaskConsole />} />
-
+            <Route path = '/pdf' element={<PDFDemo />}/>
           </Route>
 
           <Route element={<RequireAuth allowedRoles={["admin", "hr", "otm", "lead", "expert"]} />}>

@@ -7,7 +7,7 @@ export const StyledTableCell = styled(TableCell)(({ theme }) => ({
         backgroundColor: "#343F71",
         color: theme.palette.common.white,
         borderRight: `1px solid ${theme.palette.common.white}`, // Add border to the right side
-
+        fontWeight: 'bold', // Make text bold in header cells
     },
     [`&.${tableCellClasses.body}`]: {
         fontSize: 14,

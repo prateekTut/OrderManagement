@@ -42,7 +42,7 @@ export default function EditClientsDetails() {
     const [Business_name, setBusiness_name] = useState("");
     const token = localStorage.getItem("token")
 
-
+    const [clientNameValid, setClientNameValid] = useState(null);
     const [clientPasswordValid, setClientPasswordValid] = useState(null);
     const [clientPhoneValid, setClientPhoneValid] = useState(null);
     const [clientEmailValid, setClientEmailValid] = useState(null);
@@ -51,7 +51,7 @@ export default function EditClientsDetails() {
 
     const [dialogOpen, setDialogOpen] = useState(false);
 
-
+    const validateName = (value) => value.length != 0;
     const validatePassword = (value) => value.length >= 6;
     const validatePhone = (value) =>  !isNaN(value) && value.length == 10;
     const validateEmail = (value) =>  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -60,6 +60,7 @@ export default function EditClientsDetails() {
 
     const resetValidationFields = () => {
 
+        setClientNameValid(null);
       setClientPhoneValid(null);
       setClientEmailValid(null);
       setClientPasswordValid(null);
@@ -126,6 +127,13 @@ export default function EditClientsDetails() {
       setEmail(newValue)
       setClientEmailValid(validateEmail(newValue));
     }
+
+    const onNameChange = (event) =>{
+      const newValue = event.target.value;
+      setFirstName(newValue)
+      setClientNameValid(validateName(newValue));
+    }
+
     const onPasswordChange = (event) =>{
       const newValue = event.target.value;
       setPassword(newValue)
@@ -151,7 +159,7 @@ export default function EditClientsDetails() {
     
     const handleSubmit = (event) => {
       event.preventDefault();
-      if(clientEmailValid || clientPasswordValid || clientPhoneValid || clientUnivValid ){
+      if(clientEmailValid || clientNameValid || clientPhoneValid || clientUnivValid ){
         if(user == 'student'){
           var formdata = new FormData();
           formdata.append("Client_name", firstName);
@@ -260,10 +268,12 @@ export default function EditClientsDetails() {
                                       required
                                       fullWidth
                                       id="firstName"
-                                      label="First Name"
+                                      label="Name"
                                       name="firstName"
                                       value={firstName}
-                                      disabled
+                                        onChange={onNameChange}
+                                        error={clientNameValid == false}
+                                        helperText={clientNameValid == false && 'Invalid Email'}
                                   />
                               </Grid>
                               
@@ -283,7 +293,7 @@ export default function EditClientsDetails() {
                               
                           />
 
-                          <TextField
+                          {/* <TextField
                               margin="normal"
                               required
                               fullWidth
@@ -296,7 +306,7 @@ export default function EditClientsDetails() {
                               onChange={onPasswordChange}
                               error={clientPasswordValid == false}
                               helperText={clientPasswordValid == false && 'Invalid Password. Must be greater than 6 characters.'}
-                          />
+                          /> */}
                           <TextField
                               margin="normal"
                               required

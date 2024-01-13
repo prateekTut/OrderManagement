@@ -150,7 +150,7 @@ function ExpertsConsole() {
 
   return (
 
-    <Box>
+    <Box sx={{ marginRight: 2,}}>
       <Typography variant='h1' sx={{
         marginLeft: 2,
         paddingTop: 4,
@@ -160,15 +160,13 @@ function ExpertsConsole() {
       }}>
         Experts
       </Typography>
-      <Container>
+      <div>
         <Box
           sx={{
             display: "flex",
             justifyContent: "flex-end",
             alignItems: "end",
             flexDirection: "column",
-
-            marginRight: 2,
           }}
         >
           <Button
@@ -204,7 +202,6 @@ function ExpertsConsole() {
                 alignItems: "end",
                 flexDirection: "column",
                 marginBottom: 2,
-                marginRight: 2,
               }}
             >
 
@@ -307,7 +304,7 @@ function ExpertsConsole() {
           </DialogActions>
         </Dialog>
 
-      </Container>
+      </div>
     </Box>
 
   )

@@ -128,7 +128,7 @@ function ClientVendorConsole() {
   };
 
   return (
-    <Container>
+    <div>
       <Typography variant='h1' sx={{
         marginLeft: 2,
         paddingTop: 2,
@@ -250,7 +250,7 @@ function ClientVendorConsole() {
           </Button>
         </DialogActions>
       </Dialog>
-    </Container>
+    </div>
 
   )
 }

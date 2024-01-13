@@ -66,18 +66,18 @@ function generateInvoiceNumber() {
 function EditInvoices() {
 
   const currencies = [
-    /* {
+    {
       value: '$',
       label: 'US Dollar( USD, $)',
-    }, */
+    },
     {
       value: '₹',
       label: 'Indian Rupee(INR, ₹)',
     },
-    /*  {
+     {
        value: '£',
        label: 'British Pound Sterling(GBP, £)',
-     }, */
+     },
   ];
   
   let params = useParams();
@@ -233,6 +233,27 @@ function EditInvoices() {
     content: () => componentRef.current,
   });
 
+  const [selectedFile, setSelectedFile] = useState(null);
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+
+    // Check if a file is selected
+    if (file) {
+      // Check file type
+      const fileType = file.name.split('.').pop().toLowerCase();
+      if (fileType === 'doc' || fileType === 'pdf') {
+        // Check file size (2MB limit)
+        if (file.size <= 2 * 1024 * 1024) {
+          setSelectedFile(file);
+        } else {
+          alert('File size exceeds 2MB limit.');
+        }
+      } else {
+        alert('Invalid file type. Please select a DOC or PDF file.');
+      }
+    }
+  };
+
 
   const updateInvoice = () => {
     //console.log(clientId);
@@ -241,8 +262,9 @@ function EditInvoices() {
 
     if (invoiceDate != null && dueDate != null) {
 
-      const jsonData = {
-        data: data,            // Your JSON data
+      const formData = new FormData();
+      formData.append('data', JSON.stringify({
+        data: data,
         invoiceNumber: invoiceNumber,
         invoiceDate: invoiceDate,
         dueDate: dueDate,
@@ -252,18 +274,18 @@ function EditInvoices() {
         currency: currencyValue,
         total: getTotal(),
         totalAmount: getTotalAmount(),
+        clientId: clientId,
         subTax: saveSubTax,
-        clientId: clientId
-      };
-      const jsonPayload = JSON.stringify(jsonData);
+      }));
+
+      formData.append('document', selectedFile);
 
       var requestOptions = {
         method: "POST",
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + token
         },
-        body: jsonPayload,
+        body: formData,
       };
 
       fetch(FRONTEND_API + 'updateInvoice', requestOptions)
@@ -847,6 +869,7 @@ function EditInvoices() {
                       </Grid>
                       <Grid item xs={3}>
                         <Typography align="right" variant="subtitle1">
+                        <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
                           {isNaN(getTotalAmount()) ? 0 : getTotalAmount().toFixed(2)}
                         </Typography>
                       </Grid>
@@ -860,6 +883,7 @@ function EditInvoices() {
                           </Grid>
                           <Grid item xs={3}>
                             <Typography align="right" variant="subtitle1">
+                            <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
                               {isNaN(getSgst()) ? 0 : getSgst().toFixed(2)}
                             </Typography>
                           </Grid>
@@ -871,6 +895,7 @@ function EditInvoices() {
                           </Grid>
                           <Grid item xs={3}>
                             <Typography align="right" variant="subtitle1">
+                            <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
                               {isNaN(getCgst()) ? 0 : getCgst().toFixed(2)}
                             </Typography>
                           </Grid>
@@ -886,6 +911,7 @@ function EditInvoices() {
                           </Grid>
                           <Grid item xs={3}>
                             <Typography align="right" variant="subtitle1">
+                            <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
                               {isNaN(getIgst()) ? 0 : getIgst().toFixed(2)}
                             </Typography>
                           </Grid>
@@ -901,6 +927,7 @@ function EditInvoices() {
                           </Grid>
                           <Grid item xs={3}>
                             <Typography align="right" variant="subtitle1">
+                            <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
                               (+){isNaN(getIgst()) ? 0 : getIgst().toFixed(2)}
                             </Typography>
                           </Grid>
@@ -917,6 +944,7 @@ function EditInvoices() {
                           </Grid>
                           <Grid item xs={3}>
                             <Typography align="right" variant="subtitle1">
+                            <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
                               (-){isNaN(getDiscount()) ? 0 : getDiscount().toFixed(2)}
                             </Typography>
                           </Grid>
@@ -933,6 +961,7 @@ function EditInvoices() {
                       </Grid>
                       <Grid item xs={3}>
                         <Typography align="right" variant="h5" fontWeight="bold">
+                        <span style={{ marginRight: '5px', marginTop: '0px', fontWeight: "bold" }}>{currencyValue}</span>
                           {isNaN(getTotal()) ? 0 : getTotal().toFixed(2)}
                         </Typography>
                       </Grid>
@@ -951,6 +980,9 @@ function EditInvoices() {
                   </Button>
 
                 </Box>
+                <div style={{ marginTop: '15px' }}>
+                  <input type="file" accept=".doc, .pdf" onChange={handleFileChange} />
+                </div>
                 {tableData.length >= 1 && (
                   <Button variant="outlined" type='submit' sx={{ mt: 3, width: '200px' }} onClick={handlePrint}>
                     Print & Save as PDF

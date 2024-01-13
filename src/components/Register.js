@@ -21,6 +21,7 @@ import { useState } from 'react';
 import { FRONTEND_API } from "./urls";
 import { event } from 'jquery';
 import { MuiPhone } from './MuiPhone';
+import { ContentCutOutlined } from '@mui/icons-material';
 
 const defaultTheme = createTheme();
 
@@ -271,8 +272,12 @@ export default function Register() {
 
           fetch(FRONTEND_API + "addclient", requestOptions)
             .then((response) => {
+              console.log(response)
               if (response.status == 200) {
                 setStatus("200")
+                return response.json();
+              }else{
+                setStatus("400")
                 return response.json();
               }
             })
@@ -282,7 +287,7 @@ export default function Register() {
               resetFormFields();
               resetValidationFields();
             })
-            .catch((error) => alert("error", error));
+            .catch((error) => console.log("error", error));
         } else {
           setDialogOpen(true);
           console.log(userType, "check");
@@ -330,7 +335,7 @@ export default function Register() {
   }
 
   return (
-    <Container>
+    <Box>
       <Grid >
         <CssBaseline />
         <Grid sx={{ marginTop: 2 }}>
@@ -366,7 +371,7 @@ export default function Register() {
               </RadioGroup>
             </FormControl>
 
-            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1, width: '100%', paddingLeft: 30, paddingRight: 30 }}>
               {userType == "freelancer" || userType == "user" || userType == "clients" ? (
                 <div>
                   <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
@@ -562,6 +567,6 @@ export default function Register() {
           </Box>
         </Grid>
       </Grid>
-    </Container>
+    </Box>
   );
 }

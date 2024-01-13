@@ -11,18 +11,9 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
 import { Link, useNavigate } from 'react-router-dom';
-import Collapse from '@mui/material/Collapse';
 import { Badge, Button, Menu, MenuItem, Paper } from '@mui/material';
 import { AccountCircle } from '@mui/icons-material';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import { FRONTEND_API } from "./urls";
 import SideItems from './SideItems';
@@ -99,32 +90,45 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-export default function MiniDrawer() {
+const NavBarMain = ({ onDrawerOpen, onDrawerClose }) => {
   const theme = useTheme();
 
   const [anchorEl, setAnchorEl] = React.useState(null);
+
   const [open, setOpen] = React.useState(false);
-  const [openSubmenu, setOpenSubmenu] = React.useState(false);
+
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
   const email = localStorage.getItem('email');
-  const roles = localStorage.getItem("roles")
 
-  const navigate = useNavigate();
-
-  const handleSubMenuClick = () => {
-    setOpenSubmenu(!open);
-  };
-
-  const handleDrawerOpen = () => {
+  /*   const handleDrawerOpen = () => {
     if (!open)
       setOpen(true);
     else
       setOpen(false);
-  };
+  }; */
+
+  var isClickedOpen = Boolean(null);
+
+  const handleDrawerOpen = () => {
+
+    console.log("Drawer open", onDrawerOpen);
+    if (!open) {
+      isClickedOpen = true
+      console.log("is clicked open", isClickedOpen);
+      onDrawerOpen();
+    } // Call the onDrawerOpen function passed from the parent
+    else {
+      console.log(onDrawerClose, isClickedOpen)
+      isClickedOpen = false
+      onDrawerClose();
+    }
+    setOpen(!open);
+    console.log(open) // Toggle the 'open' state
+  }
 
   const handleDrawerClose = () => {
     setOpen(false);
@@ -160,16 +164,20 @@ export default function MiniDrawer() {
         console.error('Error logging out:', error);
       });
   };
-  
-  
-  //const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseEnter = () => {
-    setOpen(true);
+    if (!isClickedOpen) {
+      setOpen(true)
+    }
   };
 
   const handleMouseLeave = () => {
-    setOpen(false);
+    console.log("Mouse Leave", isClickedOpen);
+    if (!isClickedOpen) {
+      console.log("is clicked open", isClickedOpen)
+      console.log("open is getting false here!!")
+      setOpen(false);
+    }
   };
 
   const menuId = 'primary-search-account-menu';
@@ -260,7 +268,7 @@ export default function MiniDrawer() {
             <IconButton
               color="inherit"
               aria-label="open drawer"
-              onClick={handleDrawerOpen}
+              onClick={() => { handleDrawerOpen(); console.log("click") }}
               edge="start"
               sx={{
                 marginRight: 5,
@@ -311,24 +319,26 @@ export default function MiniDrawer() {
           width: open ? 200 : 64,
           transition: 'width 0.3s ease-in-out',
         }}
+      >
+        <Toolbar
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            px: [1],
+          }}
         >
-          <Toolbar
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-end',
-              px: [1],
-            }}
-          >
-            <IconButton onClick={handleDrawerOpen}>
+          {/*  <IconButton onClick={() => { handleDrawerOpen(); console.log('IconButton Clicked'); }}>
               <ChevronLeftIcon />
-            </IconButton>
-          </Toolbar>
-          <Divider />
-          <List component="nav">
-            <SideItems />
-          </List>
-        </Drawer>
+            </IconButton> */}
+        </Toolbar>
+        <Divider />
+        <List component="nav">
+          <SideItems />
+        </List>
+      </Drawer>
     </Box>
   );
 }
+
+export default NavBarMain
