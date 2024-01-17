@@ -25,6 +25,7 @@ import { FRONTEND_API } from "./urls";
 import AddIcon from '@mui/icons-material/Add';
 import { StyledTableCell, StyledTableRow } from './styles/TableStyles';
 
+import TablePagination from '@mui/material/TablePagination';
 
 function ExpertsConsole() {
   const [expertUsers, setExpertUsers] = useState([]);
@@ -147,10 +148,14 @@ function ExpertsConsole() {
   const moveToRegister = () => {
     navigate('/register');
   }
-
+  const [page, setPage] = useState(0);
+  const itemsPerPage = 8;
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
   return (
 
-    <Box sx={{ marginRight: 2,}}>
+    <Box sx={{ marginRight: 2, }}>
       <Typography variant='h1' sx={{
         marginLeft: 2,
         paddingTop: 4,
@@ -175,8 +180,26 @@ function ExpertsConsole() {
             onClick={moveToRegister}>
             Add Expert
           </Button>
+          <Box
+            sx={{
+              display: "flex",
+              marginTop: 2,
+            }}
+          >
+
+
+            <TextField
+              label="Search"
+              variant="outlined"
+              size="small"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+
+
+          </Box>
         </Box>
-        <FormControl fullWidth sx={{ marginTop: 3 }}>
+        <FormControl fullWidth >
 
           <FormLabel id="demo-row-radio-buttons-group-label">Select Expert Type</FormLabel>
 
@@ -195,32 +218,23 @@ function ExpertsConsole() {
 
         {filteredExperts != '' && (
           <Box>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                alignItems: "end",
-                flexDirection: "column",
-                marginBottom: 2,
-              }}
-            >
 
-
-              <TextField
-                label="Search"
-                variant="outlined"
-                size="small"
-                value={searchQuery}
-                onChange={handleSearchChange}
-              />
-
-
-            </Box>
             <TableContainer component={Paper} sx={{
               marginBottom: 6,
               marginRight: 2
             }}
               aria-label="customized table" >
+              <TablePagination
+                className='table-page'
+                rowsPerPageOptions={[itemsPerPage]}
+                component="div"
+                count={expertUsers.length}
+                rowsPerPage={itemsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                labelRowsPerPage="Invoices per page:"
+                labelDisplayedRows={({ from, to, count }) => `Showing ${from} to ${to} Invoice of ${count} Invoice(s)`}
+              />
               <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                   <StyledTableRow>
@@ -231,13 +245,13 @@ function ExpertsConsole() {
                     <StyledTableCell >Address</StyledTableCell>
                     {/* <StyledTableCell >Invoice</StyledTableCell> */}
                     <StyledTableCell >Operations</StyledTableCell>
-                
+
                   </StyledTableRow>
                 </TableHead>
 
                 <TableBody>
                   {(
-                    filteredExperts.map((user) => (
+                    filteredExperts.slice(page * itemsPerPage, (page + 1) * itemsPerPage).map((user, index) => (
 
                       <StyledTableRow key={user.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                         <StyledTableCell component="th" scope="row">{user.firstname + " " + user.lastname}</StyledTableCell>
@@ -245,7 +259,7 @@ function ExpertsConsole() {
                         <StyledTableCell>{user.contact}</StyledTableCell>
                         <StyledTableCell>{user.DOB}</StyledTableCell>
                         <StyledTableCell>{user.address}</StyledTableCell>
-                        
+
                         {/* <StyledTableCell>
                              <Button variant="contained" type='submit' color="success" 
                                onClick={() => tutorsinvoice(user.id)}

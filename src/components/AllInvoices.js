@@ -154,17 +154,28 @@ function AllInvoices() {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
+
+  const fetchInvoiceData = async () => {
+    try {
       const rawData = await fetchInvoicesData();
       if (rawData) {
-        console.log("raw ", rawData);
-        //fetchInvoiceByNumber(rawData[0].invoice_number);
-        setInvoices(rawData);
+        // Sort invoices by date in descending order
+        const sortedInvoices = rawData.sort((a, b) => {
+          return new Date(b.invoice_date) - new Date(a.invoice_date);
+        });
+
+        // Update the state with the sorted invoices
+        setInvoices(sortedInvoices);
       }
-    };
-    fetchData();
-  }, [setInvoices]);
+    } catch (error) {
+      console.error("Error fetching invoices:", error);
+    }
+  };
+
+
+  useEffect(() => {
+    fetchInvoiceData();
+  }, []);
 
 
   const viewOrdersInvoice = (invoiceId) => {
@@ -307,7 +318,7 @@ function AllInvoices() {
           setPaymentDate(null);
           setPaymentMode(null);
           handleClosePay();
-          fetchInvoicesData();
+          fetchInvoiceData();
         })
         .catch((rejected) => {
           console.log(rejected);
@@ -589,14 +600,7 @@ function AllInvoices() {
       .then((data) => {
         // do something with data
         console.log(data);
-        const fetchData = async () => {
-          const rawData = await fetchInvoicesData();
-          if (rawData) {
-            console.log("raw ", rawData);
-            setInvoices(rawData);
-          }
-        };
-        fetchData();
+       fetchInvoiceData();
         handleCloseWarn();
       })
       .catch((rejected) => {
@@ -652,7 +656,7 @@ function AllInvoices() {
     }
   };
 
-  
+
 
   return (
     <div style={{ marginRight: "10px" }}>

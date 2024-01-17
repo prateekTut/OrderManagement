@@ -450,28 +450,6 @@ function NewClientInvoice() {
 
   };
 
-
-
-
-  const fetchInvoiceByNumber = (invoiceNumber) => {
-    console.log("Tutor ID", invoiceNumber);
-    fetch(FRONTEND_API + "/getInvoice/".concat(invoiceNumber), {
-      headers: {
-        'Authorization': 'Bearer ' + token
-      }
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        // do something with data
-        console.log("Invoices data", data);
-       /*  setClientInvoice(data);
-        setDownloadPdf(true); */
-      })
-      .catch((rejected) => {
-        console.log(rejected);
-      });
-  };
-
   const generateAndSetInvoiceNumber = () => {
     const newInvoiceNumber = generateInvoiceNumber();
     setInvoiceNumber(newInvoiceNumber);
@@ -879,6 +857,7 @@ function NewClientInvoice() {
                       mt: 3
                     }}
                       aria-label="customized table" >
+                      
                       <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead fullWidth>
                           <StyledTableRow>

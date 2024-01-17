@@ -325,8 +325,8 @@ const PDFDemo = ({ invoice }) => (
                         <Text style={styles.columnData}>{invoice.data.currency}{data.tax_rate}</Text>
                      )}
 
-                     <Text style={styles.columnData}>{invoice.data.currency}{data.quantity}</Text>
-                     <Text style={styles.columnData}>{data.rate}</Text>
+                     <Text style={styles.columnData}>{data.quantity}</Text>
+                     <Text style={styles.columnData}>{invoice.data.currency}{data.rate}</Text>
 
                      {invoice.data.tax_type != "" ? (
                         <Text style={styles.columnData}>{invoice.data.currency}{data.amount}</Text>

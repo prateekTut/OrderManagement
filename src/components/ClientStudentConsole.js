@@ -22,252 +22,267 @@ import { DialogContentText } from '@mui/material';
 
 import { FRONTEND_API } from "./urls";
 import { StyledTableCell, StyledTableRow } from './styles/TableStyles';
-
+import TablePagination from '@mui/material/TablePagination';
 
 function ClientStudentConsole() {
-    const [client, setClient] = useState([]);
-    const token = localStorage.getItem("token")
-    const navigate = useNavigate();
+  const [client, setClient] = useState([]);
+  const token = localStorage.getItem("token")
+  const navigate = useNavigate();
 
-    const [searchQuery, setSearchQuery] = useState('');
-    const [open, setOpen] = React.useState(false);
-    const [idToUpdate, setIdToUpdate] = useState('');
-    const [phone, setPhone] = useState("");
-    const [University, setUniversity] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [open, setOpen] = React.useState(false);
+  const [idToUpdate, setIdToUpdate] = useState('');
+  const [phone, setPhone] = useState("");
+  const [University, setUniversity] = useState("");
 
-    const [clientPhoneValid, setClientPhoneValid] = useState(null);
+  const [clientPhoneValid, setClientPhoneValid] = useState(null);
 
-    const [clientUnivValid, setClientUnivValid] = useState(null);
-    
-    const [dialogOpen, setDialogOpen] = useState(false);
+  const [clientUnivValid, setClientUnivValid] = useState(null);
 
-
-    const validatePhone = (value) =>  !isNaN(value) && value.length == 10;
-    const validateUniv = (value) => value.length >= 4;
+  const [dialogOpen, setDialogOpen] = useState(false);
 
 
-    const [openWarn, setOpenWarn] = React.useState(false);
-    const [deleteId, setDeleteId] = useState("");
+  const validatePhone = (value) => !isNaN(value) && value.length == 10;
+  const validateUniv = (value) => value.length >= 4;
 
-    const viewBudgetData = (userId) => {
-      console.log("student ID", userId);
-      navigate(`/viewbudget/${userId}`);
-    };
-    
-    const viewInvoiceData = (userId) => {
-      console.log("student ID", userId);
-      navigate(`/student-invoice/${userId}`);
-    };
 
-    const viewOrdersHistory = (clientId) => {
-      console.log("student ID", clientId);
-      navigate(`/client-invoice/${clientId}`);
-    };
-    
-    
-    const updateProfile = (clientId) => {
-      navigate(`/editClients/${clientId}`);
-    };
+  const [openWarn, setOpenWarn] = React.useState(false);
+  const [deleteId, setDeleteId] = useState("");
 
-    const fetchClientsData = async () => {
-      try{
-        const response = await fetch(FRONTEND_API + "getstudentclientdata", {
-          headers: {
-            'Authorization' : 'Bearer ' + token
-          }
-        });
-        const rawData = await response.json();
-        console.log(rawData)
-        return rawData;
-      }
-      catch(rejected)  {
-        console.log(rejected);
-        return null
-      }
-    };
+  const viewBudgetData = (userId) => {
+    console.log("student ID", userId);
+    navigate(`/viewbudget/${userId}`);
+  };
 
-    useEffect(() => {
-      const fetchData = async () => {
-        const rawData = await fetchClientsData();
-        if (rawData) {
-          console.log("raw ", rawData);
-          setClient(rawData);
-        }
-      };
-      fetchData();
-    }, [setClient]);
+  const viewInvoiceData = (userId) => {
+    console.log("student ID", userId);
+    navigate(`/student-invoice/${userId}`);
+  };
 
-    const handleSearchChange = (event) => {
-      setSearchQuery(event.target.value);
-    };
+  const viewOrdersHistory = (clientId) => {
+    console.log("student ID", clientId);
+    navigate(`/client-invoice/${clientId}`);
+  };
 
-    const filteredClients = client.filter((client) =>
-      client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      client.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      client.university.toLowerCase().includes(searchQuery.toLowerCase())
-      // ... add more fields to search
-    );
 
-    const handleClickOpenWarn = (id) => {
-      setOpenWarn(true);
-      setDeleteId(id);
-    };
-  
-    const handleCloseWarn = () => {
-      setOpenWarn(false);
-    };
-  
-    const handleUserDelete = () => {
-      var requestOptions = {
-        method: "POST",
+  const updateProfile = (clientId) => {
+    navigate(`/editClients/${clientId}`);
+  };
+
+  const fetchClientsData = async () => {
+    try {
+      const response = await fetch(FRONTEND_API + "getstudentclientdata", {
         headers: {
           'Authorization': 'Bearer ' + token
         }
-      };
-  
-      fetch(FRONTEND_API + "delete_clients/".concat(deleteId), requestOptions)
-        .then((res) => res.json())
-        .then((data) => {
-          // do something with data
-          console.log(data);
-          const fetchData = async () => {
-            const rawData = await fetchClientsData();
-            if (rawData) {
-              console.log("raw ", rawData);
-              setClient(rawData);
-            }
-          };
-          fetchData();
-          handleCloseWarn();
-        })
-        .catch((rejected) => {
-          console.log(rejected);
-        });
+      });
+      const rawData = await response.json();
+      console.log(rawData)
+      return rawData;
+    }
+    catch (rejected) {
+      console.log(rejected);
+      return null
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const rawData = await fetchClientsData();
+      if (rawData) {
+        console.log("raw ", rawData);
+        setClient(rawData);
+      }
+    };
+    fetchData();
+  }, [setClient]);
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const filteredClients = client.filter((client) =>
+    client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    client.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    client.university.toLowerCase().includes(searchQuery.toLowerCase())
+    // ... add more fields to search
+  );
+
+  const handleClickOpenWarn = (id) => {
+    setOpenWarn(true);
+    setDeleteId(id);
+  };
+
+  const handleCloseWarn = () => {
+    setOpenWarn(false);
+  };
+
+  const handleUserDelete = () => {
+    var requestOptions = {
+      method: "POST",
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
     };
 
+    fetch(FRONTEND_API + "delete_clients/".concat(deleteId), requestOptions)
+      .then((res) => res.json())
+      .then((data) => {
+        // do something with data
+        console.log(data);
+        const fetchData = async () => {
+          const rawData = await fetchClientsData();
+          if (rawData) {
+            console.log("raw ", rawData);
+            setClient(rawData);
+          }
+        };
+        fetchData();
+        handleCloseWarn();
+      })
+      .catch((rejected) => {
+        console.log(rejected);
+      });
+  };
 
-    return (
-      <div>
+const [page, setPage] = useState(0);
+  const itemsPerPage = 8;
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+  return (
+    <div>
       <Typography variant='h1' sx={{
-          marginLeft: 2,
-          paddingTop: 2,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          }}>
-            Students
-          </Typography>
-         <Box sx={{
-            display:"flex",
-            justifyContent:"end",
-            alignItems:"end",
-            marginBottom: 2,
-            marginTop: 2,
-            marginRight: 2
-            }}>  
-            <TextField
-              label="Search"
-              variant="outlined"
-              size="small"
-              value={searchQuery}
-              onChange={handleSearchChange}
-          />
-        </Box>
+        marginLeft: 2,
+        paddingTop: 2,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}>
+        Students
+      </Typography>
+      <Box sx={{
+        display: "flex",
+        justifyContent: "end",
+        alignItems: "end",
+        marginBottom: 2,
+        marginTop: 2,
+        marginRight: 2
+      }}>
+        <TextField
+          label="Search"
+          variant="outlined"
+          size="small"
+          value={searchQuery}
+          onChange={handleSearchChange}
+        />
+      </Box>
 
       <Box sx={{
-          display:"flex",
-          justifyContent:"center",
-          alignItems:"center",
-          
-          }}>
-          
-         
-          <TableContainer component={Paper} sx={{
-              marginBottom: 6,
-              marginRight: 2
-              }}
-              aria-label="customized table" >
-              <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                  <TableHead>
-                      <StyledTableRow>
-                          <StyledTableCell>Name</StyledTableCell>
-                          <StyledTableCell>Email</StyledTableCell>
-                          <StyledTableCell >Contact</StyledTableCell>
-                          <StyledTableCell >University</StyledTableCell>
-                          {/* <StyledTableCell >Budget</StyledTableCell> */}
-                          <StyledTableCell >Invoices</StyledTableCell>
-                          <StyledTableCell >Update</StyledTableCell>
-                          {/* <StyledTableCell >Delete</StyledTableCell> */}
-                      </StyledTableRow>
-                  </TableHead>
-                  
-                  <TableBody>
-                  {(
-                    filteredClients.map((user) => (
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
 
-                      <StyledTableRow key={user.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                        <StyledTableCell component="th" scope="row">{user.name}</StyledTableCell>
-                        <StyledTableCell>{user.email} </StyledTableCell>
-                        <StyledTableCell>{user.contact}</StyledTableCell>
-                        <StyledTableCell>{user.university}</StyledTableCell>
-                        <StyledTableCell>
-                          <Button variant="contained" type='submit' color="success" 
-                            disabled={!user.invoice}
-                            onClick={() => viewOrdersHistory(user.id)}
-                            size="small" 
-                            sx={{marginRight: 2}}>
-                            Invoices
-                          </Button>
-                        </StyledTableCell>
+      }}>
 
-                        <StyledTableCell>
-                          <Button variant="contained" type='submit' color="success" 
 
-                            onClick={() => updateProfile(user.id)}
-                            size="small" 
-                            sx={{marginRight: 2}}>
-                            Update
-                          </Button>
-                          <Button variant="contained" type='submit' color="error" 
+        <TableContainer component={Paper} sx={{
+          marginBottom: 6,
+          marginRight: 2
+        }}
+          aria-label="customized table" >
+          <TablePagination
+            className='table-page'
+            rowsPerPageOptions={[itemsPerPage]}
+            component="div"
+            count={client.length}
+            rowsPerPage={itemsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            labelRowsPerPage="Invoices per page:"
+            labelDisplayedRows={({ from, to, count }) => `Showing ${from} to ${to} Invoice of ${count} Invoice(s)`}
+          />
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <StyledTableRow>
+                <StyledTableCell>Name</StyledTableCell>
+                <StyledTableCell>Email</StyledTableCell>
+                <StyledTableCell >Contact</StyledTableCell>
+                <StyledTableCell >University</StyledTableCell>
+                {/* <StyledTableCell >Budget</StyledTableCell> */}
+                <StyledTableCell >Invoices</StyledTableCell>
+                <StyledTableCell >Update</StyledTableCell>
+                {/* <StyledTableCell >Delete</StyledTableCell> */}
+              </StyledTableRow>
+            </TableHead>
 
-                            onClick={() => handleClickOpenWarn(user.id)}
-                            size="small" 
-                            sx={{marginRight: 2}}>
-                            Delete
-                          </Button>
-                        </StyledTableCell>
-                      </StyledTableRow>
-                      )))}
-                  </TableBody>
-              </Table>
+            <TableBody>
+              {(
+                filteredClients.slice(page * itemsPerPage, (page + 1) * itemsPerPage).map((user, index) =>  (
 
-              
-          </TableContainer>
+                  <StyledTableRow key={user.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                    <StyledTableCell component="th" scope="row">{user.name}</StyledTableCell>
+                    <StyledTableCell>{user.email} </StyledTableCell>
+                    <StyledTableCell>{user.contact}</StyledTableCell>
+                    <StyledTableCell>{user.university}</StyledTableCell>
+                    <StyledTableCell>
+                      <Button variant="contained" type='submit' color="success"
+                        disabled={!user.invoice}
+                        onClick={() => viewOrdersHistory(user.id)}
+                        size="small"
+                        sx={{ marginRight: 2 }}>
+                        Invoices
+                      </Button>
+                    </StyledTableCell>
+
+                    <StyledTableCell>
+                      <Button variant="contained" type='submit' color="success"
+
+                        onClick={() => updateProfile(user.id)}
+                        size="small"
+                        sx={{ marginRight: 2 }}>
+                        Update
+                      </Button>
+                      <Button variant="contained" type='submit' color="error"
+
+                        onClick={() => handleClickOpenWarn(user.id)}
+                        size="small"
+                        sx={{ marginRight: 2 }}>
+                        Delete
+                      </Button>
+                    </StyledTableCell>
+                  </StyledTableRow>
+                )))}
+            </TableBody>
+          </Table>
+
+
+        </TableContainer>
       </Box>
 
       <Dialog
-          open={openWarn}
-          onClose={handleCloseWarn}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">
-            {"Are you sure you want to delete this user?"}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              After selecting this step this user will be permanently deleted.
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseWarn}>Close</Button>
-            <Button onClick={handleUserDelete} autoFocus>
-              Ok
-            </Button>
-          </DialogActions>
-        </Dialog>
+        open={openWarn}
+        onClose={handleCloseWarn}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Are you sure you want to delete this user?"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            After selecting this step this user will be permanently deleted.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseWarn}>Close</Button>
+          <Button onClick={handleUserDelete} autoFocus>
+            Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
-    )
+  )
 }
 
 export default ClientStudentConsole   

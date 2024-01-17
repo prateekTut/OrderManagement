@@ -23,6 +23,7 @@ import { DialogContentText } from '@mui/material';
 import { FRONTEND_API } from "./urls";
 import { StyledTableCell, StyledTableRow } from './styles/TableStyles';
 
+import TablePagination from '@mui/material/TablePagination';
 
 function ClientVendorConsole() {
   const [client, setClient] = useState([]);
@@ -127,6 +128,12 @@ function ClientVendorConsole() {
       });
   };
 
+  const [page, setPage] = useState(0);
+  const itemsPerPage = 8;
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
   return (
     <div>
       <Typography variant='h1' sx={{
@@ -167,6 +174,17 @@ function ClientVendorConsole() {
           marginRight: 2
         }}
           aria-label="customized table" >
+            <TablePagination
+            className='table-page'
+            rowsPerPageOptions={[itemsPerPage]}
+            component="div"
+            count={client.length}
+            rowsPerPage={itemsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            labelRowsPerPage="Invoices per page:"
+            labelDisplayedRows={({ from, to, count }) => `Showing ${from} to ${to} Invoice of ${count} Invoice(s)`}
+          />
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <StyledTableRow>
@@ -183,7 +201,7 @@ function ClientVendorConsole() {
 
             <TableBody>
               {(
-                filteredClients.map((user) => (
+                filteredClients.slice(page * itemsPerPage, (page + 1) * itemsPerPage).map((user, index) =>  (
 
                   <StyledTableRow key={user.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                     <StyledTableCell component="th" scope="row">{user.name}</StyledTableCell>

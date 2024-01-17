@@ -27,6 +27,9 @@ import { useReactToPrint } from "react-to-print";
 import { useParams } from "react-router-dom";
 import dayjs from 'dayjs';
 
+import { PDFDownloadLink, BlobProvider } from '@react-pdf/renderer';
+import PDFDemo from './styles/PDFDemo';
+
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: '#343F71',
@@ -74,12 +77,12 @@ function EditInvoices() {
       value: '₹',
       label: 'Indian Rupee(INR, ₹)',
     },
-     {
-       value: '£',
-       label: 'British Pound Sterling(GBP, £)',
-     },
+    {
+      value: '£',
+      label: 'British Pound Sterling(GBP, £)',
+    },
   ];
-  
+
   let params = useParams();
 
   const [client, setclient] = useState([]);
@@ -107,13 +110,13 @@ function EditInvoices() {
     { id: 0, order_id: '', item: '', taxRate: 0, quantity: 0, rate: 0, amount: 0, igst: 0, sgst: 0, cgst: 0, amount: 0, total: 0 },
   ]);
 
- /*  const today = dayjs();
-  const nextDate = today.add(1, 'day');
- */
+  /*  const today = dayjs();
+   const nextDate = today.add(1, 'day');
+  */
   const [dueDate, setDueDate] = useState(null);
 
   const [invoiceDate, setInvoiceDate] = useState(null);
- 
+
   const [invoiceNumber, setInvoiceNumber] = useState(null);
 
   const [discount, setDiscount] = useState(0);
@@ -254,6 +257,13 @@ function EditInvoices() {
     }
   };
 
+  useEffect(() => {
+    fetchInvocieById(params.id);
+    //generateAndSetInvoiceNumber();
+  }, []);
+
+  const [clientInvoice, setClientInvoice] = useState(null);
+  const [downloadPdf, setDownloadPdf] = useState(false);
 
   const updateInvoice = () => {
     //console.log(clientId);
@@ -302,6 +312,10 @@ function EditInvoices() {
           console.log(data);
           setAlertContent(data.message);
           setAlert(true);
+          setClientInvoice(data);
+          setTimeout(() => {
+            setDownloadPdf(true);
+          }, 2000);
           // Log the response from the server
           // You can perform additional actions here if needed
         })
@@ -314,32 +328,7 @@ function EditInvoices() {
 
   };
 
-  useEffect(() => {
-    fetchInvocieById(params.id);
-    //generateAndSetInvoiceNumber();
-  }, []);
 
-  const fetchClientForInvoice = (userId) => {
-    console.log("Tutor ID", userId);
-    fetch(FRONTEND_API + "getClientFromClientId/".concat(userId), {
-      headers: {
-        'Authorization': 'Bearer ' + token
-      }
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        // do something with data
-        console.log("Clients data", data);
-        data.map((user) => {
-          setclient(user);
-
-        })
-        // navigate("/OTMform");
-      })
-      .catch((rejected) => {
-        console.log(rejected);
-      });
-  };
 
   const fetchInvocieById = (id) => {
     console.log("Invoce ID", id);
@@ -354,7 +343,7 @@ function EditInvoices() {
         console.log("Invoice data", data);
         console.log("ClientId", data.data.client_id)
         setClientId(data.data.client_id)
-        fetchClientForInvoice(data.data.client_id);
+
         setOrders(data.data);
         setSavedTax(data.data.tax_type);
         setSaveSubTax(data.data.sub_tax);
@@ -374,10 +363,10 @@ function EditInvoices() {
     console.log(receivedData);
     // Make a copy of the existing tableData array
     const updatedTableData = [...tableData];
-    
+
     for (let i = 0; i < receivedData.invoices.length; i++) {
       const receivedItem = receivedData.invoices[i];
-     
+
       updatedTableData[i] = {
         ...updatedTableData[i],
         id: i,
@@ -387,10 +376,10 @@ function EditInvoices() {
         total: receivedItem.item_total,
         quantity: receivedItem.quantity,
         rate: receivedItem.rate,
-        taxRate:receivedItem.tax_rate,
-        sgst:receivedItem.sgst,
-        cgst:receivedItem.cgst,
-        vat: receivedItem.vat,  
+        taxRate: receivedItem.tax_rate,
+        sgst: receivedItem.sgst,
+        cgst: receivedItem.cgst,
+        vat: receivedItem.vat,
       };
     }
     console.log(updatedTableData);
@@ -506,6 +495,39 @@ function EditInvoices() {
     return total;
   }
 
+  function getFile(blob) {
+    console.log(blob);
+    const formData = new FormData();
+    formData.append('invoicepdf', blob);
+    console.log(formData);
+
+    var requestOptions = {
+      method: "POST",
+      headers: {
+        'Authorization': 'Bearer ' + token
+      },
+      body: formData,
+    };
+
+    fetch(FRONTEND_API + 'uploadInvoice/'.concat(invoiceNumber), requestOptions)
+      .then((response) => {
+        if (response.status == 200) {
+          setStatus("200")
+          return response.json();
+        } else {
+          setStatus(response.status)
+          return response.json();
+        }
+      })
+      .then((data) => {
+        console.log(data);
+        setAlertContent(data.message);
+        setAlert(true);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  }
   return (
     <Container sx={{ bgcolor: "#FBF1F7" }}>
       <Box sx={{ display: 'flex', }}>
@@ -589,18 +611,17 @@ function EditInvoices() {
                           <br />
                           Email: info@webz.com.pl
                         </p>
-                        <img src={Logo} alt='BigCo Inc. logo' id='invoicelogo' />
                       </Box>
                     </Paper>
                   </Grid>
                   <Grid item xs={6}>
-                    <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', backgroundColor: "#FBF1F7", height: "230px" }}>
+                    <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', backgroundColor: "#FBF1F7", height: "160px" }}>
                       <strong>Billed To-</strong>
-                      {client != null && (
+                      {orders != null && (
                         <div>
-                          <p>Name: {client.name}</p>
-                          <p>Email: {client.email}</p>
-                          <p>Contact: {client.contact}</p>
+                          <p>Name: {orders.client_name}</p>
+                          <p>Email: {orders.client_email}</p>
+                          <p>Contact: {orders.client_contact}</p>
                         </div>
                       )}
                     </Paper>
@@ -869,7 +890,7 @@ function EditInvoices() {
                       </Grid>
                       <Grid item xs={3}>
                         <Typography align="right" variant="subtitle1">
-                        <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
+                          <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
                           {isNaN(getTotalAmount()) ? 0 : getTotalAmount().toFixed(2)}
                         </Typography>
                       </Grid>
@@ -883,7 +904,7 @@ function EditInvoices() {
                           </Grid>
                           <Grid item xs={3}>
                             <Typography align="right" variant="subtitle1">
-                            <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
+                              <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
                               {isNaN(getSgst()) ? 0 : getSgst().toFixed(2)}
                             </Typography>
                           </Grid>
@@ -895,7 +916,7 @@ function EditInvoices() {
                           </Grid>
                           <Grid item xs={3}>
                             <Typography align="right" variant="subtitle1">
-                            <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
+                              <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
                               {isNaN(getCgst()) ? 0 : getCgst().toFixed(2)}
                             </Typography>
                           </Grid>
@@ -911,7 +932,7 @@ function EditInvoices() {
                           </Grid>
                           <Grid item xs={3}>
                             <Typography align="right" variant="subtitle1">
-                            <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
+                              <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
                               {isNaN(getIgst()) ? 0 : getIgst().toFixed(2)}
                             </Typography>
                           </Grid>
@@ -927,7 +948,7 @@ function EditInvoices() {
                           </Grid>
                           <Grid item xs={3}>
                             <Typography align="right" variant="subtitle1">
-                            <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
+                              <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
                               (+){isNaN(getIgst()) ? 0 : getIgst().toFixed(2)}
                             </Typography>
                           </Grid>
@@ -944,7 +965,7 @@ function EditInvoices() {
                           </Grid>
                           <Grid item xs={3}>
                             <Typography align="right" variant="subtitle1">
-                            <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
+                              <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
                               (-){isNaN(getDiscount()) ? 0 : getDiscount().toFixed(2)}
                             </Typography>
                           </Grid>
@@ -961,7 +982,7 @@ function EditInvoices() {
                       </Grid>
                       <Grid item xs={3}>
                         <Typography align="right" variant="h5" fontWeight="bold">
-                        <span style={{ marginRight: '5px', marginTop: '0px', fontWeight: "bold" }}>{currencyValue}</span>
+                          <span style={{ marginRight: '5px', marginTop: '0px', fontWeight: "bold" }}>{currencyValue}</span>
                           {isNaN(getTotal()) ? 0 : getTotal().toFixed(2)}
                         </Typography>
                       </Grid>
@@ -987,6 +1008,20 @@ function EditInvoices() {
                   <Button variant="outlined" type='submit' sx={{ mt: 3, width: '200px' }} onClick={handlePrint}>
                     Print & Save as PDF
                   </Button>
+                )}
+                {downloadPdf && (
+                  <PDFDownloadLink document={<PDFDemo invoice={clientInvoice} />} fileName="example.pdf">
+                    {({ blob, url, loading, error }) => {
+                      if (!loading && blob) {
+                        // Use the blob as needed in your application logic
+                        console.log('PDF Blob:', blob);
+                        getFile(blob);
+                        // You can send the blob to the backend here or perform any other action
+                      }
+
+                      return null; // This will prevent rendering any visible content
+                    }}
+                  </PDFDownloadLink>
                 )}
                 <Button variant="outlined" type='submit' sx={{ mt: 3, width: '200px' }} onClick={updateInvoice}>
                   Update Invoice
