@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NewLogin from "./components/NewLogin"
 import UpdateBudgetdata from "./components/UpdateBudgetdata";
 
-import Allbutton from "./components/Allbutton";
 import Unauthorized from "./components/Unauthorized";
 import RequireAuth from "./components/RequireAuth";
 import Layout from "./components/Layout";
@@ -27,7 +26,6 @@ import RegisterClients from "./components/RegisterClients";
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import { Box, Container, CssBaseline, Paper } from "@mui/material";
 import NewClientInvoice from "./components/NewClientInvoice";
-import AddFreelancers from "./components/AddFreelancers";
 import GenerateVendorInvoice from "./components/GenerateVendorInvoice";
 
 import AllInvoices from "./components/AllInvoices";
@@ -101,7 +99,7 @@ function App() {
           <Route element={<RequireAuth allowedRoles={["admin"]} />}>
 
             <Route path='/register' element={<Register />} />
-            <Route path="/add-freelancers" element={<AddFreelancers />} />
+
             <Route path='/register-clients' element={<RegisterClients />} />
             
             <Route path='/UpdateClientdata' element={<ClientStudentConsole />} />
@@ -110,8 +108,6 @@ function App() {
             <Route path="/updateExpert/:expertId" element={<UpdateExpert />} />
 
             <Route path='/Updatebudget' element={<UpdateBudgetdata />} />
-
-            <Route path='/allbutton' element={<Allbutton />} />
 
             <Route path='/client-invoice/:userId' element={<NewClientInvoice />} />
             <Route path='/vendor-invoice/:userId' element={<GenerateVendorInvoice />} />

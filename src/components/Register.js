@@ -108,7 +108,16 @@ export default function Register() {
     setClientPhoneValid(validatePhone(newValue));
   }
 
+  React.useEffect(() => {
+    if (alert) {
+      const timeoutId = setTimeout(() => {
+        setAlert(false);
+      }, 2000);
 
+      return () => clearTimeout(timeoutId);
+    }
+  }, [alert]);
+  
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log(userType);
@@ -205,7 +214,7 @@ export default function Register() {
               setAlert(true);
             }
             );
-        }else{
+        } else {
           setDialogOpen(true);
         }
 
@@ -276,7 +285,7 @@ export default function Register() {
               if (response.status == 200) {
                 setStatus("200")
                 return response.json();
-              }else{
+              } else {
                 setStatus("400")
                 return response.json();
               }

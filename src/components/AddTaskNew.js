@@ -1,6 +1,6 @@
 import React from 'react'
 import { Container, FormControl, TextField, InputLabel, Select, MenuItem, Grid, Button, FormLabel } from '@mui/material'
-import { useState, useEffect, useRef} from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import { FRONTEND_API } from "./urls";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Alert } from '@mui/material';
@@ -177,6 +177,15 @@ function AddTaskNew() {
         //fetchInitial(event.target.value);
     };
 
+    useEffect(() => {
+        if (alert) {
+            const timeoutId = setTimeout(() => {
+                setAlert(false);
+            }, 2000);
+
+            return () => clearTimeout(timeoutId);
+        }
+    }, [alert]);
 
     const fetchInitial = (type) => {
 
@@ -360,10 +369,10 @@ function AddTaskNew() {
                     </Grid>
                 </Grid>
 
-                
-                <FormLabel sx={{m:1, marginTop: 3}} id="demo-row-radio-buttons-group-label">Task Deadline</FormLabel>
+
+                <FormLabel sx={{ m: 1, marginTop: 3 }} id="demo-row-radio-buttons-group-label">Task Deadline</FormLabel>
                 <ButtonContainer
-                    sx={{m:1}}
+                    sx={{ m: 1 }}
                     role="button"
                     onClick={handleButtonClick}
                     size='small'
@@ -374,7 +383,7 @@ function AddTaskNew() {
                         <CalendarTodayIcon />
                     </IconButton>
                 </ButtonContainer>
-                
+
                 {openDatePicker && (
                     <div
                         style={{
@@ -388,21 +397,21 @@ function AddTaskNew() {
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DateCalendar
                                 value={End_date}
-                               
+
                                 onChange={(newValue) => handleEndDateChange(newValue)}
                                 renderInput={() => null} // Hide the input inside the calendar
                                 PopperProps={{
-                                    style: { zIndex: 9999, backgroundColor: '#fff'}, // Adjust z-index as needed
+                                    style: { zIndex: 9999, backgroundColor: '#fff' }, // Adjust z-index as needed
                                 }}
                                 minDate={today}
                                 sx={{
                                     '.Mui-selected': {
-                                      backgroundColor: 'red', // Customize the background color of selected days
+                                        backgroundColor: 'red', // Customize the background color of selected days
                                     },
                                     '.MuiPickersDay-day': {
-                                      color: 'green', // Customize the color of the calendar days
+                                        color: 'green', // Customize the color of the calendar days
                                     },
-                                  }}
+                                }}
                             />
                         </LocalizationProvider>
                     </div>
