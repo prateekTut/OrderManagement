@@ -369,7 +369,7 @@ function AssignTaskConsole() {
             }
         };
 
-        fetch(FRONTEND_API + "getexpert", requestOptions)
+        fetch(FRONTEND_API + "getExpertToAssign", requestOptions)
             .then((res) => res.json())
             .then((data) => {
                 // do something with data
@@ -401,7 +401,10 @@ function AssignTaskConsole() {
             .then((rawData) => {
 
                 if (roles == "admin") {
-                    setOrders(rawData);
+                    const sortedOrdersByDate = rawData.sort((a, b) => {
+                        return new Date(b.order_end_date) - new Date(a.order_end_date);
+                    });
+                    setOrders(sortedOrdersByDate);
                 } else if (roles == "expert") {
                     const filteredOrders = rawData.filter(order => order.expertId == userId);
                     setOrders(filteredOrders);
@@ -577,8 +580,8 @@ function AssignTaskConsole() {
                                                     <StyledTableCell component="th" scope="row">
                                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                                             {orderData.id}
-                                                            <div role='button' style={{marginLeft: '4px'}}>
-                                                                <InfoSharpIcon color='secondary' fontSize='small'/>
+                                                            <div role='button' style={{ marginLeft: '4px' }}>
+                                                                <InfoSharpIcon color='secondary' fontSize='small' />
                                                             </div>
                                                         </div>
                                                     </StyledTableCell>
