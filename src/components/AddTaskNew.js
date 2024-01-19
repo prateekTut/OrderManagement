@@ -77,7 +77,7 @@ function AddTaskNew() {
 
     const resetFormFields = () => {
         setVendor_budget("");
-        setSubject("");
+        setNewSubject("");
         setOrderId("")
         //setclient([]);
         setDescription("");
