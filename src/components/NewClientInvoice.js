@@ -87,6 +87,10 @@ function NewClientInvoice() {
       value: '£',
       label: 'British Pound Sterling(GBP, £)',
     },
+    {
+      value: 'A$',
+      label: 'Australian Dollar(AUD, $)',
+    },
   ];
   let params = useParams();
 
@@ -355,26 +359,26 @@ function NewClientInvoice() {
     console.log(clientId);
     const pdf = new jsPDF('p', 'mm', 'a4');
 
-   /*  await html2canvas(componentRef.current).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
-      pdf.addImage(imgData, 'PNG', 0, 0, 210, 297); // Adjust width and height as needed
-    });
- */
+    /*  await html2canvas(componentRef.current).then((canvas) => {
+       const imgData = canvas.toDataURL('image/png');
+       pdf.addImage(imgData, 'PNG', 0, 0, 210, 297); // Adjust width and height as needed
+     });
+  */
     let pdfBlob;
 
     await html2canvas(componentRef.current).then(async (canvas) => {
       let imgData, quality = 1.0;
-    
+
       do {
         // Convert canvas to image data URL with the current quality
         imgData = canvas.toDataURL('image/jpeg', quality);
-    
+
         // Add the image to the PDF
         pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297); // Adjust width and height as needed
-    
+
         // Output PDF blob
         pdfBlob = pdf.output('blob');
-    
+
         // Check the size of the PDF blob
         if (pdfBlob.size > 1024 * 1024 && quality > 0.1) {
           // If the size is still greater than 1MB, reduce quality and retry
@@ -390,10 +394,10 @@ function NewClientInvoice() {
     //const pdfBlob = pdf.output('blob');
     const pdfFile = new File([pdfBlob], 'invoice.pdf', { type: 'application/pdf' });
     console.log(pdfBlob)
-    
+
     const data = tableData;
     if (invoiceDate != null && dueDate != null) {
-  
+
       const formData = new FormData();
       formData.append('data', JSON.stringify({
         data: data,
@@ -691,38 +695,38 @@ function NewClientInvoice() {
   //   }
   // };
 
-  function getFile(blob){
+  function getFile(blob) {
     console.log(blob);
-     const formData = new FormData();
-      formData.append('invoicepdf', blob);
-      console.log(formData);
+    const formData = new FormData();
+    formData.append('invoicepdf', blob);
+    console.log(formData);
 
-      var requestOptions = {
-        method: "POST",
-        headers: {
-          'Authorization': 'Bearer ' + token
-        },
-        body: formData,
-      };
+    var requestOptions = {
+      method: "POST",
+      headers: {
+        'Authorization': 'Bearer ' + token
+      },
+      body: formData,
+    };
 
-      fetch(FRONTEND_API + 'uploadInvoice/'.concat(invoiceNumber), requestOptions)
-        .then((response) => {
-          if (response.status == 200) {
-            setStatus("200")
-            return response.json();
-          } else {
-            setStatus(response.status)
-            return response.json();
-          }
-        })
-        .then((data) => {
-          console.log(data);
-          setAlertContent(data.message);
-          setAlert(true);
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-        });
+    fetch(FRONTEND_API + 'uploadInvoice/'.concat(invoiceNumber), requestOptions)
+      .then((response) => {
+        if (response.status == 200) {
+          setStatus("200")
+          return response.json();
+        } else {
+          setStatus(response.status)
+          return response.json();
+        }
+      })
+      .then((data) => {
+        console.log(data);
+        setAlertContent(data.message);
+        setAlert(true);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
   }
 
   return (
@@ -857,7 +861,7 @@ function NewClientInvoice() {
                       mt: 3
                     }}
                       aria-label="customized table" >
-                      
+
                       <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead fullWidth>
                           <StyledTableRow>
@@ -1198,25 +1202,25 @@ function NewClientInvoice() {
                 <div style={{ marginTop: '15px' }}>
                   <input type="file" accept=".doc, .pdf" onChange={handleFileChange} />
                 </div>
-              {/*   {tableData.length >= 1 && (
+                {/*   {tableData.length >= 1 && (
                   <Button variant="outlined" type='submit' sx={{ mt: 3, width: '200px' }} onClick={handlePrint}>
                     Print & Save as PDF
                   </Button>
                 )} */}
-                  {downloadPdf && (
-                        <PDFDownloadLink document={<PDFDemo invoice={clientInvoice} />} fileName="example.pdf">
-                          {({ blob, url, loading, error }) => {
-                            if (!loading && blob) {
-                              // Use the blob as needed in your application logic
-                              console.log('PDF Blob:', blob);
-                              getFile(blob);
-                              // You can send the blob to the backend here or perform any other action
-                            }
+                {downloadPdf && (
+                  <PDFDownloadLink document={<PDFDemo invoice={clientInvoice} />} fileName="example.pdf">
+                    {({ blob, url, loading, error }) => {
+                      if (!loading && blob) {
+                        // Use the blob as needed in your application logic
+                        console.log('PDF Blob:', blob);
+                        getFile(blob);
+                        // You can send the blob to the backend here or perform any other action
+                      }
 
-                            return null; // This will prevent rendering any visible content
-                          }}
-                        </PDFDownloadLink>
-                      )}
+                      return null; // This will prevent rendering any visible content
+                    }}
+                  </PDFDownloadLink>
+                )}
                 <Button variant="outlined" type='submit' sx={{ mt: 3, width: '200px' }} onClick={() => insertInvoice()}>
                   Save Invoice
                 </Button>

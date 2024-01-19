@@ -81,6 +81,10 @@ function EditInvoices() {
       value: '£',
       label: 'British Pound Sterling(GBP, £)',
     },
+    {
+      value: 'A$',
+      label: 'Australian Dollar(AUD, $)',
+    },
   ];
 
   let params = useParams();

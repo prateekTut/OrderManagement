@@ -32,6 +32,9 @@ import 'react-date-range/dist/theme/default.css'; // theme css file
 
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { PDFDownloadLink, BlobProvider } from '@react-pdf/renderer';
+import PDFDemo from './styles/PDFDemo';
+
 
 
 
@@ -86,6 +89,10 @@ function GenerateVendorInvoice() {
        value: '£',
        label: 'British Pound Sterling(GBP, £)',
      },
+      {
+      value: 'A$',
+      label: 'Australian Dollar(AUD, $)',
+    },
   ];
   let params = useParams();
 
@@ -211,6 +218,9 @@ function GenerateVendorInvoice() {
 
   const [discount, setDiscount] = useState(0);
   //const [dis, setTotal] = useState(0);
+
+  const [clientInvoice, setClientInvoice] = useState(null);
+  const [downloadPdf, setDownloadPdf] = useState(false);
 
   const componentRef = useRef();
 
@@ -646,6 +656,10 @@ function GenerateVendorInvoice() {
           console.log(data);
           setAlertContent(data.message);
           setAlert(true);
+           setClientInvoice(data);
+          setTimeout(() => {
+            setDownloadPdf(true);
+          }, 2000);
           // Log the response from the server
           // You can perform additional actions here if needed
         })
@@ -658,7 +672,39 @@ function GenerateVendorInvoice() {
     }
 
   };
+function getFile(blob) {
+    console.log(blob);
+    const formData = new FormData();
+    formData.append('invoicepdf', blob);
+    console.log(formData);
 
+    var requestOptions = {
+      method: "POST",
+      headers: {
+        'Authorization': 'Bearer ' + token
+      },
+      body: formData,
+    };
+
+    fetch(FRONTEND_API + 'uploadInvoice/'.concat(invoiceNumber), requestOptions)
+      .then((response) => {
+        if (response.status == 200) {
+          setStatus("200")
+          return response.json();
+        } else {
+          setStatus(response.status)
+          return response.json();
+        }
+      })
+      .then((data) => {
+        console.log(data);
+        setAlertContent(data.message);
+        setAlert(true);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  }
   return (
     <Container sx={{ bgcolor: "#FBF1F7" }}>
       <Box sx={{ display: 'flex', }}>
@@ -1150,6 +1196,20 @@ function GenerateVendorInvoice() {
                   <Button variant="outlined" type='submit' sx={{ mt: 3, width: '200px' }} onClick={handlePrint}>
                     Print & Save as PDF
                   </Button>
+                )}
+                 {downloadPdf && (
+                  <PDFDownloadLink document={<PDFDemo invoice={clientInvoice} />} fileName="example.pdf">
+                    {({ blob, url, loading, error }) => {
+                      if (!loading && blob) {
+                        // Use the blob as needed in your application logic
+                        console.log('PDF Blob:', blob);
+                        getFile(blob);
+                        // You can send the blob to the backend here or perform any other action
+                      }
+
+                      return null; // This will prevent rendering any visible content
+                    }}
+                  </PDFDownloadLink>
                 )}
                 <Button variant="outlined" type='submit' sx={{ mt: 3, width: '200px' }} onClick={() => insertInvoice()}>
                   Save Invoice

@@ -31,6 +31,10 @@ function AddTaskNew() {
             value: 'GBP',
             label: '£',
         },
+        {
+            value: 'AUD',
+            label: 'A$',
+        },
     ];
     const navigate = useNavigate();
     const token = localStorage.getItem("token")
