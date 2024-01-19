@@ -403,7 +403,7 @@ function AddTaskNew() {
                                 PopperProps={{
                                     style: { zIndex: 9999, backgroundColor: '#fff' }, // Adjust z-index as needed
                                 }}
-                                minDate={today}
+                                
                                 sx={{
                                     '.Mui-selected': {
                                         backgroundColor: 'red', // Customize the background color of selected days
