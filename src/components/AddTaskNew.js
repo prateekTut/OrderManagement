@@ -238,7 +238,7 @@ function AddTaskNew() {
     const uploadData = (event) => {
         event.preventDefault();
         console.log(subjectValid);
-        if (orderIdValid && subjectValid && wordCountValid && currencyValue !== '') {
+        if (orderIdValid && subjectValid && currencyValue !== '') {
             // Proceed with form submission
 
             console.log('Form submitted');

@@ -735,6 +735,7 @@ function AssignTaskConsole() {
                                     error={orderStatusValid == false}
                                     helperText={orderStatusValid == false && 'Select Status'}
                                     onChange={handleChangeStatus}>
+                                    <MenuItem value={'assigned'}>Assigned</MenuItem>
                                     <MenuItem value={'qc'}>QC</MenuItem>
                                     <MenuItem value={'pass'}>Completed</MenuItem>
                                     <MenuItem value={'fail'}>Failed</MenuItem>
@@ -826,6 +827,10 @@ function AssignTaskConsole() {
                                             onChange={handleChangeStatus} >
 
                                             <MenuItem value={'assigned'}>Assigned</MenuItem>
+                                            <MenuItem value={'qc'}>QC</MenuItem>
+                                            <MenuItem value={'pass'}>Completed</MenuItem>
+                                            <MenuItem value={'fail'}>Failed</MenuItem>
+                                            <MenuItem value={'rework'}>Rework</MenuItem>
 
                                         </Select>
                                     </FormControl>
