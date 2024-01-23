@@ -58,18 +58,18 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 function GenerateInvoice() {
 
   const currencies = [
-    /* {
+    {
       value: '$',
       label: 'US Dollar( USD, $)',
-    }, */
+    },
     {
       value: '₹',
       label: 'Indian Rupee(INR, ₹)',
     },
-   /*  {
+    {
       value: '£',
       label: 'British Pound Sterling(GBP, £)',
-    }, */
+    },
   ];
 
 

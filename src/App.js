@@ -1,40 +1,19 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import NewLogin from "./components/NewLogin"
-import UpdateBudgetdata from "./components/UpdateBudgetdata";
 
 import Unauthorized from "./components/Unauthorized";
 import RequireAuth from "./components/RequireAuth";
 import Layout from "./components/Layout";
-import Dashbord from "./components/Dashbord";
 import AppSelection from "./components/AppSelection";
 import { useLocation } from 'react-router-dom';
-import Register from "./components/Register";
-
-import AddTaskNew from "./components/AddTaskNew";
-import OtmUsersConsole from "./components/OtmUsersConole";
-import ExpertsConsole from "./components/ExpertsConsole";
-import ClientStudentConsole from "./components/ClientStudentConsole";
-import ClientVendorConsole from "./components/ClientVendorConsole";
-import EditClientsDetails from "./components/EditClientsDetails";
-
-import UpdateExpert from "./components/UpdateExpert";
-import TeamLeadConsole from "./components/TeamLeadConsole";
-import VendorOrderHistory from "./components/VendorOrderHistory";
-import AttendanceOverview from "./components/AttendanceOverview";
-import RegisterClients from "./components/RegisterClients";
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
-import { Box, Container, CssBaseline, Paper } from "@mui/material";
-import NewClientInvoice from "./components/NewClientInvoice";
-import GenerateVendorInvoice from "./components/GenerateVendorInvoice";
+import { Box } from "@mui/material";
 
 import AllInvoices from "./components/AllInvoices";
-import GenerateInvoice from "./components/GenerateInvoice";
-import EditInvoices from "./components/EditInvoices";
-import AssignTaskConsole from "./components/AssignTaskConsole";
+import Dashboard from "./components/Dashbord";
 import ExpenseManagement from "./components/ExpenseManagement";
-import ViewInvocie from "./components/ViewInvoice";
-import PDFDemo from "./components/styles/PDFDemo";
+import GenerateInvoice from "./components/GenerateInvoice";
 
 
 // Create a styled component for the Paper element
@@ -97,50 +76,10 @@ function App() {
           <Route path='/unauthorized' element={<Unauthorized />} />
 
           <Route element={<RequireAuth allowedRoles={["admin"]} />}>
-
-            <Route path='/register' element={<Register />} />
-
-            <Route path='/register-clients' element={<RegisterClients />} />
-            
-            <Route path='/UpdateClientdata' element={<ClientStudentConsole />} />
-            <Route path='/Updatevonder' element={<ClientVendorConsole />} />
-
-            <Route path="/updateExpert/:expertId" element={<UpdateExpert />} />
-
-            <Route path='/Updatebudget' element={<UpdateBudgetdata />} />
-
-            <Route path='/client-invoice/:userId' element={<NewClientInvoice />} />
-            <Route path='/vendor-invoice/:userId' element={<GenerateVendorInvoice />} />
-
-            <Route path="/editClients/:clientId" element={<EditClientsDetails />} />
-
-            {/* <Route path="/vendor-order-history" element={<VendorOrderHistory />} /> */}
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/generate-invocie" element = {<GenerateInvoice/>} />          
             <Route path="/order-history" element={<AllInvoices />} />
-
-           
-            <Route path="/expense-manage" element={<ExpenseManagement />} />
-         
-            <Route path="/generated-invoice/:invoiceId" element={<ViewInvocie />} />
-
-            <Route path='/edit-invoices/:id' element={<EditInvoices />} />
-
-            <Route path="/order-management" element={<AssignTaskConsole />} />
-            <Route path = '/pdf' element={<PDFDemo />}/>
-          </Route>
-
-          <Route element={<RequireAuth allowedRoles={["admin", "hr", "otm", "lead", "expert"]} />}>
-
-            <Route path='/dashboard' element={<Dashbord />} />
-            <Route path="/order-management" element={<AssignTaskConsole />} />
-
-            <Route path='/addtask/*' element={<AddTaskNew />} />
-          </Route>
-
-          <Route element={<RequireAuth allowedRoles={["admin", "hr"]} />}>
-            <Route path="/attendanceOverview" element={< AttendanceOverview />} />
-            <Route path='/teamLead' element={<TeamLeadConsole />} />
-            <Route path='/updateotm' element={<OtmUsersConsole />} />
-            <Route path='/Updatetutors' element={<ExpertsConsole />} />
+            <Route path="/expense-manage" element={<ExpenseManagement />} /> 
           </Route>
 
         </Route>

@@ -30,7 +30,6 @@ import { DateRange } from 'react-date-range';
 import dayjs from 'dayjs';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
-import InvoiceGraph from './InvoiceGraph';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -43,9 +42,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 
 import { format } from 'date-fns';
-
 import Menu from '@mui/material/Menu';
-import Popover from '@mui/material/Popover';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -74,7 +71,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { StyledTableCell, StyledTableRow } from './styles/TableStyles';
-import EmailDialog from './EmailDialog';
+
 
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -863,9 +860,9 @@ function AllInvoices() {
 
         {graphBool && (
           <Container>
-            <InvoiceGraph
+          {/*   <InvoiceGraph
               invoices={invoices}
-            />
+            /> */}
           </Container>
         )}
       </div>
@@ -1030,8 +1027,8 @@ function AllInvoices() {
         </TableContainer>
       </Paper>
 
-      <EmailDialog open={openEmailDialog} handleClose={handleCloseEmailDialog} invoices={invoiceForMail} />
-
+     {/*  <EmailDialog open={openEmailDialog} handleClose={handleCloseEmailDialog} invoices={invoiceForMail} />
+ */}
       <BootstrapDialog fullWidth open={dialogOpen} sx={{
 
       }}>
