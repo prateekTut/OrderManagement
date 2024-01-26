@@ -15,7 +15,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Badge, Button, Menu, MenuItem, Paper } from '@mui/material';
 import { AccountCircle } from '@mui/icons-material';
 import MoreIcon from '@mui/icons-material/MoreVert';
-import { FRONTEND_API } from "./urls";
+import { FRONTEND_API } from './urls';
 import SideItems from './SideItems';
 
 const drawerWidth = 280;
@@ -73,22 +73,22 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-  ({ theme, open }) => ({
-    width: drawerWidth,
-    flexShrink: 0,
-    whiteSpace: 'nowrap',
-    boxSizing: 'border-box',
-    ...(open && {
-      ...openedMixin(theme),
-      '& .MuiDrawer-paper': openedMixin(theme),
-    }),
-    ...(!open && {
-      ...closedMixin(theme),
-      '& .MuiDrawer-paper': closedMixin(theme),
-    }),
+const Drawer = styled(MuiDrawer, {
+  shouldForwardProp: (prop) => prop !== 'open',
+})(({ theme, open }) => ({
+  width: drawerWidth,
+  flexShrink: 0,
+  whiteSpace: 'nowrap',
+  boxSizing: 'border-box',
+  ...(open && {
+    ...openedMixin(theme),
+    '& .MuiDrawer-paper': openedMixin(theme),
   }),
-);
+  ...(!open && {
+    ...closedMixin(theme),
+    '& .MuiDrawer-paper': closedMixin(theme),
+  }),
+}));
 
 const NavBarMain = ({ onDrawerOpen, onDrawerClose }) => {
   const theme = useTheme();
@@ -114,21 +114,20 @@ const NavBarMain = ({ onDrawerOpen, onDrawerClose }) => {
   var isClickedOpen = Boolean(null);
 
   const handleDrawerOpen = () => {
-
-    console.log("Drawer open", onDrawerOpen);
+    console.log('Drawer open', onDrawerOpen);
     if (!open) {
-      isClickedOpen = true
-      console.log("is clicked open", isClickedOpen);
+      isClickedOpen = true;
+      console.log('is clicked open', isClickedOpen);
       onDrawerOpen();
     } // Call the onDrawerOpen function passed from the parent
     else {
-      console.log(onDrawerClose, isClickedOpen)
-      isClickedOpen = false
+      console.log(onDrawerClose, isClickedOpen);
+      isClickedOpen = false;
       onDrawerClose();
     }
     setOpen(!open);
-    console.log(open) // Toggle the 'open' state
-  }
+    console.log(open); // Toggle the 'open' state
+  };
 
   const handleDrawerClose = () => {
     setOpen(false);
@@ -152,10 +151,10 @@ const NavBarMain = ({ onDrawerOpen, onDrawerClose }) => {
   const handleLogout = async () => {
     // if used in more components, this should be in context
     // axios to /logout endpoint
-    localStorage.removeItem("token")
-    localStorage.removeItem("roles")
-    localStorage.removeItem("userId")
-    localStorage.removeItem("email")
+    localStorage.removeItem('token');
+    localStorage.removeItem('roles');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('email');
     fetch(FRONTEND_API + 'logout')
       .then(() => {
         window.location.href = '/'; // Redirect to home page after logout
@@ -167,15 +166,15 @@ const NavBarMain = ({ onDrawerOpen, onDrawerClose }) => {
 
   const handleMouseEnter = () => {
     if (!isClickedOpen) {
-      setOpen(true)
+      setOpen(true);
     }
   };
 
   const handleMouseLeave = () => {
-    console.log("Mouse Leave", isClickedOpen);
+    console.log('Mouse Leave', isClickedOpen);
     if (!isClickedOpen) {
-      console.log("is clicked open", isClickedOpen)
-      console.log("open is getting false here!!")
+      console.log('is clicked open', isClickedOpen);
+      console.log('open is getting false here!!');
       setOpen(false);
     }
   };
@@ -197,18 +196,21 @@ const NavBarMain = ({ onDrawerOpen, onDrawerClose }) => {
       open={isMenuOpen}
       onClose={handleMenuClose}
       sx={{
-        marginTop: '50px'
-      }}
-    >
+        marginTop: '50px',
+      }}>
       {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
         <MenuItem onClick={handleLogout}>logout</MenuItem> */}
 
-      <Box flexGrow={1} sx={{
-        padding: '10px'
-      }}>
+      <Box
+        flexGrow={1}
+        sx={{
+          padding: '10px',
+        }}>
         <p>Logged In as </p>
         <p>{email}</p>
-        <Button variant='outlined' onClick={handleLogout}>
+        <Button
+          variant='outlined'
+          onClick={handleLogout}>
           Logout
         </Button>
       </Box>
@@ -230,8 +232,7 @@ const NavBarMain = ({ onDrawerOpen, onDrawerClose }) => {
         horizontal: 'right',
       }}
       open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
-    >
+      onClose={handleMobileMenuClose}>
       <MenuItem onClick={handleProfileMenuOpen}>
         {/* <IconButton
           size="large"
@@ -242,18 +243,14 @@ const NavBarMain = ({ onDrawerOpen, onDrawerClose }) => {
           >
           </IconButton>
           <p>Profile</p> */}
-        <Paper>
-
-        </Paper>
+        <Paper></Paper>
         <IconButton
-          size="large"
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-          color="inherit"
-          onClick={handleLogout}
-        >
-        </IconButton>
+          size='large'
+          aria-label='account of current user'
+          aria-controls='primary-search-account-menu'
+          aria-haspopup='true'
+          color='inherit'
+          onClick={handleLogout}></IconButton>
         <p>Logout</p>
       </MenuItem>
     </Menu>
@@ -263,46 +260,49 @@ const NavBarMain = ({ onDrawerOpen, onDrawerClose }) => {
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="fixed">
+        <AppBar position='fixed'>
           <Toolbar>
             <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={() => { handleDrawerOpen(); console.log("click") }}
-              edge="start"
+              color='inherit'
+              aria-label='open drawer'
+              onClick={() => {
+                handleDrawerOpen();
+                console.log('click');
+              }}
+              edge='start'
               sx={{
                 marginRight: 5,
-              }}
-            >
+              }}>
               <MenuIcon />
             </IconButton>
-            <Typography variant="h6" noWrap component="div">
+            <Typography
+              variant='h6'
+              noWrap
+              component='div'>
               TutorsHive Order Management
             </Typography>
 
             <Box sx={{ flexGrow: 1 }} />
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
               <IconButton
-                size="large"
-                edge="end"
-                aria-label="account of current user"
+                size='large'
+                edge='end'
+                aria-label='account of current user'
                 aria-controls={menuId}
-                aria-haspopup="true"
+                aria-haspopup='true'
                 onClick={handleProfileMenuOpen}
-                color="inherit"
-              >
+                color='inherit'>
                 <AccountCircle />
               </IconButton>
             </Box>
             <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
               <IconButton
-                size="large"
-                aria-label="show more"
+                size='large'
+                aria-label='show more'
                 aria-controls={mobileMenuId}
-                aria-haspopup="true"
+                aria-haspopup='true'
                 onClick={handleProfileMenuOpen}
-                color="inherit"
-              >
+                color='inherit'>
                 <MoreIcon />
               </IconButton>
             </Box>
@@ -311,34 +311,33 @@ const NavBarMain = ({ onDrawerOpen, onDrawerClose }) => {
         {renderMenu}
       </Box>
 
-      <Drawer variant="permanent"
+      <Drawer
+        variant='permanent'
         open={open}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         style={{
           width: open ? 200 : 64,
           transition: 'width 0.3s ease-in-out',
-        }}
-      >
+        }}>
         <Toolbar
           sx={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'flex-end',
             px: [1],
-          }}
-        >
+          }}>
           {/*  <IconButton onClick={() => { handleDrawerOpen(); console.log('IconButton Clicked'); }}>
               <ChevronLeftIcon />
             </IconButton> */}
         </Toolbar>
         <Divider />
-        <List component="nav">
+        <List component='nav'>
           <SideItems />
         </List>
       </Drawer>
     </Box>
   );
-}
+};
 
-export default NavBarMain
+export default NavBarMain;

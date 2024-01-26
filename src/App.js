@@ -1,20 +1,19 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
-import NewLogin from "./components/NewLogin"
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import NewLogin from './components/NewLogin';
 
-import Unauthorized from "./components/Unauthorized";
-import RequireAuth from "./components/RequireAuth";
-import Layout from "./components/Layout";
-import AppSelection from "./components/AppSelection";
+import Unauthorized from './components/Unauthorized';
+import RequireAuth from './components/RequireAuth';
+import Layout from './components/Layout';
+import AppSelection from './components/AppSelection';
 import { useLocation } from 'react-router-dom';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
-import { Box } from "@mui/material";
+import { Box } from '@mui/material';
 
-import AllInvoices from "./components/AllInvoices";
-import Dashboard from "./components/Dashbord";
-import ExpenseManagement from "./components/ExpenseManagement";
-import GenerateInvoice from "./components/GenerateInvoice";
-
+import AllInvoices from './components/AllInvoices';
+import Dashboard from './components/Dashbord';
+import ExpenseManagement from './components/ExpenseManagement';
+import GenerateInvoice from './components/GenerateInvoice';
 
 // Create a styled component for the Paper element
 const StyledBox = styled(Box)(({ theme }) => ({
@@ -37,9 +36,8 @@ const theme = createTheme({
       main: '#228B22',
     },
     background: {
-      backgroundColor: '#E9D8E4'
+      backgroundColor: '#E9D8E4',
     },
-    
   },
   typography: {
     fontSize: 13,
@@ -62,26 +60,45 @@ const theme = createTheme({
 });
 
 function App() {
-
   const location = useLocation();
   return (
     <ThemeProvider theme={theme}>
       <Routes>
-
-        <Route path='/' element={<NewLogin />} />
-        <Route path='/app_select' element={<AppSelection />} />
-        <Route path='/' element={<Layout />}>
-
+        <Route
+          path='/'
+          element={<NewLogin />}
+        />
+        <Route
+          path='/app_select'
+          element={<AppSelection />}
+        />
+        <Route
+          path='/'
+          element={<Layout />}>
           {/* Public Routes */}
-          <Route path='/unauthorized' element={<Unauthorized />} />
+          <Route
+            path='/unauthorized'
+            element={<Unauthorized />}
+          />
 
-          <Route element={<RequireAuth allowedRoles={["admin"]} />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/generate-invocie" element = {<GenerateInvoice/>} />          
-            <Route path="/order-history" element={<AllInvoices />} />
-            <Route path="/expense-manage" element={<ExpenseManagement />} /> 
+          <Route element={<RequireAuth allowedRoles={['admin']} />}>
+            <Route
+              path='/dashboard'
+              element={<Dashboard />}
+            />
+            <Route
+              path='/generate-invocie'
+              element={<GenerateInvoice />}
+            />
+            <Route
+              path='/order-history'
+              element={<AllInvoices />}
+            />
+            <Route
+              path='/expense-manage'
+              element={<ExpenseManagement />}
+            />
           </Route>
-
         </Route>
       </Routes>
     </ThemeProvider>

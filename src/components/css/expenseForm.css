@@ -1,0 +1,41 @@
+.checkbox-container {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+}
+.checkbox-container > p {
+}
+.select-repeat {
+  max-width: 220px;
+  display: flex;
+  align-items: center;
+}
+
+.select-repeat > p {
+}
+
+.main-container {
+  max-width: 300px;
+  display: flex;
+  margin-top: 50px;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.radio-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.file-upload {
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 9px;
+}
+.button-containter {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
