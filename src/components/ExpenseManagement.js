@@ -517,37 +517,37 @@ function ExpenseManagement() {
   };
 
   //Count due invoices
-  function countDueInvoices(invoices) {
+  function countDueExpenses(expenses) {
     // Get the current date in "YYYY-MM-DD" format
     const today = new Date().toISOString().split('T')[0];
 
-    // Filter the invoices that are due (due_date is today or earlier)
-    const dueInvoices = invoices.filter((invoice) => invoice.due_date <= today);
+    // Filter the expenses that are due (due_date is today or earlier)
+    const dueExpenses = expenses.filter((invoice) => invoice.due_date <= today);
 
-    // Return the number of due invoices
-    return dueInvoices.length;
+    // Return the number of due expenses
+    return dueExpenses.length;
   }
 
-  const totalAmountDue = invoices.reduce(
-    (total, invoice) => total + (invoice.amount - invoice.paid_amount),
+  const totalAmountDue = allExpenses.reduce(
+    (total, expense) => total + (expense.amount - expense.paid_amount),
     0
   );
 
-  const totalAmount = invoices.reduce(
-    (total, invoice) => total + invoice.amount,
+  const totalAmount = allExpenses.reduce(
+    (total, expense) => total + expense.amount,
     0
   );
 
-  const totalAmountReceived = invoices.reduce(
+  const totalAmountReceived = allExpenses.reduce(
     (total, invoice) => total + invoice.paid_amount,
     0
   );
 
-  function calculateTotalAmountDueInINR(invoices) {
-    // Assuming invoices is an array of objects with a currency property and amount_due property
+  function calculateTotalAmountDueInINR(expenses) {
+    // Assuming expenses is an array of objects with a currency property and amount_due property
     let totalAmountDueInINR = 0;
 
-    for (const invoice of invoices) {
+    for (const invoice of expenses) {
       if (invoice.currency === '₹') {
         totalAmountDueInINR = totalAmountDue;
       } else if (invoice.currency == '£') {
@@ -585,11 +585,11 @@ function ExpenseManagement() {
     return totalAmountInINR;
   }
 
-  function calculatePaymentReceived(invoices) {
-    // Assuming invoices is an array of objects with a currency property and amount_due property
+  function calculatePaymentReceived(expenses) {
+    // Assuming expenses is an array of objects with a currency property and amount_due property
     let totalAmountInINR = 0;
 
-    for (const invoice of invoices) {
+    for (const invoice of expenses) {
       if (invoice.currency === '₹') {
         totalAmountInINR = totalAmountReceived;
       } else if (invoice.currency == '£') {
@@ -747,7 +747,7 @@ function ExpenseManagement() {
                   <IconWithText
                     icon={<ReceiptIcon />}
                     heading='Total Invoice'
-                    content={invoices.length}
+                    content={allExpenses.length}
                     iconColor='#2E9EFF'
                   />
                 </Grid>
@@ -759,7 +759,7 @@ function ExpenseManagement() {
                   <IconWithText
                     icon={<MonetizationOnIcon />}
                     heading='Invoice Due'
-                    content={countDueInvoices(invoices)}
+                    content={countDueExpenses(allExpenses)}
                     iconColor='#2E9EFF'
                   />
                 </Grid>
@@ -771,7 +771,7 @@ function ExpenseManagement() {
                   <IconWithText
                     icon={<MoneyOffIcon />}
                     heading='Amount Due'
-                    content={`₹${calculateTotalAmountDueInINR(invoices)}`}
+                    content={`₹${calculateTotalAmountDueInINR(allExpenses)}`}
                     iconColor='#1AAA3A'
                   />
                 </Grid>
@@ -928,7 +928,7 @@ function ExpenseManagement() {
                 <IconWithText
                   icon={<ReceiptIcon />} // Use the School icon
                   heading='Expenditure'
-                  content={invoices.length}
+                  content={allExpenses.length}
                   iconColor='#2E9EFF'
                 />
               </Grid>
@@ -938,7 +938,7 @@ function ExpenseManagement() {
                 <IconWithText
                   icon={<MonetizationOnIcon />} // Use the Work icon
                   heading='Expenditure Amount'
-                  content={calculateTotalAmount(invoices)}
+                  content={calculateTotalAmount(allExpenses)}
                   iconColor='#2E9EFF'
                 />
               </Grid>
@@ -948,7 +948,7 @@ function ExpenseManagement() {
                 <IconWithText
                   icon={<MoneyOffIcon />} // Use the School icon
                   heading='Amount Due'
-                  content={`₹${calculateTotalAmountDueInINR(invoices)}`}
+                  content={`₹${calculateTotalAmountDueInINR(allExpenses)}`}
                   iconColor='#1AAA3A'
                 />
               </Grid>
@@ -959,7 +959,7 @@ function ExpenseManagement() {
                 <IconWithText
                   icon={<MoneyOffIcon />} // Use the School icon
                   heading='Payment Received'
-                  content={`₹${calculatePaymentReceived(invoices)}`}
+                  content={`₹${calculatePaymentReceived(allExpenses)}`}
                   iconColor='#1AAA3A'
                 />
               </Grid>

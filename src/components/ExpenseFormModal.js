@@ -47,7 +47,7 @@ const names = [
 
 const ExpenseFormModal = ({ open, onClose, setExpenses }) => {
   const [expenseDate, setExpenseDate] = useState('');
-  const [vendor, setVendor] = useState('');
+  const [vendor, setVendor] = useState('selectVendor');
   const [expenseNumber, setExpenseNumber] = useState('');
   const [invoiceNumber, setInvoiceNumber] = useState('');
   const [amount, setAmount] = useState('');
@@ -55,7 +55,7 @@ const ExpenseFormModal = ({ open, onClose, setExpenses }) => {
   const [value, setValue] = React.useState('female');
   const [isRecurringChecked, setIsReccuringChecked] = useState(false);
   const [fileFormData, setFileFormData] = useState({});
-  const [currencyVal, setCurrencyVal] = useState('');
+  const [currencyVal, setCurrencyVal] = useState('currencies');
   const theme = useTheme();
   const [personName, setPersonName] = React.useState([]);
 
@@ -344,12 +344,12 @@ const ExpenseFormModal = ({ open, onClose, setExpenses }) => {
                     marginLeft: '6px',
                     minWidth: 120,
                   }}>
-                  <InputLabel id='demo-simple-select-label'>Age</InputLabel>
+                  <InputLabel id='demo-simple-select-label'>Date</InputLabel>
                   <Select
                     labelId='demo-simple-select-label'
                     id='demo-simple-select'
-                    value={'age'}
-                    label='Age'
+                    value={'Date'}
+                    label='Date'
                     size='small'
                     onChange={handleChange}>
                     <MenuItem value={10}>Ten</MenuItem>
@@ -366,12 +366,12 @@ const ExpenseFormModal = ({ open, onClose, setExpenses }) => {
                     marginLeft: '6px',
                     minWidth: 120,
                   }}>
-                  <InputLabel id='demo-simple-select-label'>Age</InputLabel>
+                  <InputLabel id='demo-simple-select-label'>Date</InputLabel>
                   <Select
                     labelId='demo-simple-select-label'
                     id='demo-simple-select'
-                    value={'age'}
-                    label='Age'
+                    value={'Date'}
+                    label='Date'
                     size='small'
                     onChange={handleChange}>
                     <MenuItem value={10}>Ten</MenuItem>
