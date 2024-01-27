@@ -106,7 +106,7 @@ function ExpenseManagement() {
   const [graphBool, setGraphBool] = useState(false);
   const [summaryBool, setSummaryBool] = useState(false);
 
-  const [invoiceStatus, setInvoiceStatus] = useState('');
+  const [expenseStatus, setExpenseStatus] = useState('');
 
   const today = dayjs();
   const [selectedPaymentId, setSelectedPaymentId] = useState();
@@ -197,7 +197,12 @@ function ExpenseManagement() {
   };
 
   useEffect(() => {
-    fetchInvoiceData();
+    const intervalId = setInterval(() => {
+      fetchInvoiceData();
+    }, 1000);
+    return () => {
+      clearInterval(intervalId);
+    };
   }, []);
 
   const viewOrdersInvoice = (invoiceId) => {
@@ -242,8 +247,8 @@ function ExpenseManagement() {
     }
   };
 
-  const handleInvoiceStatusChange = (event) => {
-    setInvoiceStatus(event.target.value);
+  const handleExpenseChange = (event) => {
+    setExpenseStatus(event.target.value);
   };
 
   const onChangePaymentMode = (event) => {
@@ -429,7 +434,7 @@ function ExpenseManagement() {
   const filteredExpenses = allExpenses.filter((invoice) => {
     if (
       !selectedClient &&
-      !invoiceStatus &&
+      !expenseStatus &&
       (!dateRange[0] || dateRange[0].startDate === null)
     ) {
       return true;
@@ -443,8 +448,8 @@ function ExpenseManagement() {
     }
 
     // Check if invoice status is selected
-    if (invoiceStatus) {
-      switch (invoiceStatus) {
+    if (expenseStatus) {
+      switch (expenseStatus) {
         case 'paid':
           return invoice.paid_amount >= invoice.amount; // Include fully paid invoices
         case 'unpaid':
@@ -564,11 +569,11 @@ function ExpenseManagement() {
     return totalAmountDueInINR;
   }
 
-  function calculateTotalAmount(invoices) {
-    // Assuming invoices is an array of objects with a currency property and amount_due property
+  function calculateTotalAmount(expenses) {
+    // Assuming expenses is an array of objects with a currency property and amount_due property
     let totalAmountInINR = 0;
 
-    for (const invoice of invoices) {
+    for (const invoice of expenses) {
       if (invoice.currency === '₹') {
         totalAmountInINR = totalAmount;
       } else if (invoice.currency == '£') {
@@ -654,9 +659,9 @@ function ExpenseManagement() {
 
   const handleOpenEmailDialog = (id) => {
     //setSelectedInvoiceNumber(invoiceNumber);
-    const foundInvoice = invoices.find((invoice) => invoice.id === id);
+    const foundExpense = allExpenses.find((expense) => expense.id === id);
     console.log(id);
-    setInvoiceForMail(foundInvoice);
+    setInvoiceForMail(foundExpense);
     console.log('Send mail dialog');
     setOpenEmailDialog(true);
   };
@@ -667,13 +672,13 @@ function ExpenseManagement() {
   };
 
   const handleDownloadPDF = async (id) => {
-    const foundInvoice = invoices.find((invoice) => invoice.id === id);
-    console.log('In get pdf', foundInvoice.invoice_number);
-    var invoiceNumber = foundInvoice.invoice_number;
+    const foundExpense = allExpenses.find((expense) => expense.id === id);
+    console.log('In get pdf', foundExpense.expense_number);
+    var expenseNumber = foundExpense.expense_number;
 
     try {
       const response = await fetch(
-        FRONTEND_API + 'download-invoice/'.concat(invoiceNumber)
+        FRONTEND_API + 'download-invoice/'.concat(expenseNumber)
       );
       if (!response.ok) {
         throw new Error(`Failed to download PDF: ${response.statusText}`);
@@ -686,7 +691,7 @@ function ExpenseManagement() {
       // Create a link and trigger a click to download the PDF
       const link = document.createElement('a');
       link.href = url;
-      link.download = `${invoiceNumber}_invoice.pdf`;
+      link.download = `${expenseNumber}_invoice.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -803,8 +808,8 @@ function ExpenseManagement() {
                 <Select
                   labelId='demo-select-small-label'
                   id='demo-select-small'
-                  value={invoiceStatus}
-                  onChange={handleInvoiceStatusChange}>
+                  value={expenseStatus}
+                  onChange={handleExpenseChange}>
                   <MenuItem value=''>
                     <em>None</em>
                   </MenuItem>

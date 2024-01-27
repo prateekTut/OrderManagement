@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { createRef, useEffect, useRef, useState } from 'react';
 import {
   Button,
   Modal,
@@ -54,11 +54,9 @@ const ExpenseFormModal = ({ open, onClose, setExpenses }) => {
   const [notes, setNotes] = useState('');
   const [value, setValue] = React.useState('female');
   const [isRecurringChecked, setIsReccuringChecked] = useState(false);
-  const [fileFormData, setFileFormData] = useState({});
   const [currencyVal, setCurrencyVal] = useState('currencies');
-  const theme = useTheme();
   const [personName, setPersonName] = React.useState([]);
-
+  const fileData = createRef();
   const handleChange = (event) => {
     const {
       target: { value },
@@ -131,7 +129,10 @@ const ExpenseFormModal = ({ open, onClose, setExpenses }) => {
       notes: notes,
       vendor: vendor,
       currency: currencyVal,
+      attachment: fileData.current.value,
     };
+
+    console.log('formData', formData);
     // const formData = new FormData();
 
     // formData.append('expense_date', expenseDate);
@@ -141,13 +142,14 @@ const ExpenseFormModal = ({ open, onClose, setExpenses }) => {
     // formData.append('invoice_number', invoiceNumber);
     // formData.append('amount', amount);
     // formData.append('vendor', vendor);
+    // formData.append('attachment', fileData.current.value);
 
     fetch(`${FRONTEND_API}submitexpense`, {
       method: 'POST',
       body: JSON.stringify(formData),
       headers: {
-        Authorization: 'Bearer ' + token,
         'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token,
       },
     })
       .then((response) => response.json())
@@ -159,6 +161,7 @@ const ExpenseFormModal = ({ open, onClose, setExpenses }) => {
         // Handle errors
         console.error('Error:', error);
       });
+    onClose();
     setExpenses({
       expenseDate: expenseDate,
       expenseNumber: expenseNumber,
@@ -175,11 +178,6 @@ const ExpenseFormModal = ({ open, onClose, setExpenses }) => {
   const currecyChangeHandler = (e) => {
     console.log('inside currency', e.target.value);
     setCurrencyVal(e.target.value);
-  };
-  const handleFileChange = async (e) => {
-    const file = e.target.files[0];
-    console.log('file', file);
-    setFileFormData(file);
   };
 
   return (
@@ -318,7 +316,7 @@ const ExpenseFormModal = ({ open, onClose, setExpenses }) => {
               id='fileInput'
               type='file'
               hidden
-              onChange={handleFileChange}
+              ref={fileData}
             />
           </div>
         </div>
