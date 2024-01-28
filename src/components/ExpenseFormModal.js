@@ -1,4 +1,10 @@
-import React, { createRef, useEffect, useRef, useState } from 'react';
+import React, {
+  createRef,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   Button,
   Modal,
@@ -45,23 +51,33 @@ const names = [
   'Kelly Snyder',
 ];
 
-const ExpenseFormModal = ({ open, onClose, setExpenses }) => {
+const ExpenseFormModal = ({
+  open,
+  onClose,
+  setExpenseId,
+  expenseId,
+  editItem,
+  setExpenseData,
+  expenseData,
+  submitHandler,
+  fileData,
+}) => {
   const [expenseDate, setExpenseDate] = useState('');
   const [vendor, setVendor] = useState('selectVendor');
   const [expenseNumber, setExpenseNumber] = useState('');
   const [invoiceNumber, setInvoiceNumber] = useState('');
   const [amount, setAmount] = useState('');
   const [notes, setNotes] = useState('');
-  const [value, setValue] = React.useState('female');
+  const [value, setValue] = React.useState('');
   const [isRecurringChecked, setIsReccuringChecked] = useState(false);
   const [currencyVal, setCurrencyVal] = useState('currencies');
-  const [personName, setPersonName] = React.useState([]);
-  const fileData = createRef();
+  const [recurringDate, setReccuringDate] = React.useState([]);
   const handleChange = (event) => {
     const {
       target: { value },
     } = event;
-    setPersonName(typeof value === 'string' ? value.split(',') : value);
+
+    setReccuringDate(typeof value === 'string' ? value.split(',') : value);
   };
 
   const handleRadioChange = (event) => {
@@ -112,66 +128,10 @@ const ExpenseFormModal = ({ open, onClose, setExpenses }) => {
   };
   const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
   let token = localStorage.getItem('token');
-  const submitHandler = () => {
-    console.log('date', expenseDate);
-    console.log('expenseNumber', expenseNumber);
-    console.log('invoice number', invoiceNumber);
-    console.log('amount', amount);
-    console.log('notes', notes);
-    console.log('vendor', vendor);
-    console.log('currency', currencyVal);
+  if (fileData.current) {
+    console.log('file from modal', fileData.current);
+  }
 
-    const formData = {
-      expense_date: expenseDate,
-      expense_number: expenseNumber,
-      invoice_number: invoiceNumber,
-      amount: amount,
-      notes: notes,
-      vendor: vendor,
-      currency: currencyVal,
-      attachment: fileData.current.value,
-    };
-
-    console.log('formData', formData);
-    // const formData = new FormData();
-
-    // formData.append('expense_date', expenseDate);
-    // formData.append('expense_number', expenseNumber);
-    // formData.append('invoice_number', invoiceNumber);
-    // formData.append('currency', currencyVal);
-    // formData.append('invoice_number', invoiceNumber);
-    // formData.append('amount', amount);
-    // formData.append('vendor', vendor);
-    // formData.append('attachment', fileData.current.value);
-
-    fetch(`${FRONTEND_API}submitexpense`, {
-      method: 'POST',
-      body: JSON.stringify(formData),
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + token,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // Handle the response from the backend
-        console.log('Backend response:', data);
-      })
-      .catch((error) => {
-        // Handle errors
-        console.error('Error:', error);
-      });
-    onClose();
-    setExpenses({
-      expenseDate: expenseDate,
-      expenseNumber: expenseNumber,
-      invoiceNumber: invoiceNumber,
-      currency: currencyVal,
-      amount: amount,
-      notes: notes,
-      vendor: vendor,
-    });
-  };
   const vendorSelectHandler = (e) => {
     setVendor(e.target.value);
   };
@@ -179,7 +139,9 @@ const ExpenseFormModal = ({ open, onClose, setExpenses }) => {
     console.log('inside currency', e.target.value);
     setCurrencyVal(e.target.value);
   };
+  console.log('item needs to edit', editItem);
 
+  console.log('modal status', open);
   return (
     <Modal
       open={open}
@@ -215,8 +177,12 @@ const ExpenseFormModal = ({ open, onClose, setExpenses }) => {
           margin='normal'
           size='small'
           type='date'
-          value={expenseDate}
-          onChange={(e) => setExpenseDate(e.target.value)}
+          value={expenseData.expense_date}
+          onChange={(e) =>
+            setExpenseData((prevState) => {
+              return { ...prevState, expense_date: e.target.value };
+            })
+          }
           InputLabelProps={{
             shrink: true,
           }}
@@ -231,10 +197,14 @@ const ExpenseFormModal = ({ open, onClose, setExpenses }) => {
           <Select
             labelId='demo-simple-select-label'
             id='demo-simple-select'
-            value={vendor}
+            value={expenseData.vendor}
             label='Select Vendors'
             size='small'
-            onChange={vendorSelectHandler}>
+            onChange={(e) =>
+              setExpenseData((prevState) => {
+                return { ...prevState, vendor: e.target.value };
+              })
+            }>
             {vendorsList.map((vndr) => (
               <MenuItem
                 key={vndr.id}
@@ -250,16 +220,24 @@ const ExpenseFormModal = ({ open, onClose, setExpenses }) => {
           margin='normal'
           label='Expense Number'
           size='small'
-          value={expenseNumber}
-          onChange={(e) => setExpenseNumber(e.target.value)}
+          value={expenseData.expense_number}
+          onChange={(e) =>
+            setExpenseData((prevState) => {
+              return { ...prevState, expense_number: e.target.value };
+            })
+          }
         />
         <TextField
           fullWidth
           margin='normal'
           label='Invoice Number'
-          value={invoiceNumber}
+          value={expenseData.invoice_number}
           size='small'
-          onChange={(e) => setInvoiceNumber(e.target.value)}
+          onChange={(e) =>
+            setExpenseData((prevState) => {
+              return { ...prevState, invoice_number: e.target.value };
+            })
+          }
         />
         <FormControl
           fullWidth
@@ -268,10 +246,14 @@ const ExpenseFormModal = ({ open, onClose, setExpenses }) => {
           <Select
             labelId='demo-simple-select-label'
             id='demo-simple-select'
-            value={currencyVal}
+            value={expenseData.currency}
             size='small'
             label='currencies'
-            onChange={currecyChangeHandler}>
+            onChange={(e) =>
+              setExpenseData((prevState) => {
+                return { ...prevState, currency: e.target.value };
+              })
+            }>
             {currencies.map((currency) => (
               <MenuItem value={currency.value}>{currency.label}</MenuItem>
             ))}
@@ -283,15 +265,23 @@ const ExpenseFormModal = ({ open, onClose, setExpenses }) => {
           label='Amount'
           type='number'
           size='small'
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
+          value={expenseData.amount}
+          onChange={(e) =>
+            setExpenseData((prevState) => {
+              return { ...prevState, amount: e.target.value };
+            })
+          }
         />
         <TextField
           minRows={3}
           placeholder='Notes'
           label='Notes'
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
+          value={expenseData.notes}
+          onChange={(e) =>
+            setExpenseData((prevState) => {
+              return { ...prevState, notes: e.target.value };
+            })
+          }
           style={{ width: '100%', marginTop: '16px' }}
         />
         <div className='file-upload'>
@@ -402,12 +392,8 @@ const ExpenseFormModal = ({ open, onClose, setExpenses }) => {
                   <RadioGroup
                     aria-labelledby='demo-controlled-radio-buttons-group'
                     name='controlled-radio-buttons-group'
-                    value={value}
                     onChange={handleRadioChange}>
-                    <FormControlLabel
-                      value='male'
-                      control={<Radio />}
-                    />
+                    <FormControlLabel control={<Radio />} />
                   </RadioGroup>
                 </FormControl>
                 <div>

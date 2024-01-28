@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createRef } from 'react';
 import { Typography, Container, Portal } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useState, useEffect, useRef } from 'react';
@@ -87,6 +87,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { StyledTableCell, StyledTableRow } from './styles/TableStyles';
 import ExpenseFormModal from './ExpenseFormModal';
+import DeleteModal from './DeleteModal';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -99,7 +100,22 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 
 function ExpenseManagement() {
   const [invoices, setInvoices] = useState([]);
-  const [expenses, setExpenses] = useState({});
+  const [editItem, setEditItem] = useState({});
+  const [expenseId, setExpenseId] = useState('');
+
+  const [expenseData, setExpenseData] = useState({
+    expense_date: '',
+    vendor: '',
+    expense_number: '',
+    amount: '',
+    notes: '',
+    currency: '',
+    invoice_number: '',
+  });
+  const [recurringDate, setReccuringDate] = React.useState([]);
+  const fileData = useRef(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   const [allExpenses, setAllExpenses] = useState([]);
   const [toggleLifetime, setToggleLifetime] = useState(false);
 
@@ -129,7 +145,7 @@ function ExpenseManagement() {
     const year = today.getFullYear();
     return `${day}${month}${year}`;
   } */
-
+  console.log('currentExpenseId', expenseId);
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
 
@@ -146,27 +162,67 @@ function ExpenseManagement() {
     setPage(newPage);
   };
 
-  const fetchInvoicesData = async () => {
-    try {
-      var formdata = new FormData();
-      //formdata.append("user", "student");
-      const response = await fetch(FRONTEND_API + 'getAllInvoices', {
-        method: 'POST',
-        headers: {
-          Authorization: 'Bearer ' + token,
-        },
-      });
-      const rawData = await response.json();
-      console.log(rawData);
-      return rawData;
-    } catch (rejected) {
-      console.log(rejected);
-      return null;
-    }
-  };
   useEffect(() => {
     getAllExpenses();
   }, []);
+
+  console.log('date', expenseData.expense_date);
+  console.log('expenseNumber', expenseData.expense_number);
+  console.log('invoice number', expenseData.invoice_number);
+  console.log('amount', expenseData.amount);
+  console.log('notes', expenseData.notes);
+  console.log('vendor', expenseData.vendor);
+  console.log('currency', expenseData.currency);
+  console.log('attachment', fileData);
+  const submitHandler = () => {
+    const formData = {
+      expense_date: expenseData.expense_date,
+      expense_number: expenseData.expense_number,
+      invoice_number: expenseData.invoice_number,
+      amount: expenseData.amount,
+      notes: expenseData.notes,
+      vendor: expenseData.vendor,
+      currency: expenseData.currency,
+      attachment: fileData.current.value,
+    };
+
+    console.log('formData', formData);
+    // const formData = new FormData();
+
+    // formData.append('expense_date', expenseDate);
+    // formData.append('expense_number', expenseNumber);
+    // formData.append('invoice_number', invoiceNumber);
+    // formData.append('currency', currencyVal);
+    // formData.append('invoice_number', invoiceNumber);
+    // formData.append('amount', amount);
+    // formData.append('vendor', vendor);
+    // formData.append('attachment', fileData.current.value);
+
+    fetch(
+      expenseId
+        ? `${FRONTEND_API}editexpense/${expenseId}`
+        : `${FRONTEND_API}submitexpense`,
+      {
+        method: expenseId ? 'PUT' : 'POST',
+        body: JSON.stringify(formData),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response from the backend
+        console.log('Backend response:', data);
+        setShowExpenseModal(false);
+      })
+      .catch((error) => {
+        // Handle errors
+        console.error('Error:', error);
+      });
+    getAllExpenses();
+  };
 
   const getAllExpenses = async () => {
     const res = await fetch(`${FRONTEND_API}getAllExpenses`, {
@@ -179,31 +235,26 @@ function ExpenseManagement() {
     console.log('all expense data', data);
     setAllExpenses(data.expenses);
   };
-  const fetchInvoiceData = async () => {
-    try {
-      const rawData = await fetchInvoicesData();
-      if (rawData) {
-        // Sort invoices by date in descending order
-        const sortedInvoices = rawData.sort((a, b) => {
-          return new Date(b.invoice_date) - new Date(a.invoice_date);
-        });
 
-        // Update the state with the sorted invoices
-        setInvoices(sortedInvoices);
-      }
-    } catch (error) {
-      console.error('Error fetching invoices:', error);
-    }
+  const deleteItemHandler = () => {
+    const deleteExpenseUrl = `deleteexpense/${expenseId}`;
+
+    fetch(FRONTEND_API + deleteExpenseUrl, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => console.log('successfully deleted'))
+      .catch((error) => console.error('Error:', error));
+    getAllExpenses();
   };
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      fetchInvoiceData();
-    }, 1000);
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, []);
+  const menuCloseHandler = () => {
+    setMenuOpen(false);
+  };
 
   const viewOrdersInvoice = (invoiceId) => {
     console.log('Invoice ID', invoiceId);
@@ -347,7 +398,6 @@ function ExpenseManagement() {
           setPaymentDate(null);
           setPaymentMode(null);
           handleClosePay();
-          fetchInvoiceData();
         })
         .catch((rejected) => {
           console.log(rejected);
@@ -611,9 +661,23 @@ function ExpenseManagement() {
     return totalAmountInINR;
   }
 
+  console.log('current file', fileData.current);
+
   //Edit invoices
-  const editInvoices = (invoice_number) => {
-    navigate(`/edit-invoices/${invoice_number}`);
+  const editExpense = (user) => {
+    console.log(' user from edit', user);
+    setShowExpenseModal(true);
+    setExpenseData({
+      expense_date: user.expense_date,
+      vendor: user.vendor,
+      expense_number: user.expense_number,
+      amount: user.amount,
+      notes: user.notes,
+      currency: user.currency,
+      invoice_number: user.invoice_number,
+    });
+    fileData.current = user.attachment;
+    setExpenseId(user.id);
   };
 
   //Client dropdown
@@ -647,7 +711,6 @@ function ExpenseManagement() {
       .then((data) => {
         // do something with data
         console.log(data);
-        fetchInvoiceData();
         handleCloseWarn();
       })
       .catch((rejected) => {
@@ -705,6 +768,17 @@ function ExpenseManagement() {
 
   const expenseModalHandler = () => {
     setShowExpenseModal(true);
+    setExpenseId('');
+    setExpenseData({
+      expense_date: '',
+      vendor: '',
+      expense_number: '',
+      amount: '',
+      notes: '',
+      currency: '',
+      invoice_number: '',
+    });
+    fileData.current = null;
   };
 
   return (
@@ -1006,7 +1080,18 @@ function ExpenseManagement() {
         <ExpenseFormModal
           onClose={() => setShowExpenseModal(false)}
           open={showExpenseModal}
-          setExpenses={setExpenses}
+          expenseData={expenseData}
+          setExpenseData={setExpenseData}
+          editItem={editItem}
+          fileData={fileData}
+          editId={expenseId}
+          setExpenseId={setExpenseId}
+          submitHandler={submitHandler}
+        />
+        <DeleteModal
+          isOpen={showDeleteModal}
+          onClose={() => setShowDeleteModal(false)}
+          deleteItemHandler={() => deleteItemHandler(expenseId)}
         />
         <Button
           variant='contained'
@@ -1126,10 +1211,11 @@ function ExpenseManagement() {
                           <OpenInNewIcon fontSize='small' />
                           <div className='text'>Open</div>
                         </div>
+                        {console.log('attachment from list', user.attachment)}
                         <div
                           className='container-icon'
                           role='button'
-                          onClick={() => editInvoices(user.invoice_number)}>
+                          onClick={() => editExpense(user)}>
                           <DriveFileRenameOutlineIcon fontSize='small' />
                           <div className='text'>Edit</div>
                         </div>
@@ -1138,7 +1224,10 @@ function ExpenseManagement() {
                           <div
                             className='container-icon'
                             role='button'
-                            onClick={() => setPaymentState(user.id)}>
+                            onClick={() => {
+                              setPaymentState(user.id);
+                              console.log('user from mark paid', user);
+                            }}>
                             <CheckCircleOutlineIcon fontSize='small' />
                             <div className='text'>Mark Paid</div>
                           </div>
@@ -1147,7 +1236,11 @@ function ExpenseManagement() {
                         <div className='container-icon'>
                           <div
                             role='button'
-                            onClick={(e) => handleClick(e, user.id)}>
+                            onClick={(e) => {
+                              console.log('delete icon clicked', user);
+                              setExpenseId(user.id);
+                              handleClick(e, user.id);
+                            }}>
                             <MoreHorizIcon fontSize='small' />
                             <div className='text'>More</div>
                           </div>
@@ -1156,7 +1249,7 @@ function ExpenseManagement() {
                             id={`menu-${user.id}`}
                             anchorEl={anchorEl}
                             open={menuOpen}
-                            onClose={() => setMenuOpen(false)}>
+                            onClose={menuCloseHandler}>
                             <MenuList>
                               <MenuItem
                                 onClick={() =>
@@ -1176,9 +1269,10 @@ function ExpenseManagement() {
                                 </MenuItem>*/}
 
                               <MenuItem
-                                onClick={() =>
-                                  handleDownloadPDF(selectedInvoiceId)
-                                }>
+                                onClick={() => {
+                                  handleDownloadPDF(selectedInvoiceId);
+                                  console.log('user from download', user);
+                                }}>
                                 <ListItemIcon>
                                   <DownloadIcon fontSize='small' />
                                 </ListItemIcon>
@@ -1186,9 +1280,10 @@ function ExpenseManagement() {
                               </MenuItem>
 
                               <MenuItem
-                                onClick={() =>
-                                  handleClickOpenWarn(selectedInvoiceId)
-                                }>
+                                onClick={() => {
+                                  setShowDeleteModal(true);
+                                  menuCloseHandler();
+                                }}>
                                 <ListItemIcon>
                                   <DeleteIcon fontSize='small' />
                                 </ListItemIcon>
