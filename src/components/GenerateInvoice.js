@@ -83,7 +83,10 @@ function GenerateInvoice() {
   const { state } = location;
   let expenseData = state;
   console.log('data url ', state);
-  let isExpenseData = Object.keys(expenseData).length > 0;
+  let isExpenseData = false;
+  if (expenseData !== null) {
+    isExpenseData = Object.keys(expenseData).length > 0;
+  }
   const currencies = [
     {
       value: '$',
