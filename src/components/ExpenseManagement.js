@@ -256,9 +256,11 @@ function ExpenseManagement() {
     setMenuOpen(false);
   };
 
-  const viewOrdersInvoice = (invoiceId) => {
-    console.log('Invoice ID', invoiceId);
-    navigate(`/generated-invoice/${invoiceId}`);
+  const viewExpense = (user) => {
+    console.log('Invoice ID', user.invoice_number);
+    navigate(`/expense-view/${user.invoice_number}`, {
+      state: user,
+    });
   };
 
   const handleBudget = (budget, currency) => {
@@ -1205,9 +1207,7 @@ function ExpenseManagement() {
                         <div
                           role='button'
                           className='container-icon'
-                          onClick={() =>
-                            viewOrdersInvoice(user.invoice_number)
-                          }>
+                          onClick={() => viewExpense(user)}>
                           <OpenInNewIcon fontSize='small' />
                           <div className='text'>Open</div>
                         </div>
@@ -1519,19 +1519,3 @@ function ExpenseManagement() {
 }
 
 export default ExpenseManagement;
-
-// useEffect(() => {
-//   getAllExpenses();
-// }, []);
-
-// const getAllExpenses = async () => {
-//   const res = await fetch(`${FRONTEND_API}getAllExpenses`, {
-//     headers: {
-//       Authorization: 'Bearer ' + token,
-//       'Content-Type': 'application/json',
-//     },
-//   });
-//   const data = await res.json();
-//   console.log('all expense data', data);
-//   setAllExpenses(data.expenses);
-// };

@@ -98,6 +98,10 @@ function App() {
               path='/expense-manage'
               element={<ExpenseManagement />}
             />
+            <Route
+              path='/expense-view/:id'
+              element={<GenerateInvoice />}
+            />
           </Route>
         </Route>
       </Routes>
