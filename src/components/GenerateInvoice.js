@@ -87,6 +87,7 @@ function GenerateInvoice() {
   if (expenseData !== null) {
     isExpenseData = Object.keys(expenseData).length > 0;
   }
+  console.log('isExpenseData', isExpenseData);
   const currencies = [
     {
       value: '$',
@@ -737,179 +738,62 @@ function GenerateInvoice() {
                           {savedTax == 'vat' && !isExpenseData && (
                             <StyledTableCell>VAT</StyledTableCell>
                           )}
-                          <StyledTableCell></StyledTableCell>
+                          <StyledTableCell>Total</StyledTableCell>
                         </StyledTableRow>
                       </TableHead>
-
-                      {tableData.length > 0 && !isExpenseData ? (
-                        tableData.map((data, index) => (
-                          <TableBody key={data.id}>
-                            <StyledTableCell>
-                              <TextField
-                                variant='standard'
-                                value={data.item}
-                                onChange={(event) =>
-                                  handleInputChange(event, 'item', data.id)
-                                }
-                              />
-                            </StyledTableCell>
-                            {savedTax && (
-                              <StyledTableCell>
-                                <div>
-                                  <TextField
-                                    variant='standard'
-                                    value={data.taxRate}
-                                    onChange={(event) =>
-                                      handleInputChange(
-                                        event,
-                                        'taxRate',
-                                        data.id
-                                      )
-                                    }
-                                    InputProps={{
-                                      endAdornment: (
-                                        <InputAdornment position='end'>
-                                          %
-                                        </InputAdornment>
-                                      ),
-                                    }}
-                                  />
-                                </div>
-                              </StyledTableCell>
-                            )}
-                            <StyledTableCell>
-                              <TextField
-                                id='standard-basic'
-                                variant='standard'
-                                value={data.quantity}
-                                onChange={(event) =>
-                                  handleInputChange(event, 'quantity', data.id)
-                                }
-                              />
-                            </StyledTableCell>
-
-                            <StyledTableCell>
-                              <div
-                                style={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                }}>
-                                <span
-                                  style={{
-                                    marginRight: '5px',
-                                    marginTop: '0px',
-                                  }}>
-                                  {currencyValue}
-                                </span>
-                                <TextField
-                                  id='standard-basic'
-                                  variant='standard'
-                                  value={data.rate}
-                                  onChange={(event) =>
-                                    handleInputChange(event, 'rate', data.id)
-                                  }
-                                />
-                              </div>
-                            </StyledTableCell>
-
-                            {savedTax == 'gst' && saveSubTax == 'igst' && (
-                              <StyledTableCell>
-                                <div
-                                  style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                  }}>
-                                  <span
-                                    style={{
-                                      marginRight: '5px',
-                                      marginTop: '0px',
-                                    }}>
-                                    {currencyValue}
-                                  </span>
-
-                                  <TextField
-                                    id='standard-basic'
-                                    disabled
-                                    variant='standard'
-                                    value={data.amount}
-                                    onChange={(event) =>
-                                      handleInputChange(
-                                        event,
-                                        'amount',
-                                        data.id
-                                      )
-                                    }
-                                  />
-                                </div>
-                              </StyledTableCell>
-                            )}
-
-                            {savedTax == 'gst' && saveSubTax == 'igst' && (
-                              <div>
+                      {!isExpenseData && (
+                        <>
+                          {tableData.length > 0 &&
+                            tableData.map((data, index) => (
+                              <TableBody key={data.id}>
                                 <StyledTableCell>
-                                  <div
-                                    style={{
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                    }}>
-                                    <span
-                                      style={{
-                                        marginRight: '5px',
-                                        marginTop: '0px',
-                                      }}>
-                                      {currencyValue}
-                                    </span>
-
-                                    <TextField
-                                      id='standard-basic'
-                                      disabled
-                                      variant='standard'
-                                      value={data.igst.toFixed(2)}
-                                      onChange={(event) =>
-                                        handleInputChange(
-                                          event,
-                                          'igst',
-                                          data.id
-                                        )
-                                      }
-                                    />
-                                  </div>
+                                  <TextField
+                                    variant='standard'
+                                    value={data.item}
+                                    onChange={(event) =>
+                                      handleInputChange(event, 'item', data.id)
+                                    }
+                                  />
                                 </StyledTableCell>
-                              </div>
-                            )}
-                            {savedTax == 'gst' && saveSubTax == 'gst' && (
-                              <StyledTableCell>
-                                <div
-                                  style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                  }}>
-                                  <span
-                                    style={{
-                                      marginRight: '5px',
-                                      marginTop: '0px',
-                                    }}>
-                                    {currencyValue}
-                                  </span>
-
+                                {savedTax && (
+                                  <StyledTableCell>
+                                    <div>
+                                      <TextField
+                                        variant='standard'
+                                        value={data.taxRate}
+                                        onChange={(event) =>
+                                          handleInputChange(
+                                            event,
+                                            'taxRate',
+                                            data.id
+                                          )
+                                        }
+                                        InputProps={{
+                                          endAdornment: (
+                                            <InputAdornment position='end'>
+                                              %
+                                            </InputAdornment>
+                                          ),
+                                        }}
+                                      />
+                                    </div>
+                                  </StyledTableCell>
+                                )}
+                                <StyledTableCell>
                                   <TextField
                                     id='standard-basic'
-                                    disabled
                                     variant='standard'
-                                    value={data.amount}
+                                    value={data.quantity}
                                     onChange={(event) =>
                                       handleInputChange(
                                         event,
-                                        'amount',
+                                        'quantity',
                                         data.id
                                       )
                                     }
                                   />
-                                </div>
-                              </StyledTableCell>
-                            )}
-                            {savedTax == 'gst' && saveSubTax == 'gst' && (
-                              <div>
+                                </StyledTableCell>
+
                                 <StyledTableCell>
                                   <div
                                     style={{
@@ -924,104 +808,242 @@ function GenerateInvoice() {
                                       {currencyValue}
                                     </span>
                                     <TextField
-                                      disabled
                                       id='standard-basic'
                                       variant='standard'
-                                      value={data.cgst.toFixed(2)}
+                                      value={data.rate}
                                       onChange={(event) =>
                                         handleInputChange(
                                           event,
-                                          'cgst',
+                                          'rate',
                                           data.id
                                         )
                                       }
                                     />
                                   </div>
                                 </StyledTableCell>
-                              </div>
-                            )}
-                            {savedTax == 'gst' && saveSubTax == 'gst' && (
-                              <StyledTableCell>
-                                <div
-                                  style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                  }}>
-                                  <span
+
+                                {savedTax == 'gst' && saveSubTax == 'igst' && (
+                                  <StyledTableCell>
+                                    <div
+                                      style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                      }}>
+                                      <span
+                                        style={{
+                                          marginRight: '5px',
+                                          marginTop: '0px',
+                                        }}>
+                                        {currencyValue}
+                                      </span>
+
+                                      <TextField
+                                        id='standard-basic'
+                                        disabled
+                                        variant='standard'
+                                        value={data.amount}
+                                        onChange={(event) =>
+                                          handleInputChange(
+                                            event,
+                                            'amount',
+                                            data.id
+                                          )
+                                        }
+                                      />
+                                    </div>
+                                  </StyledTableCell>
+                                )}
+
+                                {savedTax == 'gst' && saveSubTax == 'igst' && (
+                                  <div>
+                                    <StyledTableCell>
+                                      <div
+                                        style={{
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                        }}>
+                                        <span
+                                          style={{
+                                            marginRight: '5px',
+                                            marginTop: '0px',
+                                          }}>
+                                          {currencyValue}
+                                        </span>
+
+                                        <TextField
+                                          id='standard-basic'
+                                          disabled
+                                          variant='standard'
+                                          value={data.igst.toFixed(2)}
+                                          onChange={(event) =>
+                                            handleInputChange(
+                                              event,
+                                              'igst',
+                                              data.id
+                                            )
+                                          }
+                                        />
+                                      </div>
+                                    </StyledTableCell>
+                                  </div>
+                                )}
+                                {savedTax == 'gst' && saveSubTax == 'gst' && (
+                                  <StyledTableCell>
+                                    <div
+                                      style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                      }}>
+                                      <span
+                                        style={{
+                                          marginRight: '5px',
+                                          marginTop: '0px',
+                                        }}>
+                                        {currencyValue}
+                                      </span>
+
+                                      <TextField
+                                        id='standard-basic'
+                                        disabled
+                                        variant='standard'
+                                        value={data.amount}
+                                        onChange={(event) =>
+                                          handleInputChange(
+                                            event,
+                                            'amount',
+                                            data.id
+                                          )
+                                        }
+                                      />
+                                    </div>
+                                  </StyledTableCell>
+                                )}
+                                {savedTax == 'gst' && saveSubTax == 'gst' && (
+                                  <div>
+                                    <StyledTableCell>
+                                      <div
+                                        style={{
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                        }}>
+                                        <span
+                                          style={{
+                                            marginRight: '5px',
+                                            marginTop: '0px',
+                                          }}>
+                                          {currencyValue}
+                                        </span>
+                                        <TextField
+                                          disabled
+                                          id='standard-basic'
+                                          variant='standard'
+                                          value={data.cgst.toFixed(2)}
+                                          onChange={(event) =>
+                                            handleInputChange(
+                                              event,
+                                              'cgst',
+                                              data.id
+                                            )
+                                          }
+                                        />
+                                      </div>
+                                    </StyledTableCell>
+                                  </div>
+                                )}
+                                {savedTax == 'gst' && saveSubTax == 'gst' && (
+                                  <StyledTableCell>
+                                    <div
+                                      style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                      }}>
+                                      <span
+                                        style={{
+                                          marginRight: '5px',
+                                          marginTop: '0px',
+                                        }}>
+                                        {currencyValue}
+                                      </span>
+
+                                      <TextField
+                                        disabled
+                                        id='standard-basic'
+                                        variant='standard'
+                                        value={data.sgst.toFixed(2)}
+                                        onChange={(event) =>
+                                          handleInputChange(
+                                            event,
+                                            'sgst',
+                                            data.id
+                                          )
+                                        }
+                                      />
+                                    </div>
+                                  </StyledTableCell>
+                                )}
+
+                                {savedTax == 'vat' && (
+                                  <StyledTableCell>
+                                    <div
+                                      style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                      }}>
+                                      <span
+                                        style={{
+                                          marginRight: '5px',
+                                          marginTop: '0px',
+                                        }}>
+                                        {currencyValue}
+                                      </span>
+
+                                      <TextField
+                                        disabled
+                                        id='standard-basic'
+                                        variant='standard'
+                                        value={data.vat.toFixed(2)}
+                                        onChange={(event) =>
+                                          handleInputChange(
+                                            event,
+                                            'vat',
+                                            data.id
+                                          )
+                                        }
+                                      />
+                                    </div>
+                                  </StyledTableCell>
+                                )}
+
+                                <StyledTableCell>
+                                  <div
                                     style={{
-                                      marginRight: '5px',
-                                      marginTop: '0px',
+                                      display: 'flex',
+                                      alignItems: 'center',
                                     }}>
-                                    {currencyValue}
-                                  </span>
+                                    <span
+                                      style={{
+                                        marginRight: '5px',
+                                        marginTop: '0px',
+                                      }}>
+                                      {currencyValue}
+                                    </span>
 
-                                  <TextField
-                                    disabled
-                                    id='standard-basic'
-                                    variant='standard'
-                                    value={data.sgst.toFixed(2)}
-                                    onChange={(event) =>
-                                      handleInputChange(event, 'sgst', data.id)
-                                    }
+                                    {data.total != null
+                                      ? data.total.toFixed(2)
+                                      : 0}
+                                  </div>
+                                </StyledTableCell>
+                                <StyledTableCell>
+                                  {' '}
+                                  <CloseIcon
+                                    onClick={() => handleRemoveRow(data.id)}
                                   />
-                                </div>
-                              </StyledTableCell>
-                            )}
-
-                            {savedTax == 'vat' && (
-                              <StyledTableCell>
-                                <div
-                                  style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                  }}>
-                                  <span
-                                    style={{
-                                      marginRight: '5px',
-                                      marginTop: '0px',
-                                    }}>
-                                    {currencyValue}
-                                  </span>
-
-                                  <TextField
-                                    disabled
-                                    id='standard-basic'
-                                    variant='standard'
-                                    value={data.vat.toFixed(2)}
-                                    onChange={(event) =>
-                                      handleInputChange(event, 'vat', data.id)
-                                    }
-                                  />
-                                </div>
-                              </StyledTableCell>
-                            )}
-
-                            <StyledTableCell>
-                              <div
-                                style={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                }}>
-                                <span
-                                  style={{
-                                    marginRight: '5px',
-                                    marginTop: '0px',
-                                  }}>
-                                  {currencyValue}
-                                </span>
-
-                                {data.total != null ? data.total.toFixed(2) : 0}
-                              </div>
-                            </StyledTableCell>
-                            <StyledTableCell>
-                              {' '}
-                              <CloseIcon
-                                onClick={() => handleRemoveRow(data.id)}
-                              />
-                            </StyledTableCell>
-                          </TableBody>
-                        ))
-                      ) : (
+                                </StyledTableCell>
+                              </TableBody>
+                            ))}
+                        </>
+                      )}
+                      {isExpenseData && (
                         <>
                           <TableBody key={data.id}>
                             <StyledTableCell>
@@ -1042,7 +1064,7 @@ function GenerateInvoice() {
                                     marginRight: '5px',
                                     marginTop: '0px',
                                   }}>
-                                  {expenseData.amount ? (
+                                  {expenseData !== null ? (
                                     <>{expenseData.amount}</>
                                   ) : (
                                     0
@@ -1063,7 +1085,7 @@ function GenerateInvoice() {
                                   }}>
                                   {currencyValue}
                                 </span>
-                                {expenseData.amount ? (
+                                {expenseData !== null ? (
                                   <>{expenseData.amount}</>
                                 ) : (
                                   0
