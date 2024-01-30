@@ -863,7 +863,9 @@ function ExpenseManagement() {
       </Paper>
 
       <div className='toggle-container'>
-        <div className='filters-data'>
+        <div
+          className='filters-data'
+          style={{ position: 'relative' }}>
           <div>Filters</div>
 
           <Grid
@@ -953,7 +955,7 @@ function ExpenseManagement() {
                 <div
                   style={{
                     position: 'absolute',
-                    zIndex: 9999,
+                    zIndex: 9,
                     top:
                       buttonRef.current.offsetTop +
                       buttonRef.current.offsetHeight +

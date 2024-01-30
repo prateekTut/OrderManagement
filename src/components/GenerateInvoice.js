@@ -738,7 +738,9 @@ function GenerateInvoice() {
                           {savedTax == 'vat' && !isExpenseData && (
                             <StyledTableCell>VAT</StyledTableCell>
                           )}
-                          <StyledTableCell>Total</StyledTableCell>
+                          {!isExpenseData && (
+                            <StyledTableCell>Total</StyledTableCell>
+                          )}
                         </StyledTableRow>
                       </TableHead>
                       {!isExpenseData && (
@@ -1281,7 +1283,7 @@ function GenerateInvoice() {
                     variant='outlined'
                     type='submit'
                     sx={{ mt: 3, width: '200px' }}
-                    onClick={!isExpenseData ? handlePrint : () => {}}>
+                    onClick={handlePrint}>
                     Print & Save as PDF
                   </Button>
                 )}
