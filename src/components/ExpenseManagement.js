@@ -146,7 +146,7 @@ function ExpenseManagement() {
 
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const [selectedInvoice, setSelectedInvoice] = useState(null);
+  const [selectedExpense, setselectedExpense] = useState(null);
 
   const [page, setPage] = useState(0);
   const itemsPerPage = 8;
@@ -284,11 +284,11 @@ function ExpenseManagement() {
 
   const setPaymentState = (id) => {
     setSelectedPaymentId(id);
-    const foundInvoice = invoices.find((invoice) => invoice.id === id);
-    console.log(id);
-    console.log(foundInvoice);
-    if (foundInvoice) {
-      setSelectedInvoice(foundInvoice);
+    const foundExpense = allExpenses.find((expense) => expense.id === id);
+    console.log('id update pay', id);
+    console.log(foundExpense);
+    if (foundExpense) {
+      setselectedExpense(foundExpense);
       setDialogOpen(true);
     } else {
       console.error(`Invoice with ID ${id} not found`);
@@ -305,27 +305,25 @@ function ExpenseManagement() {
   const handleUpdatePay = () => {
     var formdata = new FormData();
     console.log(paidAmount);
-    formdata.append('amount', paidAmount);
+    formdata.append('paid_amount', paidAmount);
     formdata.append('payment_date', paymentDate);
     formdata.append('payment_method', paymentMode);
-    console.log(selectedInvoice.amount, 'Amount');
+    console.log(selectedExpense.amount, 'Amount');
     if (
       paidAmount != null &&
       paidAmount != 0 &&
       paidAmount != '' &&
-      paidAmount <= selectedInvoice.amount
+      paidAmount <= selectedExpense.amount
     ) {
       var requestOptions = {
-        method: 'POST',
+        method: 'PUT',
         body: formdata,
         headers: {
           Authorization: 'Bearer ' + token,
         },
       };
-      fetch(
-        FRONTEND_API + 'updatePaymentById/'.concat(selectedPaymentId),
-        requestOptions
-      )
+      const updateExpenseUrl = `/update_payment/${selectedExpense.id}`;
+      fetch(FRONTEND_API + updateExpenseUrl, requestOptions)
         .then((res) => res.json())
         .then((data) => {
           // do something with data
@@ -334,6 +332,7 @@ function ExpenseManagement() {
           setPaymentDate(null);
           setPaymentMode(null);
           handleClosePay();
+          getAllExpenses();
         })
         .catch((rejected) => {
           console.log(rejected);
@@ -489,13 +488,13 @@ function ExpenseManagement() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const [selectedInvoiceId, setSelectedInvoiceId] = useState(null);
+  const [selectedExpenseId, setselectedExpenseId] = useState(null);
 
   const handleClick = (event, id) => {
     setMenuOpen(true);
     setAnchorEl(event.currentTarget);
     console.log('click id', id);
-    setSelectedInvoiceId(id);
+    setselectedExpenseId(id);
   };
 
   const handleClickAway = () => {
@@ -674,7 +673,7 @@ function ExpenseManagement() {
   const [invoiceForMail, setInvoiceForMail] = useState([]);
 
   const handleOpenEmailDialog = (id) => {
-    //setSelectedInvoiceNumber(invoiceNumber);
+    //setselectedExpenseNumber(invoiceNumber);
     const foundExpense = allExpenses.find((expense) => expense.id === id);
     console.log(id);
     setInvoiceForMail(foundExpense);
@@ -1073,7 +1072,7 @@ function ExpenseManagement() {
             className='table-page'
             rowsPerPageOptions={[itemsPerPage]}
             component='div'
-            count={invoices.length}
+            count={allExpenses.length}
             rowsPerPage={itemsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -1205,7 +1204,7 @@ function ExpenseManagement() {
                             <MenuList>
                               <MenuItem
                                 onClick={() =>
-                                  handleOpenEmailDialog(selectedInvoiceId)
+                                  handleOpenEmailDialog(selectedExpenseId)
                                 }>
                                 <ListItemIcon>
                                   <MailIcon fontSize='small' />
@@ -1222,7 +1221,7 @@ function ExpenseManagement() {
 
                               <MenuItem
                                 onClick={() => {
-                                  handleDownloadPDF(selectedInvoiceId);
+                                  handleDownloadPDF(selectedExpenseId);
                                   console.log('user from download', user);
                                 }}>
                                 <ListItemIcon>
@@ -1261,7 +1260,7 @@ function ExpenseManagement() {
           <TablePagination
             rowsPerPageOptions={[itemsPerPage]}
             component='div'
-            count={invoices.length}
+            count={allExpenses.length}
             rowsPerPage={itemsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -1309,7 +1308,7 @@ function ExpenseManagement() {
             <Grid
               item
               xs={6}>
-              {selectedInvoice?.invoice_number}
+              {selectedExpense?.invoice_number}
             </Grid>
             <Grid
               item
@@ -1319,7 +1318,7 @@ function ExpenseManagement() {
             <Grid
               item
               xs={6}>
-              {selectedInvoice?.name}
+              {selectedExpense?.vendor}
             </Grid>
             <Grid
               item
@@ -1329,8 +1328,8 @@ function ExpenseManagement() {
             <Grid
               item
               xs={6}>
-              {selectedInvoice?.currency}
-              {selectedInvoice?.amount}
+              {selectedExpense?.currency}
+              {selectedExpense?.amount}
             </Grid>
             <Grid
               item
@@ -1351,7 +1350,7 @@ function ExpenseManagement() {
                   id='outlined-adornment-amount'
                   startAdornment={
                     <InputAdornment position='start'>
-                      {selectedInvoice?.currency}
+                      {selectedExpense?.currency}
                     </InputAdornment>
                   }
                   label='Amount'
