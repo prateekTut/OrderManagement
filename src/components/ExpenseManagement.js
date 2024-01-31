@@ -36,6 +36,7 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import '../components/css/expenseManagement.css';
 import AddIcon from '@mui/icons-material/Add';
 import {
   Dialog,
@@ -103,15 +104,6 @@ function ExpenseManagement() {
   const [editItem, setEditItem] = useState({});
   const [expenseId, setExpenseId] = useState('');
 
-  const [expenseData, setExpenseData] = useState({
-    expense_date: '',
-    vendor: '',
-    expense_number: '',
-    amount: '',
-    notes: '',
-    currency: '',
-    invoice_number: '',
-  });
   const [recurringDate, setReccuringDate] = React.useState([]);
   const fileData = useRef(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -165,64 +157,6 @@ function ExpenseManagement() {
   useEffect(() => {
     getAllExpenses();
   }, []);
-
-  console.log('date', expenseData.expense_date);
-  console.log('expenseNumber', expenseData.expense_number);
-  console.log('invoice number', expenseData.invoice_number);
-  console.log('amount', expenseData.amount);
-  console.log('notes', expenseData.notes);
-  console.log('vendor', expenseData.vendor);
-  console.log('currency', expenseData.currency);
-  console.log('attachment', fileData);
-  const submitHandler = () => {
-    const formData = {
-      expense_date: expenseData.expense_date,
-      expense_number: expenseData.expense_number,
-      invoice_number: expenseData.invoice_number,
-      amount: expenseData.amount,
-      notes: expenseData.notes,
-      vendor: expenseData.vendor,
-      currency: expenseData.currency,
-      attachment: fileData.current.value,
-    };
-
-    console.log('formData', formData);
-    // const formData = new FormData();
-
-    // formData.append('expense_date', expenseDate);
-    // formData.append('expense_number', expenseNumber);
-    // formData.append('invoice_number', invoiceNumber);
-    // formData.append('currency', currencyVal);
-    // formData.append('invoice_number', invoiceNumber);
-    // formData.append('amount', amount);
-    // formData.append('vendor', vendor);
-    // formData.append('attachment', fileData.current.value);
-
-    fetch(
-      expenseId
-        ? `${FRONTEND_API}editexpense/${expenseId}`
-        : `${FRONTEND_API}submitexpense`,
-      {
-        method: expenseId ? 'PUT' : 'POST',
-        body: JSON.stringify(formData),
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + token,
-        },
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        // Handle the response from the backend
-        console.log('Backend response:', data);
-        setShowExpenseModal(false);
-      })
-      .catch((error) => {
-        // Handle errors
-        console.error('Error:', error);
-      });
-    getAllExpenses();
-  };
 
   const getAllExpenses = async () => {
     const res = await fetch(`${FRONTEND_API}getAllExpenses`, {
@@ -667,9 +601,10 @@ function ExpenseManagement() {
 
   //Edit invoices
   const editExpense = (user) => {
-    console.log(' user from edit', user);
+    localStorage.setItem('canSubmit', true);
+    console.log('user from edit', user);
     setShowExpenseModal(true);
-    setExpenseData({
+    setEditItem({
       expense_date: user.expense_date,
       vendor: user.vendor,
       expense_number: user.expense_number,
@@ -677,10 +612,26 @@ function ExpenseManagement() {
       notes: user.notes,
       currency: user.currency,
       invoice_number: user.invoice_number,
+      attachment: user.attachment,
     });
     fileData.current = user.attachment;
     setExpenseId(user.id);
+    navigate('/add-expense', {
+      state: {
+        id: user.id,
+        expense_date: user.expense_date,
+        vendor: user.vendor,
+        expense_number: user.expense_number,
+        amount: user.amount,
+        notes: user.notes,
+        currency: user.currency,
+        invoice_number: user.invoice_number,
+        attachment: user.attachment,
+      },
+    });
   };
+
+  console.log('allExpense', allExpenses);
 
   //Client dropdown
   const handleClientSelect = (event, newValue) => {
@@ -768,19 +719,11 @@ function ExpenseManagement() {
     }
   };
 
+  const handleRecordNewExpenditure = () => {
+    navigate('/generate-invoice');
+  };
   const expenseModalHandler = () => {
-    setShowExpenseModal(true);
-    setExpenseId('');
-    setExpenseData({
-      expense_date: '',
-      vendor: '',
-      expense_number: '',
-      amount: '',
-      notes: '',
-      currency: '',
-      invoice_number: '',
-    });
-    fileData.current = null;
+    navigate('/add-expense');
   };
 
   return (
@@ -1081,9 +1024,7 @@ function ExpenseManagement() {
           paddingRight: '0px',
           marginBottom: '10px',
         }}>
-        <ExpenseFormModal
-          onClose={() => setShowExpenseModal(false)}
-          open={showExpenseModal}
+        {/* <ExpenseFormModal
           expenseData={expenseData}
           setExpenseData={setExpenseData}
           editItem={editItem}
@@ -1091,19 +1032,28 @@ function ExpenseManagement() {
           editId={expenseId}
           setExpenseId={setExpenseId}
           submitHandler={submitHandler}
-        />
+        /> */}
         <DeleteModal
           isOpen={showDeleteModal}
           onClose={() => setShowDeleteModal(false)}
           deleteItemHandler={() => deleteItemHandler(expenseId)}
         />
-        <Button
-          variant='contained'
-          size='large'
-          disableElevation
-          onClick={expenseModalHandler}>
-          + Add Expenditure
-        </Button>
+        <div className='expenditure-btn-container'>
+          <Button
+            variant='contained'
+            size='large'
+            disableElevation
+            onClick={expenseModalHandler}>
+            + Add Expenditure
+          </Button>
+          <Button
+            variant='contained'
+            size='large'
+            disableElevation
+            onClick={handleRecordNewExpenditure}>
+            Record new Expenditure
+          </Button>
+        </div>
       </Container>
       <Paper
         elevation={3}

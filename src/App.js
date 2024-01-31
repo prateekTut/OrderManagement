@@ -14,6 +14,7 @@ import AllInvoices from './components/AllInvoices';
 import Dashboard from './components/Dashbord';
 import ExpenseManagement from './components/ExpenseManagement';
 import GenerateInvoice from './components/GenerateInvoice';
+import ExpenseFormModal from './components/ExpenseFormModal';
 
 // Create a styled component for the Paper element
 const StyledBox = styled(Box)(({ theme }) => ({
@@ -87,7 +88,7 @@ function App() {
               element={<Dashboard />}
             />
             <Route
-              path='/generate-invocie'
+              path='/generate-invoice'
               element={<GenerateInvoice />}
             />
             <Route
@@ -101,6 +102,10 @@ function App() {
             <Route
               path='/expense-view/:id'
               element={<GenerateInvoice />}
+            />
+            <Route
+              path='/add-expense'
+              element={<ExpenseFormModal />}
             />
           </Route>
         </Route>
