@@ -17,35 +17,32 @@ const CustomListItemButton = styled(ListItemButton)(({ theme }) => ({
 }));
 
 export default function SideItems() {
-   const [openCollapseAccount, setOpenCollapseAccount] = React.useState(false);
+  const [openCollapseAccount, setOpenCollapseAccount] = React.useState(false);
 
   const role = localStorage.getItem('roles');
-
 
   const toggleAccountSubmenu = () => {
     setOpenCollapseAccount(!openCollapseAccount);
   };
 
-
   return (
     <div>
       {role == 'admin' && (
         <React.Fragment>
-
-          <Link to="/dashboard">
+          <Link to='/dashboard'>
             <ListItemButton>
               <ListItemIcon>
                 <DashboardIcon style={{ color: '#F34C19' }} />
               </ListItemIcon>
-              <ListItemText primary="Dashboard" />
+              <ListItemText primary='Dashboard' />
             </ListItemButton>
           </Link>
-          <Link to="/generate-invocie">
+          <Link to='/generate-invoice'>
             <ListItemButton>
               <ListItemIcon>
                 <DashboardIcon style={{ color: '#F34C19' }} />
               </ListItemIcon>
-              <ListItemText primary="Generate Invoice" />
+              <ListItemText primary='Generate Invoice' />
             </ListItemButton>
           </Link>
 
@@ -53,38 +50,34 @@ export default function SideItems() {
             <ListItemIcon>
               <AccountBoxIcon style={{ color: '#F34C19' }} />
             </ListItemIcon>
-            <ListItemText primary="Accounting" />
+            <ListItemText primary='Accounting' />
             {openCollapseAccount ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
 
-          <Collapse in={openCollapseAccount} timeout="auto" unmountOnExit>
-
-            <Link to="/order-history">
+          <Collapse
+            in={openCollapseAccount}
+            timeout='auto'
+            unmountOnExit>
+            <Link to='/order-history'>
               <CustomListItemButton>
                 <ListItemIcon>
                   <AssignmentIcon style={{ color: '#343F71' }} />
                 </ListItemIcon>
-                <ListItemText primary="Invoices" />
+                <ListItemText primary='Invoices' />
               </CustomListItemButton>
             </Link>
 
-            <Link to="/expense-manage">
+            <Link to='/expense-manage'>
               <CustomListItemButton>
                 <ListItemIcon>
                   <AssignmentIcon style={{ color: '#343F71' }} />
                 </ListItemIcon>
-                <ListItemText primary="Expense Management" />
+                <ListItemText primary='Expense Management' />
               </CustomListItemButton>
             </Link>
           </Collapse>
-
-
-
         </React.Fragment>
       )}
-
-
     </div>
-
   );
 }

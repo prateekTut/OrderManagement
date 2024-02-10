@@ -1,0 +1,6 @@
+.expenditure-btn-container {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  justify-content: end;
+}

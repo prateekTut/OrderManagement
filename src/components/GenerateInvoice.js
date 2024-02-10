@@ -1,11 +1,34 @@
-import { Box, Container, CssBaseline, Grid, InputAdornment, Paper, Typography } from '@mui/material'
-import React, { useRef } from 'react'
-import Logo from "./img/logo.jpg";
-import { FormControl, TextField, InputLabel, Select, MenuItem, Button, FormControlLabel } from '@mui/material'
+import {
+  Box,
+  Container,
+  CssBaseline,
+  Grid,
+  InputAdornment,
+  Paper,
+  Typography,
+} from '@mui/material';
+import React, { useRef } from 'react';
+import Logo from './img/logo.jpg';
+import {
+  FormControl,
+  TextField,
+  InputLabel,
+  Select,
+  MenuItem,
+  Button,
+  FormControlLabel,
+} from '@mui/material';
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from "react-router-dom";
-import { FRONTEND_API } from "./urls";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Alert } from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { FRONTEND_API } from './urls';
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Alert,
+} from '@mui/material';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import { data, event, get } from 'jquery';
@@ -23,7 +46,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Divider from '@mui/material/Divider';
-import { useReactToPrint } from "react-to-print";
+import { useReactToPrint } from 'react-to-print';
+import { amountInWords } from '../utils/utils';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -54,9 +78,16 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-
 function GenerateInvoice() {
-
+  const location = useLocation();
+  const { state } = location;
+  let expenseData = state;
+  console.log('data url ', state);
+  let isExpenseData = false;
+  if (expenseData !== null) {
+    isExpenseData = Object.keys(expenseData).length > 0;
+  }
+  console.log('isExpenseData', isExpenseData);
   const currencies = [
     {
       value: '$',
@@ -72,12 +103,13 @@ function GenerateInvoice() {
     },
   ];
 
-
   const [userClientType, setUserClientType] = useState('');
   const [client, setclient] = useState([]);
-  const token = localStorage.getItem("token")
+  const token = localStorage.getItem('token');
   const [userClient, setUserClient] = React.useState('');
-  const [currencyValue, setCurrencyValue] = React.useState(currencies.at(0).value)
+  const [currencyValue, setCurrencyValue] = React.useState(
+    currencies.at(0).value
+  );
 
   const [taxType, setTaxType] = React.useState('');
 
@@ -93,14 +125,26 @@ function GenerateInvoice() {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const [tableData, setTableData] = useState([
-    {id: 0, item: '', taxRate: 0, quantity: 0, rate: 0, amount: 0, igst: 0, sgst: 0, cgst: 0, amount: 0, total: 0},
+    {
+      id: 0,
+      item: '',
+      taxRate: 0,
+      quantity: 0,
+      rate: 0,
+      amount: 0,
+      igst: 0,
+      sgst: 0,
+      cgst: 0,
+      amount: 0,
+      total: 0,
+    },
   ]);
 
   const [dueDate, setDueDate] = useState(null);
   const [invoiceDate, setInvoiceDate] = useState(null);
   const [subtotal, setSubtotal] = useState(0);
   const [total, setTotal] = useState(0);
-  
+
   const componentRef = useRef();
 
   const handleAddRow = () => {
@@ -115,7 +159,7 @@ function GenerateInvoice() {
   const handleRemoveRow = (index) => {
     const updatedTableData = tableData.filter((row) => row.id !== index);
     setTableData(updatedTableData);
-  }
+  };
 
   const handleRadioChange = (event) => {
     //setSelectedRadio(event.target.value);
@@ -157,11 +201,8 @@ function GenerateInvoice() {
 
   const handleTaxTypeChange = (event) => {
     const { name, value } = event.target;
-    if (savedTax != null)
-      setTaxType(value);
-    else
-      setTaxType(savedTax);
-
+    if (savedTax != null) setTaxType(value);
+    else setTaxType(savedTax);
   };
 
   const handleSaveTax = () => {
@@ -169,14 +210,14 @@ function GenerateInvoice() {
       if (selectedTax == '') {
         setRadioError(true);
       } else {
-        setRadioError(false)
-        setSavedTax(taxType)
-        setSaveSubTax(selectedTax)
+        setRadioError(false);
+        setSavedTax(taxType);
+        setSaveSubTax(selectedTax);
 
         setDialogOpen(false);
       }
     } else if (taxType == 'none') {
-      setSavedTax('')
+      setSavedTax('');
       setDialogOpen(false);
     } else {
       setSavedTax(taxType);
@@ -184,31 +225,31 @@ function GenerateInvoice() {
     }
   };
 
-  const handleInvoiceDate = (date) =>{
+  const handleInvoiceDate = (date) => {
     setInvoiceDate(date);
-  }
+  };
 
-  const handleDueDate = (date) =>{
+  const handleDueDate = (date) => {
     setDueDate(date);
-  }
+  };
 
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
- /*  const handlePrint = () => {
+  /*  const handlePrint = () => {
     window.print();
   }; */
   const saveInvoice = (clinetId) => {
-    fetch(FRONTEND_API + "getOrdersByClientId/".concat(clinetId), {
+    fetch(FRONTEND_API + 'getOrdersByClientId/'.concat(clinetId), {
       headers: {
-        'Authorization': 'Bearer ' + token
-      }
+        Authorization: 'Bearer ' + token,
+      },
     })
       .then((res) => res.json())
       .then((data) => {
         // do something with data
-        console.log("Orders data", data);
-        setOrders(data)
+        console.log('Orders data', data);
+        setOrders(data);
         // navigate("/OTMform");
       })
       .catch((rejected) => {
@@ -217,12 +258,11 @@ function GenerateInvoice() {
   };
 
   const fetchInitial = (type) => {
-
     if (type === 'student') {
-      fetch(FRONTEND_API + "getstudentclientdata", {
+      fetch(FRONTEND_API + 'getstudentclientdata', {
         headers: {
-          'Authorization': 'Bearer ' + token
-        }
+          Authorization: 'Bearer ' + token,
+        },
       })
         .then((res) => res.json())
         .then((data) => {
@@ -232,13 +272,12 @@ function GenerateInvoice() {
         })
         .catch((rejected) => {
           console.log(rejected);
-        }
-        );
+        });
     } else {
-      fetch(FRONTEND_API + "getvendoreclientdata", {
+      fetch(FRONTEND_API + 'getvendoreclientdata', {
         headers: {
-          'Authorization': 'Bearer ' + token
-        }
+          Authorization: 'Bearer ' + token,
+        },
       })
         .then((res) => res.json())
         .then((data) => {
@@ -248,18 +287,19 @@ function GenerateInvoice() {
         })
         .catch((rejected) => {
           console.log(rejected);
-        }
-        );
+        });
     }
   };
 
   const getClientsDetails = () => {
     if (client != null) {
-      const selectedClient = client.filter(filteredClients => filteredClients.id == userClient)
-      console.log(selectedClient)
+      const selectedClient = client.filter(
+        (filteredClients) => filteredClients.id == userClient
+      );
+      console.log(selectedClient);
       return selectedClient;
     }
-  }
+  };
 
   const handleInputChange = (event, field, id) => {
     const updatedTableData = tableData.map((row) => {
@@ -274,7 +314,7 @@ function GenerateInvoice() {
           quantity = parseFloat(newValue) || 0;
         } else if (field === 'rate') {
           rate = parseFloat(newValue) || 0;
-        }else if(field === 'taxRate') {
+        } else if (field === 'taxRate') {
           taxRate = parseFloat(newValue) || 0;
         }
 
@@ -287,628 +327,1057 @@ function GenerateInvoice() {
         amount = rate * quantity;
         if (savedTax === 'gst') {
           if (saveSubTax === 'igst') {
-            igst = (taxRate / 100) * (amount);
+            igst = (taxRate / 100) * amount;
           } else if (saveSubTax === 'gst') {
-            cgst = (taxRate / 200) * (amount);
-            sgst = (taxRate / 200) * (amount);
-          } 
+            cgst = (taxRate / 200) * amount;
+            sgst = (taxRate / 200) * amount;
+          }
           total = amount + igst + cgst + sgst;
-        }else if (savedTax === 'vat'){
+        } else if (savedTax === 'vat') {
           console.log(taxRate / 100);
-          vat = (taxRate / 100) * (amount);
+          vat = (taxRate / 100) * amount;
           console.log(vat);
           total = amount + vat;
-        }else{
+        } else {
           total = amount;
         }
-        
+
         //igst = (taxRate / 100) * (amount);
-        
-        return { ...row, [field]: newValue, amount, igst, cgst, sgst, vat, total };
+
+        return {
+          ...row,
+          [field]: newValue,
+          amount,
+          igst,
+          cgst,
+          sgst,
+          vat,
+          total,
+        };
       }
       return row;
     });
     setTableData(updatedTableData);
-
   };
 
   const getTotal = () => {
     let total = 0;
     tableData.forEach((row) => {
       total += row.total;
-    })
+    });
     return total;
-  }
+  };
 
   const getTotalAmount = () => {
     let total = 0;
     tableData.forEach((row) => {
       total += row.amount;
-    })
-    console.log(total)
+    });
+    console.log(total);
     return total;
-  }
+  };
 
   const getIgst = () => {
     let total = 0;
-    if(savedTax == 'gst' && saveSubTax == 'igst'){
+    if (savedTax == 'gst' && saveSubTax == 'igst') {
       tableData.forEach((row) => {
         total += row.igst;
-      })
-    }
-    else if(savedTax == 'vat'){
+      });
+    } else if (savedTax == 'vat') {
       tableData.forEach((row) => {
         total += row.vat;
-      })
+      });
     }
     return total;
-  }
+  };
 
   const getSgst = () => {
     let total = 0;
     tableData.forEach((row) => {
-      total += row.sgst
-    })
+      total += row.sgst;
+    });
     return total;
-  }
+  };
 
   const getCgst = () => {
     let total = 0;
     tableData.forEach((row) => {
-      total += row.cgst
-    })
+      total += row.cgst;
+    });
     return total;
-  }
+  };
 
   return (
-    <Container sx={{bgcolor: "#FBF1F7"}}>
-      <Box sx={{ display: 'flex', }}>
+    <Container sx={{ bgcolor: '#FBF1F7' }}>
+      <Box sx={{ display: 'flex' }}>
         <CssBaseline />
-        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-          <Grid container spacing={3}>
+        <Container
+          maxWidth='lg'
+          sx={{ mt: 4, mb: 4 }}>
+          <Grid
+            container
+            spacing={3}>
             {/* Chart */}
-            <Grid item xs={12}>
-              <Paper sx={{m: 5,p: 5, display: 'flex', flexDirection: 'column', border: '1px solid #C7A1BD'}} ref={componentRef}>
-
-                <Typography variant="h4" sx={{ display: 'flex', justifyContent: 'center', mb: '20px'}}>
+            <Grid
+              item
+              xs={12}>
+              <Paper
+                sx={{
+                  m: 5,
+                  p: 5,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  border: '1px solid #C7A1BD',
+                }}
+                ref={componentRef}>
+                <Typography
+                  variant='h4'
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    mb: '20px',
+                  }}>
                   Invoice
                 </Typography>
-                
-                <Grid container spacing={3}>
-                  <Grid item xs={6}>
-                    <Grid container spacing={2}>
-                      <Grid item xs={6}>
+
+                <Grid
+                  container
+                  spacing={3}>
+                  <Grid
+                    item
+                    xs={6}>
+                    <Grid
+                      container
+                      spacing={2}>
+                      <Grid
+                        item
+                        xs={6}>
                         <div>
                           <strong>Invoice No:</strong>
                         </div>
                       </Grid>
-                      <Grid item xs={6}>
+                      <Grid
+                        item
+                        xs={6}>
                         <div>
-                          <TextField label="Invoice" variant="standard" fullWidth />
+                          {isExpenseData ? (
+                            <p>{expenseData.invoice_number}</p>
+                          ) : (
+                            <>
+                              <TextField
+                                label='Invoice'
+                                variant='standard'
+                                fullWidth
+                              />
+                            </>
+                          )}
                         </div>
                       </Grid>
-                      <Grid item xs={6}>
+                      <Grid
+                        item
+                        xs={6}>
                         <div>
                           <strong>Date:</strong>
                         </div>
                       </Grid>
-                      <Grid item xs={6}>
+                      <Grid
+                        item
+                        xs={6}>
                         <div>
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker
-                               value={invoiceDate} // Set the value prop to display the selected date
-                               onChange={handleInvoiceDate} // Capture the selected date
-                               renderInput={(params) => <TextField {...params} label="Select Date" variant="outlined" />} 
-                              
-                            />
-                          </LocalizationProvider>
+                          {isExpenseData ? (
+                            <p>{expenseData.expense_date}</p>
+                          ) : (
+                            <>
+                              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DatePicker
+                                  value={invoiceDate} // Set the value prop to display the selected date
+                                  onChange={handleInvoiceDate} // Capture the selected date
+                                  renderInput={(params) => (
+                                    <TextField
+                                      {...params}
+                                      label='Select Date'
+                                      variant='outlined'
+                                    />
+                                  )}
+                                />
+                              </LocalizationProvider>
+                            </>
+                          )}
                         </div>
                       </Grid>
-                      <Grid item xs={6}>
+                      <Grid
+                        item
+                        xs={6}>
                         <div>
-                          <strong>Add Due Date:</strong>
+                          <strong> Due Date:</strong>
                         </div>
                       </Grid>
-                      <Grid item xs={6}>
+                      <Grid
+                        item
+                        xs={6}>
                         <div>
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker 
-                             value={dueDate} // Set the value prop to display the selected date
-                             onChange={handleDueDate} // Capture the selected date
-                             renderInput={(params) => <TextField {...params} label="Select Date" variant="outlined" />} 
-                            />
-                          </LocalizationProvider>
+                          {isExpenseData ? (
+                            <p>{expenseData.due_date}</p>
+                          ) : (
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                              <DatePicker
+                                value={dueDate} // Set the value prop to display the selected date
+                                onChange={handleDueDate} // Capture the selected date
+                                renderInput={(params) => (
+                                  <TextField
+                                    {...params}
+                                    label='Select Date'
+                                    variant='outlined'
+                                  />
+                                )}
+                              />
+                            </LocalizationProvider>
+                          )}
                         </div>
                       </Grid>
                     </Grid>
                   </Grid>
-                  <Grid item xs={6} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <img src={Logo} alt='BigCo Inc. logo' id='invoicelogo' />
+                  <Grid
+                    item
+                    xs={6}
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <img
+                      src={Logo}
+                      alt='BigCo Inc. logo'
+                      id='invoicelogo'
+                    />
                   </Grid>
                 </Grid>
 
-                <Grid container spacing={3} marginTop="10px">
-                  <Grid item xs={6}>
-                    <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', backgroundColor: "#FBF1F7" }}>
+                <Grid
+                  container
+                  spacing={3}
+                  marginTop='10px'>
+                  <Grid
+                    item
+                    xs={6}>
+                    <Paper
+                      sx={{
+                        p: 2,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        backgroundColor: '#FBF1F7',
+                      }}>
                       <Box sx={{ paddingBottom: 2 }}>
                         <strong>Billed By-</strong>
                         <p id='companylogo'>
-                          <span id='tutorshivetext'> TutorsHive Pvt. Ltd. </span>
+                          <span id='tutorshivetext'>
+                            {' '}
+                            TutorsHive Pvt. Ltd.{' '}
+                          </span>
                           <br />
-                          Regd. office: 88A, Nancy Residency, First Floor, <br />
-                          Sindhu Nagar, Scheme No. 17, Murlipura, Jaipur, jaipur,
+                          Regd. office: 88A, Nancy Residency, First Floor,{' '}
+                          <br />
+                          Sindhu Nagar, Scheme No. 17, Murlipura, Jaipur,
+                          jaipur,
                           <br />
                           Email: info@webz.com.pl
                         </p>
-                        <img src={Logo} alt='BigCo Inc. logo' id='invoicelogo' />
+                        <img
+                          src={Logo}
+                          alt='BigCo Inc. logo'
+                          id='invoicelogo'
+                        />
                       </Box>
                     </Paper>
                   </Grid>
-                  <Grid item xs={6}>
-                    <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', backgroundColor: "#FBF1F7", height: "230px" }}>
+                  <Grid
+                    item
+                    xs={6}>
+                    <Paper
+                      sx={{
+                        p: 2,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        backgroundColor: '#FBF1F7',
+                        height: '230px',
+                      }}>
                       <strong>Billed To-</strong>
-                      <RadioGroup
-                        row
-                        aria-labelledby="demo-row-radio-buttons-group-label"
-                        name="row-radio-buttons-group"
-                        value={userClientType}
-                        onChange={handleRadioChange}
-                      >
-                        <FormControlLabel value="student" control={<Radio />} label="Student" />
-                        <FormControlLabel value="vendor" control={<Radio />} label="Vendor" />
-                      </RadioGroup>
+                      {isExpenseData ? (
+                        <p>{expenseData.vendor}</p>
+                      ) : (
+                        <>
+                          <RadioGroup
+                            row
+                            aria-labelledby='demo-row-radio-buttons-group-label'
+                            name='row-radio-buttons-group'
+                            value={userClientType}
+                            onChange={handleRadioChange}>
+                            <FormControlLabel
+                              value='student'
+                              control={<Radio />}
+                              label='Student'
+                            />
+                            <FormControlLabel
+                              value='vendor'
+                              control={<Radio />}
+                              label='Vendor'
+                            />
+                          </RadioGroup>
 
-                      {userClientType != '' && (
-                        <FormControl>
-                          <InputLabel id="demo-simple-select-label">Client</InputLabel>
-                          <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            value={userClient}
-                            label="Experts"
-                            variant='outlined'
-                            onChange={handleChangeClient}
-                          >
-                            {client.map((data) => (
-
-                  
-                              <MenuItem value={data.id}>{data.name}</MenuItem>
-
-                            ))}
-                          </Select>
-                        </FormControl>
-                      )}
-                      {getClientsDetails() != null && (
-                        <div>
-                          {getClientsDetails().map((selectedClient) => (
-                            <div key={selectedClient.id}>
-                              <p>Name: {selectedClient.name}</p>
-                              <p>Email: {selectedClient.email}</p>
-                              <p>Contact: {selectedClient.contact}</p>
+                          {userClientType != '' && (
+                            <FormControl>
+                              <InputLabel id='demo-simple-select-label'>
+                                Client
+                              </InputLabel>
+                              <Select
+                                labelId='demo-simple-select-label'
+                                id='demo-simple-select'
+                                value={userClient}
+                                label='Experts'
+                                variant='outlined'
+                                onChange={handleChangeClient}>
+                                {client.map((data) => (
+                                  <MenuItem value={data.id}>
+                                    {data.name}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                            </FormControl>
+                          )}
+                          {getClientsDetails() != null && (
+                            <div>
+                              {getClientsDetails().map((selectedClient) => (
+                                <div key={selectedClient.id}>
+                                  <p>Name: {selectedClient.name}</p>
+                                  <p>Email: {selectedClient.email}</p>
+                                  <p>Contact: {selectedClient.contact}</p>
+                                </div>
+                              ))}
                             </div>
-                          ))}
-                        </div>
+                          )}
+                        </>
                       )}
                     </Paper>
                   </Grid>
                 </Grid>
-                <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
-                  <Button variant="outlined" sx={{ mt: 3, mb: 2, marginRight: 2 }}
-                    onClick={handleTaxUpdate}>
-                    {savedTax != '' ? 'Configure Tax' : 'Add Tax'}
-                  </Button>
-                  <InputLabel id="demo-simple-select-label" sx={{ marginRight: 2 }}>Currency</InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={currencyValue}
-
-                    onChange={handleCurrencyChange}
-                    error={currencyValue === ''}
-                    helperText={currencyValue === '' && 'Select Currency'}
-                    fullWidth
-                    sx={{ width: '200px' }}
-                  >
-                    {currencies.map((data) => (
-
-                      <MenuItem value={data.value}>{data.label}</MenuItem>
-
-                    ))}
-                  </Select>
-                </div>
-
+                {!isExpenseData && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      marginTop: '10px',
+                    }}>
+                    <Button
+                      variant='outlined'
+                      sx={{ mt: 3, mb: 2, marginRight: 2 }}
+                      onClick={handleTaxUpdate}>
+                      {savedTax != '' ? 'Configure Tax' : 'Add Tax'}
+                    </Button>
+                    <InputLabel
+                      id='demo-simple-select-label'
+                      sx={{ marginRight: 2 }}>
+                      Currency
+                    </InputLabel>
+                    <Select
+                      labelId='demo-simple-select-label'
+                      id='demo-simple-select'
+                      value={currencyValue}
+                      onChange={handleCurrencyChange}
+                      error={currencyValue === ''}
+                      helperText={currencyValue === '' && 'Select Currency'}
+                      fullWidth
+                      sx={{ width: '200px' }}>
+                      {currencies.map((data) => (
+                        <MenuItem value={data.value}>{data.label}</MenuItem>
+                      ))}
+                    </Select>
+                  </div>
+                )}
                 <Box>
-                  <TableContainer component={Paper} sx={{
-                    marginBottom: 6,
-                    marginRight: 2,
-                    mt: 3
-                  }}
-                    aria-label="customized table" >
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                      <TableHead fullWidth> 
+                  <TableContainer
+                    component={Paper}
+                    sx={{
+                      marginBottom: 6,
+                      marginRight: 2,
+                      mt: 3,
+                    }}
+                    aria-label='customized table'>
+                    <Table
+                      sx={{ minWidth: 650 }}
+                      aria-label='simple table'>
+                      <TableHead fullWidth>
                         <StyledTableRow>
                           <StyledTableCell>Item</StyledTableCell>
                           {savedTax && (
-                            <StyledTableCell >{savedTax == 'gst' ? 'GST Rate' : 'VAT Rate'}</StyledTableCell>
+                            <StyledTableCell>
+                              {savedTax == 'gst' ? 'GST Rate' : 'VAT Rate'}
+                            </StyledTableCell>
                           )}
                           <StyledTableCell>Quantity</StyledTableCell>
-                          <StyledTableCell >Rate</StyledTableCell>
+                          <StyledTableCell>Rate</StyledTableCell>
                           {/* */}
-                          {savedTax == 'gst' && saveSubTax == 'igst' && (
-                            <StyledTableCell >IGST</StyledTableCell>
-                          )}
-                           {savedTax == 'gst' && saveSubTax == 'gst' && (
-
-                            <StyledTableCell >Amount</StyledTableCell> 
-
-
+                          {savedTax == 'gst' &&
+                            saveSubTax == 'igst' &&
+                            !isExpenseData && (
+                              <StyledTableCell>IGST</StyledTableCell>
                             )}
-                          {savedTax == 'gst' && saveSubTax == 'gst' && (
-
-                            <StyledTableCell >CGST</StyledTableCell>
-
-
+                          {(savedTax == 'gst' && saveSubTax == 'gst') ||
+                            (isExpenseData && (
+                              <StyledTableCell>Amount</StyledTableCell>
+                            ))}
+                          {savedTax == 'gst' &&
+                            saveSubTax == 'gst' &&
+                            !isExpenseData && (
+                              <StyledTableCell>CGST</StyledTableCell>
+                            )}
+                          {savedTax == 'gst' &&
+                            saveSubTax == 'gst' &&
+                            !isExpenseData && (
+                              <StyledTableCell>SGST</StyledTableCell>
+                            )}
+                          {savedTax == 'vat' && !isExpenseData && (
+                            <StyledTableCell>VAT</StyledTableCell>
                           )}
-                          {savedTax == 'gst' && saveSubTax == 'gst' && (
-
-                            <StyledTableCell >SGST</StyledTableCell>
-
+                          {!isExpenseData && (
+                            <StyledTableCell>Total</StyledTableCell>
                           )}
-                          {savedTax == 'vat' && (
-
-                            <StyledTableCell >VAT</StyledTableCell>
-
-                          )}
-
-                          <StyledTableCell >Total</StyledTableCell>
-                          <StyledTableCell ></StyledTableCell>
                         </StyledTableRow>
                       </TableHead>
-
-
-                      {tableData.length > 0 && tableData.map((data, index) => (
-                        <TableBody key={data.id}>
-                          <StyledTableCell>
-                            <TextField
-                                
-                                variant="standard"
-                                value={data.item}
-                                onChange={(event) => handleInputChange(event, 'item', data.id)}
-                              />
-                          </StyledTableCell>
-                          {savedTax && (
-                            <StyledTableCell>
-                              <div>
-                                <TextField
-                                 
-                                  variant="standard"
-                                  value={data.taxRate}
-                                  onChange={(event) => handleInputChange(event, 'taxRate', data.id)}
-                                  InputProps={{
-                                    endAdornment: <InputAdornment position="end">%</InputAdornment>,
-                                  }}
-                                />
-                                
-                              </div>
-                            </StyledTableCell>
-                          )}
-                          <StyledTableCell>
-                            <TextField id="standard-basic"
-                              
-                              variant="standard"
-                              value={data.quantity}
-                              onChange={(event) => handleInputChange(event, 'quantity', data.id)}
-                            />
-                          </StyledTableCell>
-
-                          <StyledTableCell>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                              <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
-                              <TextField
-                                id="standard-basic"
-                                
-                                variant="standard"
-                                value={data.rate}
-                                onChange={(event) => handleInputChange(event, 'rate', data.id)}
-                              />
-                            </div>
-                          </StyledTableCell>
-
-                          {savedTax == 'gst' && saveSubTax == 'igst' && (
-                            <StyledTableCell>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                              <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
-
-                              <TextField
-                                id="standard-basic"
-                                disabled
-                                variant="standard"
-                                value={data.amount}
-                                onChange={(event) => handleInputChange(event, 'amount', data.id)}
-                              />
-                            
-                            </div>
-                          </StyledTableCell>
-                          )}
-
-                          {savedTax == 'gst' && saveSubTax == 'igst' && (
-                            <div>
-                              
-                            
-                              <StyledTableCell >
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                  <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
-
+                      {!isExpenseData && (
+                        <>
+                          {tableData.length > 0 &&
+                            tableData.map((data, index) => (
+                              <TableBody key={data.id}>
+                                <StyledTableCell>
                                   <TextField
-                                    id="standard-basic"
-                                    disabled
-                                    variant="standard"
-                                    value={data.igst.toFixed(2)}
-                                    onChange={(event) => handleInputChange(event, 'igst', data.id)}
-                                   
+                                    variant='standard'
+                                    value={data.item}
+                                    onChange={(event) =>
+                                      handleInputChange(event, 'item', data.id)
+                                    }
                                   />
+                                </StyledTableCell>
+                                {savedTax && (
+                                  <StyledTableCell>
+                                    <div>
+                                      <TextField
+                                        variant='standard'
+                                        value={data.taxRate}
+                                        onChange={(event) =>
+                                          handleInputChange(
+                                            event,
+                                            'taxRate',
+                                            data.id
+                                          )
+                                        }
+                                        InputProps={{
+                                          endAdornment: (
+                                            <InputAdornment position='end'>
+                                              %
+                                            </InputAdornment>
+                                          ),
+                                        }}
+                                      />
+                                    </div>
+                                  </StyledTableCell>
+                                )}
+                                <StyledTableCell>
+                                  <TextField
+                                    id='standard-basic'
+                                    variant='standard'
+                                    value={data.quantity}
+                                    onChange={(event) =>
+                                      handleInputChange(
+                                        event,
+                                        'quantity',
+                                        data.id
+                                      )
+                                    }
+                                  />
+                                </StyledTableCell>
 
-                                </div>
-                              </StyledTableCell>
-                            </div>
-                          )}
-                          {savedTax == 'gst' && saveSubTax == 'gst' && (
+                                <StyledTableCell>
+                                  <div
+                                    style={{
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                    }}>
+                                    <span
+                                      style={{
+                                        marginRight: '5px',
+                                        marginTop: '0px',
+                                      }}>
+                                      {currencyValue}
+                                    </span>
+                                    <TextField
+                                      id='standard-basic'
+                                      variant='standard'
+                                      value={data.rate}
+                                      onChange={(event) =>
+                                        handleInputChange(
+                                          event,
+                                          'rate',
+                                          data.id
+                                        )
+                                      }
+                                    />
+                                  </div>
+                                </StyledTableCell>
+
+                                {savedTax == 'gst' && saveSubTax == 'igst' && (
+                                  <StyledTableCell>
+                                    <div
+                                      style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                      }}>
+                                      <span
+                                        style={{
+                                          marginRight: '5px',
+                                          marginTop: '0px',
+                                        }}>
+                                        {currencyValue}
+                                      </span>
+
+                                      <TextField
+                                        id='standard-basic'
+                                        disabled
+                                        variant='standard'
+                                        value={data.amount}
+                                        onChange={(event) =>
+                                          handleInputChange(
+                                            event,
+                                            'amount',
+                                            data.id
+                                          )
+                                        }
+                                      />
+                                    </div>
+                                  </StyledTableCell>
+                                )}
+
+                                {savedTax == 'gst' && saveSubTax == 'igst' && (
+                                  <div>
+                                    <StyledTableCell>
+                                      <div
+                                        style={{
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                        }}>
+                                        <span
+                                          style={{
+                                            marginRight: '5px',
+                                            marginTop: '0px',
+                                          }}>
+                                          {currencyValue}
+                                        </span>
+
+                                        <TextField
+                                          id='standard-basic'
+                                          disabled
+                                          variant='standard'
+                                          value={data.igst.toFixed(2)}
+                                          onChange={(event) =>
+                                            handleInputChange(
+                                              event,
+                                              'igst',
+                                              data.id
+                                            )
+                                          }
+                                        />
+                                      </div>
+                                    </StyledTableCell>
+                                  </div>
+                                )}
+                                {savedTax == 'gst' && saveSubTax == 'gst' && (
+                                  <StyledTableCell>
+                                    <div
+                                      style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                      }}>
+                                      <span
+                                        style={{
+                                          marginRight: '5px',
+                                          marginTop: '0px',
+                                        }}>
+                                        {currencyValue}
+                                      </span>
+
+                                      <TextField
+                                        id='standard-basic'
+                                        disabled
+                                        variant='standard'
+                                        value={data.amount}
+                                        onChange={(event) =>
+                                          handleInputChange(
+                                            event,
+                                            'amount',
+                                            data.id
+                                          )
+                                        }
+                                      />
+                                    </div>
+                                  </StyledTableCell>
+                                )}
+                                {savedTax == 'gst' && saveSubTax == 'gst' && (
+                                  <div>
+                                    <StyledTableCell>
+                                      <div
+                                        style={{
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                        }}>
+                                        <span
+                                          style={{
+                                            marginRight: '5px',
+                                            marginTop: '0px',
+                                          }}>
+                                          {currencyValue}
+                                        </span>
+                                        <TextField
+                                          disabled
+                                          id='standard-basic'
+                                          variant='standard'
+                                          value={data.cgst.toFixed(2)}
+                                          onChange={(event) =>
+                                            handleInputChange(
+                                              event,
+                                              'cgst',
+                                              data.id
+                                            )
+                                          }
+                                        />
+                                      </div>
+                                    </StyledTableCell>
+                                  </div>
+                                )}
+                                {savedTax == 'gst' && saveSubTax == 'gst' && (
+                                  <StyledTableCell>
+                                    <div
+                                      style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                      }}>
+                                      <span
+                                        style={{
+                                          marginRight: '5px',
+                                          marginTop: '0px',
+                                        }}>
+                                        {currencyValue}
+                                      </span>
+
+                                      <TextField
+                                        disabled
+                                        id='standard-basic'
+                                        variant='standard'
+                                        value={data.sgst.toFixed(2)}
+                                        onChange={(event) =>
+                                          handleInputChange(
+                                            event,
+                                            'sgst',
+                                            data.id
+                                          )
+                                        }
+                                      />
+                                    </div>
+                                  </StyledTableCell>
+                                )}
+
+                                {savedTax == 'vat' && (
+                                  <StyledTableCell>
+                                    <div
+                                      style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                      }}>
+                                      <span
+                                        style={{
+                                          marginRight: '5px',
+                                          marginTop: '0px',
+                                        }}>
+                                        {currencyValue}
+                                      </span>
+
+                                      <TextField
+                                        disabled
+                                        id='standard-basic'
+                                        variant='standard'
+                                        value={data.vat.toFixed(2)}
+                                        onChange={(event) =>
+                                          handleInputChange(
+                                            event,
+                                            'vat',
+                                            data.id
+                                          )
+                                        }
+                                      />
+                                    </div>
+                                  </StyledTableCell>
+                                )}
+
+                                <StyledTableCell>
+                                  <div
+                                    style={{
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                    }}>
+                                    <span
+                                      style={{
+                                        marginRight: '5px',
+                                        marginTop: '0px',
+                                      }}>
+                                      {currencyValue}
+                                    </span>
+
+                                    {data.total != null
+                                      ? data.total.toFixed(2)
+                                      : 0}
+                                  </div>
+                                </StyledTableCell>
+                                <StyledTableCell>
+                                  {' '}
+                                  <CloseIcon
+                                    onClick={() => handleRemoveRow(data.id)}
+                                  />
+                                </StyledTableCell>
+                              </TableBody>
+                            ))}
+                        </>
+                      )}
+                      {isExpenseData && (
+                        <>
+                          <TableBody key={data.id}>
                             <StyledTableCell>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                              <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
+                              <h3>Expenditure</h3>
+                            </StyledTableCell>
+                            <StyledTableCell>
+                              <h3>1</h3>
+                            </StyledTableCell>
 
-                              <TextField
-                                id="standard-basic"
-                                disabled
-                                variant="standard"
-                                value={data.amount}
-                                onChange={(event) => handleInputChange(event, 'amount', data.id)}
-                              />
-                            
-                            </div>
-                          </StyledTableCell>
-                          )}
-                          {savedTax == 'gst' && saveSubTax == 'gst' && (
-                            <div>
-                              
-                            
-                            <StyledTableCell >
-                              <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
-                                <TextField
-                                  disabled
-                                  id="standard-basic"
-                                  
-                                  variant="standard"
-                                  value={data.cgst.toFixed(2)}
-                                  onChange={(event) => handleInputChange(event, 'cgst', data.id)}
-                                 
-                                />
+                            <StyledTableCell>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                }}>
+                                <span
+                                  style={{
+                                    marginRight: '5px',
+                                    marginTop: '0px',
+                                  }}>
+                                  {expenseData !== null ? (
+                                    <>{expenseData.amount}</>
+                                  ) : (
+                                    0
+                                  )}
+                                </span>
                               </div>
                             </StyledTableCell>
-                            </div>
-
-                          )}
-                          {savedTax == 'gst' && saveSubTax == 'gst' && (
-                            <StyledTableCell >
-                              <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
-
-                                <TextField
-                                  disabled
-                                  id="standard-basic"
-                                  variant="standard"
-                                  value={data.sgst.toFixed(2)}
-                                  onChange={(event) => handleInputChange(event, 'sgst', data.id)}
-                                  
-                                />
+                            <StyledTableCell>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                }}>
+                                <span
+                                  style={{
+                                    marginRight: '5px',
+                                    marginTop: '0px',
+                                  }}>
+                                  {currencyValue}
+                                </span>
+                                {expenseData !== null ? (
+                                  <>{expenseData.amount}</>
+                                ) : (
+                                  0
+                                )}
                               </div>
                             </StyledTableCell>
-                          )}
-
-                          {savedTax == 'vat'&& (
-
-                            <StyledTableCell >
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                              <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
-
-                              <TextField
-                                disabled
-                                id="standard-basic"
-                                variant="standard"
-                                value={data.vat.toFixed(2)}
-                                onChange={(event) => handleInputChange(event, 'vat', data.id)}
-                                
-                              />
-                            </div>
-                            </StyledTableCell>
-
-                          )}
-
-                          <StyledTableCell>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                              <span style={{ marginRight: '5px', marginTop: '0px' }}>{currencyValue}</span>
-
-                            {data.total != null ? data.total.toFixed(2): 0}
-                            </div>
-                          </StyledTableCell>
-                          <StyledTableCell> <CloseIcon onClick={() => handleRemoveRow(data.id)} /></StyledTableCell>
-
-                        
-                        </TableBody>
-                      ))}
-
+                          </TableBody>
+                        </>
+                      )}
                     </Table>
                   </TableContainer>
-                
-                  {tableData.length >= 1 &&(
-                    <Grid alignItems='end' display='flex' justifyContent='flex-end' container spacing={2}>
-                    <Grid item xs={9}>
-                      <Typography align="right" variant="subtitle1">
-                        Amount:
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Typography align="right" variant="subtitle1">
-                        {isNaN(getTotalAmount()) ? 0 : getTotalAmount().toFixed(2)}
-                      </Typography>
-                    </Grid>
-                  
-                    {savedTax === 'gst' && saveSubTax === 'gst' && (
-                      <>
-                        <Grid item xs={9}>
-                          <Typography align="right" variant="subtitle1">
-                            SGST:
-                          </Typography>
+                  {!isExpenseData && (
+                    <>
+                      {tableData.length >= 1 && (
+                        <Grid
+                          alignItems='end'
+                          display='flex'
+                          justifyContent='flex-end'
+                          container
+                          spacing={2}>
+                          <Grid
+                            item
+                            xs={9}>
+                            <Typography
+                              align='right'
+                              variant='subtitle1'>
+                              Amount:
+                            </Typography>
+                          </Grid>
+                          <Grid
+                            item
+                            xs={3}>
+                            <Typography
+                              align='right'
+                              variant='subtitle1'>
+                              {isNaN(getTotalAmount())
+                                ? 0
+                                : getTotalAmount().toFixed(2)}
+                            </Typography>
+                          </Grid>
+
+                          {savedTax === 'gst' && saveSubTax === 'gst' && (
+                            <>
+                              <Grid
+                                item
+                                xs={9}>
+                                <Typography
+                                  align='right'
+                                  variant='subtitle1'>
+                                  SGST:
+                                </Typography>
+                              </Grid>
+                              <Grid
+                                item
+                                xs={3}>
+                                <Typography
+                                  align='right'
+                                  variant='subtitle1'>
+                                  {getSgst().toFixed(2)}
+                                </Typography>
+                              </Grid>
+
+                              <Grid
+                                item
+                                xs={9}>
+                                <Typography
+                                  align='right'
+                                  variant='subtitle1'>
+                                  CGST:
+                                </Typography>
+                              </Grid>
+                              <Grid
+                                item
+                                xs={3}>
+                                <Typography
+                                  align='right'
+                                  variant='subtitle1'>
+                                  {getCgst().toFixed(2)}
+                                </Typography>
+                              </Grid>
+                            </>
+                          )}
+
+                          {savedTax === 'gst' && saveSubTax === 'igst' && (
+                            <>
+                              <Grid
+                                item
+                                xs={9}>
+                                <Typography
+                                  align='right'
+                                  variant='subtitle1'>
+                                  IGST:
+                                </Typography>
+                              </Grid>
+                              <Grid
+                                item
+                                xs={3}>
+                                <Typography
+                                  align='right'
+                                  variant='subtitle1'>
+                                  {getIgst().toFixed(2)}
+                                </Typography>
+                              </Grid>
+                            </>
+                          )}
+
+                          {savedTax === 'vat' && (
+                            <>
+                              <Grid
+                                item
+                                xs={9}>
+                                <Typography
+                                  align='right'
+                                  variant='subtitle1'>
+                                  VAT:
+                                </Typography>
+                              </Grid>
+                              <Grid
+                                item
+                                xs={3}>
+                                <Typography
+                                  align='right'
+                                  variant='subtitle1'>
+                                  {getIgst().toFixed(2)}
+                                </Typography>
+                              </Grid>
+                            </>
+                          )}
+
+                          <Grid
+                            item
+                            xs={9}>
+                            <Typography
+                              align='right'
+                              variant='h5'
+                              fontWeight='semi-bold'>
+                              Total:
+                            </Typography>
+                          </Grid>
+                          <Grid
+                            item
+                            xs={3}>
+                            <Typography
+                              align='right'
+                              variant='h5'
+                              fontWeight='bold'>
+                              {isNaN(getTotal()) ? 0 : getTotal().toFixed(2)}
+                            </Typography>
+                          </Grid>
                         </Grid>
-                        <Grid item xs={3}>
-                          <Typography align="right" variant="subtitle1">
-                            {getSgst().toFixed(2)}
-                          </Typography>
-                        </Grid>
-                  
-                        <Grid item xs={9}>
-                          <Typography align="right" variant="subtitle1">
-                            CGST:
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={3}>
-                          <Typography align="right" variant="subtitle1">
-                            {getCgst().toFixed(2)}
-                          </Typography>
-                        </Grid>
-                      </>
-                    )}
-                  
-                    {savedTax === 'gst' && saveSubTax === 'igst' && (
-                      <>
-                      <Grid item xs={9}>
-                        <Typography align="right" variant="subtitle1">
-                          IGST:
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={3}>
-                        <Typography align="right" variant="subtitle1">
-                          {getIgst().toFixed(2)}
-                        </Typography>
-                      </Grid>
-                      </>
-                    )}
-                  
-                    {savedTax === 'vat' && (
-                      <>
-                      <Grid item xs={9}>
-                        <Typography align="right" variant="subtitle1">
-                          VAT:
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={3}>
-                        <Typography align="right" variant="subtitle1">
-                          {getIgst().toFixed(2)}
-                        </Typography>
-                      </Grid>
-                        
-                      </>
-                    )}
-                  
-                    <Grid item xs={9}>
-                      
-                      <Typography align="right" variant="h5" fontWeight="semi-bold">
-                        Total:
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Typography align="right" variant="h5" fontWeight="bold">
-                        {isNaN(getTotal()) ? 0 : getTotal().toFixed(2)}
-                      </Typography>
-                    </Grid>
-                  </Grid>
+                      )}
+                      <Button
+                        variant='outlined'
+                        sx={{ mt: 3 }}
+                        onClick={handleAddRow}>
+                        Add More Items
+                      </Button>
+                    </>
                   )}
-                  
-                  <Button variant='outlined' sx={{ mt: 3 }} onClick={handleAddRow}>
-                    Add More Items
-                  </Button>
-                 
                 </Box>
+                {isExpenseData && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'start',
+                      gap: '50px',
+                    }}>
+                    <Typography variant='h6'>
+                      <Box sx={{ fontWeight: 'semi-bold', m: 1 }}>
+                        Total (in words):-
+                        <span style={{ fontWeight: 'bold' }}>
+                          {amountInWords(
+                            expenseData.currency,
+                            expenseData.amount
+                          )}
+                        </span>
+                      </Box>
+                    </Typography>
+                    <Typography variant='h6'>
+                      <Box sx={{ fontWeight: 'semi-bold', m: 1 }}>
+                        Total{' '}
+                        <span style={{ fontWeight: 'bold' }}>
+                          {expenseData.currency}
+                          {expenseData.amount}
+                        </span>
+                      </Box>
+                    </Typography>
+                  </div>
+                )}
                 {tableData.length >= 1 && (
-                  <Button variant="outlined" type='submit' sx={{ mt: 3, width: '200px'}} onClick={handlePrint}>
+                  <Button
+                    variant='outlined'
+                    type='submit'
+                    sx={{ mt: 3, width: '200px' }}
+                    onClick={handlePrint}>
                     Print & Save as PDF
                   </Button>
                 )}
-                
               </Paper>
             </Grid>
           </Grid>
         </Container>
       </Box>
 
-      <BootstrapDialog fullWidth open={dialogOpen} sx={{
-
-      }}>
-        <DialogTitle>
-          <strong>Configure Tax</strong>
-        </DialogTitle>
-        <IconButton
-          aria-label="close"
-          onClick={handleCloseTax}
-          sx={{
-            position: 'absolute',
-            right: 8,
-            top: 8,
-            color: (theme) => theme.palette.grey[500],
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
-        <DialogContent dividers fullWidth sx={{ padding: 3 }}>
-          <InputLabel id="demo-simple-select-label" sx={{ mb: 1 }}>Select Tax Type</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={taxType}
-            placeholder='Tax'
-            onChange={handleTaxTypeChange}
+      {!isExpenseData && (
+        <BootstrapDialog
+          fullWidth
+          open={dialogOpen}
+          sx={{}}>
+          <DialogTitle>
+            <strong>Configure Tax</strong>
+          </DialogTitle>
+          <IconButton
+            aria-label='close'
+            onClick={handleCloseTax}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}>
+            <CloseIcon />
+          </IconButton>
+          <DialogContent
+            dividers
             fullWidth
-            sx={{ mb: 1 }}
-          >
-            <MenuItem value={'none'}>None</MenuItem>
-            <MenuItem value={'gst'}>GST (India)</MenuItem>
-            <MenuItem value={'vat'}>VAT</MenuItem>
+            sx={{ padding: 3 }}>
+            <InputLabel
+              id='demo-simple-select-label'
+              sx={{ mb: 1 }}>
+              Select Tax Type
+            </InputLabel>
+            <Select
+              labelId='demo-simple-select-label'
+              id='demo-simple-select'
+              value={taxType}
+              placeholder='Tax'
+              onChange={handleTaxTypeChange}
+              fullWidth
+              sx={{ mb: 1 }}>
+              <MenuItem value={'none'}>None</MenuItem>
+              <MenuItem value={'gst'}>GST (India)</MenuItem>
+              <MenuItem value={'vat'}>VAT</MenuItem>
+            </Select>
 
-          </Select>
+            {taxType == 'gst' && (
+              <Box sx={{ marginTop: 3 }}>
+                <strong>GST Type</strong>
+                <RadioGroup
+                  row
+                  aria-labelledby='demo-row-radio-buttons-group-label'
+                  name='row-radio-buttons-group'
+                  value={selectedTax}
+                  onChange={handleTaxRadioChange}>
+                  <FormControlLabel
+                    value='igst'
+                    control={<Radio />}
+                    label='IGST'
+                  />
 
-          {taxType == 'gst' && (
-            <Box sx={{ marginTop: 3 }}>
-              <strong>GST Type</strong>
-              <RadioGroup
-                row
-                aria-labelledby="demo-row-radio-buttons-group-label"
-                name="row-radio-buttons-group"
-                value={selectedTax}
-                onChange={handleTaxRadioChange}
-              >
+                  <FormControlLabel
+                    value='gst'
+                    control={<Radio />}
+                    label='CGST & SGST'
+                  />
+                </RadioGroup>
+                {radioError && (
+                  <p style={{ color: 'red' }}>Please select a tax option.</p>
+                )}
+              </Box>
+            )}
+          </DialogContent>
 
-                <FormControlLabel value="igst" control={<Radio />} label="IGST" />
-
-                <FormControlLabel value="gst" control={<Radio />} label="CGST & SGST" />
-              </RadioGroup>
-              {radioError && <p style={{ color: 'red' }}>Please select a tax option.</p>}
-            </Box>
-          )}
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={handleCloseTax} color="primary">
-            Close
-          </Button>
-          <Button onClick={handleSaveTax} color="primary">
-            Save
-          </Button>
-        </DialogActions>
-      </BootstrapDialog>
-
+          <DialogActions>
+            <Button
+              onClick={handleCloseTax}
+              color='primary'>
+              Close
+            </Button>
+            <Button
+              onClick={handleSaveTax}
+              color='primary'>
+              Save
+            </Button>
+          </DialogActions>
+        </BootstrapDialog>
+      )}
     </Container>
-  )
+  );
 }
 
-export default GenerateInvoice
+export default GenerateInvoice;
